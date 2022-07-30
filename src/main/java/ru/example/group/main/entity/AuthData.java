@@ -9,9 +9,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 import ru.example.group.main.entity.enums.MessagesPermission;
 
 @Entity
+@Getter
+@Setter
 public class AuthData {
 
   @Id
@@ -39,6 +43,7 @@ public class AuthData {
   private String about; //о? про? О_о хз что это (может что-то типа расскажи о себе)
 
   private String photo; //фото... наверное ссылка на фото
+
   private String token; // знак? тоже не понимаю
 
   @Column(name = "reg_time")
