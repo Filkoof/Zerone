@@ -2,6 +2,18 @@ version: '3.1'
 
 services:
 
+  sonarqube:
+    image: sonarqube
+    container_name: sonarqube
+    restart: always
+    environment:
+      SONARQUBE_USER: zerone
+      SONARQUBE_PASSWORD: ktb80m
+      SONARQUBE_URL: jdbc:postgresql://db:5432/sonarqube
+    ports:
+      - "9000:9000"
+
+
   db:
     image: postgres
     container_name: "postgres_docker"
@@ -9,5 +21,6 @@ services:
     environment:
       POSTGRES_USER: zerone
       POSTGRES_PASSWORD: 7tsfft
+      POSTGRES_DB: sonarqube
     ports:
       - "5432:5432"
