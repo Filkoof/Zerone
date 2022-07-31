@@ -2,7 +2,6 @@ package ru.example.group.main.entity;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,41 +12,42 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-public class PostData {
+@Table(name = "post")
+public class PostEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
-  @Column(name = "is_blocked")
-  private boolean isBlocked; // блокировка
+  private boolean isBlocked;
 
   @ManyToOne
-  @JoinColumn(name = "author_id")
-  private AuthData author; //автор поста
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
-  private LocalDateTime time; //время создания
 
-  private String title; //заголовок
+  private LocalDateTime time;
 
-  private String type; // тип
+  private String title;
 
-  @Column(name = "post_text", columnDefinition = "text")
-  private String postText; //текст поста
+  private String type;
 
-  @Column(name = "my_like")
-  private boolean myLike; //ставить ли лайк
+  @Column(columnDefinition = "text")
+  private String postText;
 
-  private int likes; //колличество лайков
+  private boolean myLike;
+
+  private int likes;
 
   @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
-  private Set<CommentData> comments = new HashSet<>(); //комментарии к посту
+  private Set<CommentEntity> comments = new HashSet<>();
 
   private String tags; //тэг    создавать ли под него сущность так как написано ТЭГИ во множественном числе
 }
