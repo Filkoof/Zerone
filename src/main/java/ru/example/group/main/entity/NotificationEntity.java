@@ -13,30 +13,31 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import ru.example.group.main.entity.enums.EventType;
+import ru.example.group.main.entity.enumerated.EntityType;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "notification")
+@Table(name = "notifications")
 public class NotificationEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
+  @ManyToOne
+  @JoinColumn(name = "type_id")
+  private NotificationTypeEntity type;
+
   private LocalDateTime sentTime;
 
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum('POST','POST_COMMENT','COMMENT_COMMENT','FRIEND_REQUEST','MESSAGE')")
-  private EventType eventType;
-
-
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "person_id")
   private UserEntity user;
 
-  private int entityId; //не понятно что за айди какой такой сучности
+  @Enumerated(EnumType.STRING)
+  @Column(columnDefinition = "enum('COMMENT','FRIEND','POST','MESSAGE')")
+  private EntityType entityId;
 
-  private int parentEntityId; //а это видать ай ди предка той сучности что выше
+  private boolean status;
 }

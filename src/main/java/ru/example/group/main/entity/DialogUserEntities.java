@@ -11,7 +11,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class DialogUserEntities {
+public class DialogUserEntities { //получается данная таблица не нужна, но что-то я сомневаюсь
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

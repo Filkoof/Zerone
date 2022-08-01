@@ -17,12 +17,25 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "comment")
+@Table(name = "post_comments")
 public class CommentEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
+
+  private LocalDateTime time;
+
+  @ManyToOne
+  @JoinColumn(name = "post_id")
+  private PostEntity post;
+
+  @ManyToOne
+  private CommentEntity parentId;
+
+  @ManyToOne
+  @JoinColumn(name = "author_id")
+  private UserEntity user;
 
   private String commentText;
 
@@ -30,26 +43,8 @@ public class CommentEntity {
 
   private boolean isDeleted;
 
-  @ManyToOne
-  @JoinColumn(name = "post_id")
-  private PostEntity postId;
-
-  private boolean myLike;
-
-  @ManyToOne()
-  private CommentEntity parentId;
-
-  private LocalDateTime time;
-
-  private int likes;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserEntity user;
-
   @OneToMany
   @JoinColumn(name = "parent_id")
   private Set<CommentEntity> subComments = new HashSet<>();
 
-  //image  создавать ли под нее сущность так как она прописана как imageDTO
 }

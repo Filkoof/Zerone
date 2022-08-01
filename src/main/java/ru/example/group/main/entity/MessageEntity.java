@@ -16,28 +16,27 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "message")
+@Table(name = "messages")
 public class MessageEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
-  @Column(columnDefinition = "text")
-  private String messageText;
-
-  private boolean sendByMe;
-
-  private String readStatus;
-
-  private LocalDateTime time;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserEntity user;
+  private LocalDateTime sent_time;
 
   @ManyToOne
   @JoinColumn(name = "dialog_id")
   private DialogEntity dialog;
+
+  @Column(columnDefinition = "text")
+  private String messageText;
+
+  private String readStatus;
+
+  /**  в структуре бд его нет он по моему он нужен чтобы понять кому мы сообщение пишем */
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
 }

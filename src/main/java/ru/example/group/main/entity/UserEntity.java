@@ -17,50 +17,56 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import ru.example.group.main.entity.enums.MessagesPermission;
+import ru.example.group.main.entity.enumerated.MessagesPermission;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
-  private String lastName;
-
   private String firstName;
 
-  private String country;
+  private String lastName;
 
-  private String city;
+  private LocalDateTime regDate;
+
+  private LocalDate birthDate;
+
+  private String eMail;
 
   private String phone;
 
-  private String email;
+  private String password;
 
-  private LocalDate birthDate;
+  private String photo;
 
   @Column(columnDefinition = "text")
   private String about;
 
-  private String photo;
+  private boolean status;
 
-  private String token;
+  private String city;
 
-  private LocalDateTime regDate;
+  private String country;
+
+  private String confirmationCode;
+
+  private boolean isApproved;
+
+  @Enumerated(EnumType.STRING)
+  @Column(columnDefinition = "enum('ALL', 'FRIENDS')")
+  private MessagesPermission messagePermissions;
+
+  private LocalDateTime lastOnlineTime;
 
   private boolean isBlocked;
 
-  private boolean deleted;
-
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum('ALL', 'FRIENDS', 'NOBODY')")
-  private MessagesPermission messagesPermission;
-
-  private LocalDateTime lastOnlineTime;
+  private boolean isDeleted;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<PostEntity> post;
@@ -70,5 +76,11 @@ public class UserEntity {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<NotificationEntity> notification = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "senderId", cascade = CascadeType.ALL)
+  private Set<DialogEntity> senderDialogEntities = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "recipientId", cascade = CascadeType.ALL)
+  private Set<DialogEntity> recipientDialogEntities = new LinkedHashSet<>();
 
 }

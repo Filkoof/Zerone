@@ -19,35 +19,32 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "post")
+@Table(name = "posts")
 public class PostEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
-  private boolean isBlocked;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserEntity user;
-
-
   private LocalDateTime time;
 
-  private String title;
+  @ManyToOne//может оне-то-оне у одного поста один автор...
+  @JoinColumn(name = "author_id")
+  private UserEntity user;
 
-  private String type;
+  private String title;
 
   @Column(columnDefinition = "text")
   private String postText;
 
-  private boolean myLike;
+  private LocalDateTime updateDate;
 
-  private int likes;
+  private boolean isBlocked;
 
-  @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+  private boolean isDeleted;
+
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private Set<CommentEntity> comments = new HashSet<>();
 
-  private String tags; //тэг    создавать ли под него сущность так как написано ТЭГИ во множественном числе
+  private String tags; //переделать под сущность тэг не забыть создать сущность
 }
