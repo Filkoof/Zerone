@@ -1,0 +1,88 @@
+<!--END-->
+<!--END--><!DOCTYPE html><!--[if IE 7]>
+<html class="ie7" lang="ru">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie8" lang="ru">
+<![endif]-->
+<!--[if IE 9]>
+<html class="ie9" lang="ru">
+<![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!--<![endif]-->
+<head>
+    <title>Логин тест</title>
+    <meta name="description" content="Описание страницы"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+</head>
+<body class="Site">
+
+
+<div class="Middle">
+    <div class="Middle-top">
+        <div class="wrap">
+            <h1 class="Middle-title">Авторизуйтесь тут
+            </h1>
+        </div>
+    </div>
+    <div class="wrap">
+        <main class="Middle-main">
+            <h2 class="Middle-title">Логин
+            </h2>
+            <div class="Tabs Tabs_default">
+
+
+                <div class="Tabs-wrap">
+                    <div class="Tabs-block" id="addBook">
+                        <div class="CMS">
+
+                            <form class="form Login-form" action="#" th:action="@{/login}" method="post">
+
+                                <div class="row">
+                                    <div class="row-block">
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="login">Имя (почта)
+                                            </label>
+                                            <input class="form-input" id="login" name="login" type="text"
+                                                   th:name="email"
+                                                   value=""
+                                                   data-validate="require login"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="password">Пароль
+                                            </label>
+                                            <input class="form-input" id="password" name="password" type="text"
+                                                   th:name="password"
+                                                   value=""
+                                                   data-validate="require password"/>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="CMS-btn">
+
+                                                <button class="btn btn_primary" type="submit">Войти
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
