@@ -2,31 +2,21 @@ package ru.example.group.main.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
-import ru.example.group.main.entity.enums.MessagesPermission;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   private String lastName;
@@ -48,7 +38,7 @@ public class UserEntity {
 
   private String photo;
 
-  private String token;
+  private String password;
 
   private LocalDateTime regDate;
 
@@ -56,19 +46,9 @@ public class UserEntity {
 
   private boolean deleted;
 
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum('ALL', 'FRIENDS', 'NOBODY')")
-  private MessagesPermission messagesPermission;
-
   private LocalDateTime lastOnlineTime;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<PostEntity> post;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<CommentEntity> comment = new LinkedHashSet<>();
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<NotificationEntity> notification = new LinkedHashSet<>();
+  @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
+  private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
 }
