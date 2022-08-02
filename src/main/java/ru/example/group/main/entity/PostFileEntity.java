@@ -4,22 +4,25 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-public class DialogUserEntities { //получается данная таблица не нужна, но что-то я сомневаюсь
-
+@Table(name = "post_files")
+public class PostFileEntity{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @OneToOne
-  private UserEntity user;
+  @ManyToOne
+  @JoinColumn(name = "post_id")
+  private PostEntity post;
 
-  @OneToOne
-  private DialogEntity dialog;
+  private String path;
+
 }

@@ -26,7 +26,7 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 public class UserEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   private String firstName;

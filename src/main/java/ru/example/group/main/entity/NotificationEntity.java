@@ -22,7 +22,7 @@ import ru.example.group.main.entity.enumerated.EntityType;
 public class NotificationEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   @ManyToOne
