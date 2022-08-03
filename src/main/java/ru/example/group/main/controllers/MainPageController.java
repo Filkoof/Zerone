@@ -19,6 +19,12 @@ public class MainPageController {
         return "Hello, you are in the GAME of GOOODS you are IN!!!";
     }
 
+    @GetMapping("/testAdmin")
+    @ResponseBody
+    public String mainPageAdmin() {
+        return "Hello, you are THE GOOODDD!!!";
+    }
+
     @GetMapping("/")
     @ResponseBody
     public String mainPage() {

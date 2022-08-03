@@ -1,6 +1,8 @@
 #Session security
 auth:
   secret: SocialNetwork26
+header:
+  authorization: "AUTHORIZATION"
 server:
   servlet:
     session:

@@ -67,12 +67,25 @@
                                                 <button class="btn btn_primary" type="submit">Войти
                                                 </button>
                                             </div>
+
                                         </div>
 
                                     </div>
 
                                 </div>
 
+                            </form>
+
+                            <form class="form refresh" action="#" th:action="@{/refresh}" method="get">
+                                <button class="btn btn_refresh" type="submit">
+                                    Перегрузить
+                                </button>
+                            </form>
+
+                            <form class="form logout" action="#" th:action="@{/logoutHeader}" method="get">
+                                <button class="btn btn_logout" type="submit">
+                                    Выйти
+                                </button>
                             </form>
 
                         </div>

@@ -2,22 +2,12 @@ package ru.example.group.main.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
 
 @Entity
 @Getter
@@ -29,58 +19,36 @@ public class UserEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private String firstName;
-
   private String lastName;
 
-  private LocalDateTime regDate;
+  private String firstName;
 
-  private LocalDate birthDate;
+  private String country;
 
-  private String eMail;
+  private String city;
 
   private String phone;
 
-  private String password;
+  private String email;
 
-  private String photo;
+  private LocalDate birthDate;
 
   @Column(columnDefinition = "text")
   private String about;
 
-  private boolean status;
+  private String photo;
 
-  private String city;
+  private String password;
 
-  private String country;
-
-  private String confirmationCode;
-
-  private boolean isApproved;
-
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum('ALL', 'FRIENDS')")
-  private MessagesPermission messagePermissions;
-
-  private LocalDateTime lastOnlineTime;
+  private LocalDateTime regDate;
 
   private boolean isBlocked;
 
-  private boolean isDeleted;
+  private boolean deleted;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<PostEntity> post;
+  private LocalDateTime lastOnlineTime;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<CommentEntity> comment = new LinkedHashSet<>();
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<NotificationEntity> notification = new LinkedHashSet<>();
-
-  @OneToMany(mappedBy = "senderId", cascade = CascadeType.ALL)
-  private Set<DialogEntity> senderDialogEntities = new LinkedHashSet<>();
-
-  @OneToMany(mappedBy = "recipientId", cascade = CascadeType.ALL)
-  private Set<DialogEntity> recipientDialogEntities = new LinkedHashSet<>();
+  @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
+  private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
 }
