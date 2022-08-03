@@ -1,13 +1,13 @@
 package ru.example.group.main.entity;
 
-import java.util.Set;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,22 +15,25 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "dialogs")
-public class DialogEntity {
+@Table(name = "friendships")
+public class Friendship {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @ManyToOne
-  @JoinColumn(name = "sender_id")
-  private UserEntity sender;
+  @OneToOne
+  @JoinColumn(name = "status_id")
+  private FriendshipStatusEntity status;
 
   @ManyToOne
-  @JoinColumn(name = "recipient_id")
-  private UserEntity recipient;
+  @JoinColumn(name = "src_person_id")
+  private UserEntity srcPerson;
 
-  @OneToMany(mappedBy = "dialog")
-  private Set<MessageEntity> messageSet;
+  @ManyToOne
+  @JoinColumn(name = "dst_person_id")
+  private UserEntity dstPerson;
+
+  private LocalDateTime time;
 
 }

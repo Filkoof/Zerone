@@ -77,10 +77,22 @@ public class UserEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<NotificationEntity> notification = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "senderId", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
   private Set<DialogEntity> senderDialogEntities = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "recipientId", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
   private Set<DialogEntity> recipientDialogEntities = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "srcPerson", cascade = CascadeType.ALL)
+  private Set<Friendship> srcFriendships = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "dstPerson",  cascade = CascadeType.ALL)
+  private Set<Friendship> dstFriendships = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private Set<NotificationSettingEntity> notificationSettings = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private Set<BlockHistoryEntity> blockHistoryEntities = new LinkedHashSet<>();
 
 }

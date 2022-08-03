@@ -1,13 +1,11 @@
 package ru.example.group.main.entity;
 
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,22 +13,27 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "dialogs")
-public class DialogEntity {
+@Table(name = "notification_settings")
+public class NotificationSettingEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   @ManyToOne
-  @JoinColumn(name = "sender_id")
-  private UserEntity sender;
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
-  @ManyToOne
-  @JoinColumn(name = "recipient_id")
-  private UserEntity recipient;
+  private boolean post_enabled;
 
-  @OneToMany(mappedBy = "dialog")
-  private Set<MessageEntity> messageSet;
+  private boolean postCommentEnabled;
+
+  private boolean commentCommentEnabled;
+
+  private boolean friendRequestEnabled;
+
+  private boolean messagesEnabled;
+
+  private boolean friendBirthdayEnabled;
 
 }

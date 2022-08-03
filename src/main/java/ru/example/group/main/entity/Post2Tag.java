@@ -1,36 +1,33 @@
 package ru.example.group.main.entity;
 
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import ru.example.group.main.entity.TagEntity.TagsEntity;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "dialogs")
-public class DialogEntity {
+@Table(name = "posts_to_tags")
+public class Post2Tag {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @ManyToOne
-  @JoinColumn(name = "sender_id")
-  private UserEntity sender;
+  @OneToOne
+  @JoinColumn(name = "post_id")
+  private PostEntity post;
 
-  @ManyToOne
-  @JoinColumn(name = "recipient_id")
-  private UserEntity recipient;
+  @OneToOne
+  @JoinColumn(name = "tag_id")
+  private TagsEntity tag;
 
-  @OneToMany(mappedBy = "dialog")
-  private Set<MessageEntity> messageSet;
 
 }
