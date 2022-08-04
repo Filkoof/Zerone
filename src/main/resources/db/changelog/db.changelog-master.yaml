@@ -48,7 +48,7 @@ databaseChangeLog:
                   name: city # – страна проживания
                   type: varchar(50)
               - column:
-                  name: county # – город проживания
+                  name: country # – город проживания
                   type: varchar(50)
               - column:
                   name: confirmation_code # – код восстановления пароля / подтверждения регистрации
@@ -409,7 +409,7 @@ databaseChangeLog:
                   name: last_name
                   type: varchar(50)
               - column:
-                  name: email
+                  name: e_mail
                   type: varchar(50)
               - column:
                   name: message
@@ -420,6 +420,41 @@ databaseChangeLog:
               - column:
                   name: status
                   type: varchar(10)
+
+        - createTable:
+            tableName: blacklisted_tokens
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: jwt_blacklisted
+                  type: varchar(255)
+              - column:
+                  name: revocation_date
+                  type: timestamp
+
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+              - column:
+                  name: user_role
+                  type: varchar(50)
+
 
   - changeSet:
       id: 2
