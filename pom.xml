@@ -51,15 +51,20 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
 
     <!-- security and test -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter-security</artifactId>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -68,6 +73,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
     </dependency>
+
 
     <!-- postgresql -->
     <dependency>
@@ -88,7 +94,6 @@
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
-
   </dependencies>
 
 </project>

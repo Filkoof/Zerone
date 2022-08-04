@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:postgresql://localhost:5432/zerone
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+    liquibase:
+      change-log: classpath:db/changelog/dbchangelog.xml
+      enabled: true
+  liquibase:
+    enabled: false
+server:
+  port: 8086
