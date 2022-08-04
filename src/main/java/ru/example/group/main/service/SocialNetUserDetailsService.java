@@ -33,7 +33,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        UserEntity user = socialNetUserRepository.findUserEntityByEmail(s);
+        UserEntity user = socialNetUserRepository.findUserEntityByEMail(s);
         if (user != null) {
             return new SocialNetUserDetails(user);
         }
