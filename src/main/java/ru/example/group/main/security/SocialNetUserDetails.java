@@ -6,10 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class SocialNetUserDetails implements UserDetails {
@@ -30,11 +27,11 @@ public class SocialNetUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> simpleGrantedAuthorityList = new ArrayList<>();
         simpleGrantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
-        List<UserRoleEntity> userRoleEntityList;
+        Set<UserRoleEntity> userRoleEntityList;
         try {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
-            userRoleEntityList = new ArrayList<>();
+            userRoleEntityList = new LinkedHashSet<>();
             logger.info("ОШИБКА " + e.getMessage());
         }
         if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
@@ -52,7 +49,7 @@ public class SocialNetUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getEMail();
     }
 
     @Override

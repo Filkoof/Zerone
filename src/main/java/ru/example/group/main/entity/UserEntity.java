@@ -1,6 +1,6 @@
 package ru.example.group.main.entity;
 
-import java.time.LocalDate;
+import java.util.List;import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -94,5 +94,8 @@ public class UserEntity {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private Set<BlockHistoryEntity> blockHistoryEntities = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
+  private Set<UserRoleEntity> userRoleEntities = new LinkedHashSet<>();
 
 }

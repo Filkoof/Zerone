@@ -54,13 +54,13 @@ public class SocialNetUserRegisterService {
     public UserEntity registerTestUser() {
         UserEntity user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
-        user.setEmail("test@test.tu");
+        user.setEMail("test@test.tu");
         user.setPassword(passwordEncoder.encode("111"));
         socialNetUserRepository.save(user);
 
         user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
-        user.setEmail("admin@admin.tu");
+        user.setEMail("admin@admin.tu");
         user.setPassword(passwordEncoder.encode("111"));
         socialNetUserRepository.save(user);
 
