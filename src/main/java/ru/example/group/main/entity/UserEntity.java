@@ -58,9 +58,7 @@ public class UserEntity {
 
   private boolean isApproved;
 
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum('ALL', 'FRIENDS')")
-  private MessagesPermission messagePermissions;
+  private boolean messagePermissions;
 
   private LocalDateTime lastOnlineTime;
 
