@@ -1,13 +1,16 @@
 package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.controllers.AuthUserController;
 import ru.example.group.main.controllers.GlobalExceptionHandlerController;
+import ru.example.group.main.data.dto.UserDto;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repositories.SocialNetUserRepository;
 import ru.example.group.main.security.SocialNetUserDetails;
 
@@ -39,5 +42,29 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         }
         handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
         throw new UsernameNotFoundException("user not found doh!");
+    }
+
+    public UserDto setUserDtoFromAuth(UserEntity user, String token) {
+        UserDto userDto = new UserDto();
+
+        userDto.setAbout(user.getAbout());
+        userDto.setBirthDate(user.getBirthDate());
+        userDto.setBlocked(user.isBlocked());
+        userDto.setCity(user.getCity());
+        userDto.setCountry(user.getCountry());
+        userDto.setPassword(null);
+        userDto.setRegDate(user.getRegDate());
+        userDto.setDeleted(user.isDeleted());
+        userDto.seteMail(user.getEMail());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setId(user.getId());
+        userDto.setLastName(user.getLastName());
+        userDto.setPhone(user.getPhone());
+        userDto.setLastOnlineTime(user.getLastOnlineTime());
+        MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
+        userDto.setMessagePermissions(messagesPermission);
+        userDto.setToken(token);
+
+        return userDto;
     }
 }

@@ -1,5 +1,8 @@
 package ru.example.group.main.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,6 +10,8 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "blacklisted_tokens")
 public class JwtBlacklistEntity {
 
@@ -16,20 +21,5 @@ public class JwtBlacklistEntity {
 
     @Column(name = "revocation_date", columnDefinition = "TIMESTAMP NOT NULL")
     private LocalDateTime revocationDate;
-
-    public String getJwtBlacklisted() {
-        return jwtBlacklistedToken;
-    }
-
-    public void setJwtBlacklisted(String jwtBlacklistedToken) {
-        this.jwtBlacklistedToken = jwtBlacklistedToken;
-    }
-
-    public LocalDateTime getRevocationDate() {
-        return revocationDate;
-    }
-
-    public void setRevocationDate(LocalDateTime revocationDate) {
-        this.revocationDate = revocationDate;
-    }
 }
+

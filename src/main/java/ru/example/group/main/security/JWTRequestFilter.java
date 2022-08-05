@@ -45,11 +45,15 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = null;
         String username = null;
+        logger.info("origin " + httpServletRequest.getHeader("origin"));
+        logger.info("token " + httpServletRequest.getHeader(authHeader));
 
-        if (httpServletRequest.getHeader(authHeader) != null) {
-                    token = httpServletRequest.getHeader(authHeader);
-                    username = checkToken(token, httpServletRequest, httpServletResponse);
-                checkAuthenticationToken(username, token, httpServletRequest,httpServletResponse);
+       if (httpServletRequest.getHeader(authHeader) != null ) {
+           if (!httpServletRequest.getHeader(authHeader).equals("undefined")) {
+               token = httpServletRequest.getHeader(authHeader);
+               username = checkToken(token, httpServletRequest, httpServletResponse);
+               checkAuthenticationToken(username, token, httpServletRequest, httpServletResponse);
+           }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
@@ -80,7 +84,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtilService.extractUsername(token);
             } catch (Exception e) {
-
                 logoutHeaderProcessing(httpServletRequest, httpServletResponse);
                 throw new ServletException("Expired token." + e.getMessage());
             }
@@ -97,7 +100,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         if (response.getHeader(authHeader) != null) {
             token = response.getHeader(authHeader);
             JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-            jwtBlacklistEntity.setJwtBlacklisted(token);
+            jwtBlacklistEntity.setJwtBlacklistedToken(token);
             jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
             jwtBlacklistRepository.save(jwtBlacklistEntity);
             response.setHeader(authHeader, null);

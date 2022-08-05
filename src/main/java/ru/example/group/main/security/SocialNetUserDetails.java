@@ -27,11 +27,11 @@ public class SocialNetUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> simpleGrantedAuthorityList = new ArrayList<>();
         simpleGrantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
-        Set<UserRoleEntity> userRoleEntityList;
+        List<UserRoleEntity> userRoleEntityList;
         try {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
-            userRoleEntityList = new LinkedHashSet<>();
+            userRoleEntityList = new ArrayList<>();
             logger.info("ОШИБКА " + e.getMessage());
         }
         if (userRoleEntityList != null && userRoleEntityList.size() != 0) {

@@ -2,8 +2,9 @@ package ru.example.group.main.data;
 
 public class ContactConfirmationPayload {
 
-    private String email;
     private String password;
+    private String email;
+
 
     public String getEmail() {
         return email;

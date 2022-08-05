@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
@@ -55,13 +57,13 @@ public class SocialNetUserRegisterService {
         UserEntity user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
         user.setEMail("test@test.tu");
-        user.setPassword(passwordEncoder.encode("111"));
+        user.setPassword(passwordEncoder.encode("11111111"));
         socialNetUserRepository.save(user);
 
         user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
         user.setEMail("admin@admin.tu");
-        user.setPassword(passwordEncoder.encode("111"));
+        user.setPassword(passwordEncoder.encode("11111111"));
         socialNetUserRepository.save(user);
 
         UserRoleEntity userRoleEntity = new UserRoleEntity();
@@ -76,13 +78,15 @@ public class SocialNetUserRegisterService {
     public ContactConfirmationResponse jwtLogin(ContactConfirmationPayload payload) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                 payload.getPassword()));
-        logger.info(socialNetUserDetailsService.loadUserByUsername(payload.getEmail()).toString());
+        logger.info(socialNetUserDetailsService.loadUserByUsername(payload.getEmail()).getUsername());
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         String jwtToken = jwtUtilService.generateToken(userDetails);
 
         ContactConfirmationResponse response = new ContactConfirmationResponse();
         response.setResult(jwtToken);
+
+        response.setUserDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
         return response;
     }
 
@@ -101,7 +105,7 @@ public class SocialNetUserRegisterService {
         if (response.getHeader(authHeader) != null) {
             token = response.getHeader(authHeader);
             JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-            jwtBlacklistEntity.setJwtBlacklisted(token);
+            jwtBlacklistEntity.setJwtBlacklistedToken(token);
             jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
             jwtBlacklistRepository.save(jwtBlacklistEntity);
             response.setHeader(authHeader, null);
