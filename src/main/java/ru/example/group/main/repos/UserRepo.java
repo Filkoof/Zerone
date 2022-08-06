@@ -1,12 +1,10 @@
 package ru.example.group.main.repos;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.repository.CrudRepository;
-import ru.example.group.main.entity.User;
+import ru.example.group.main.entity.UserEntity;
 
-@ComponentScan
-public interface UserRepo extends CrudRepository<User, Long> {
-    User findByEmail(String username);
+public interface UserRepo extends CrudRepository<UserEntity, Long> {
+    UserEntity findByEmail(String eMail);
 
-    Boolean existsByEmail(String user);
+    Boolean existsByEmail(String eMail);
 }
