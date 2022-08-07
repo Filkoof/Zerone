@@ -9,7 +9,6 @@ server:
       tracking-modes: cookie
   port: 8086
 
-
 #spring security session login
 spring:
   security:

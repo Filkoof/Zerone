@@ -3,7 +3,6 @@ package ru.example.group.main.service;
 import liquibase.util.StringUtil;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +42,7 @@ public class SocialNetUserRegisterService {
     private final Logger logger = Logger.getLogger(SocialNetUserRegisterService.class.getName());
 
     @Autowired
-    public SocialNetUserRegisterService(SocialNetUserRepository socialNetUserRepository, SocialNetUserDetailsService socialNetUserDetailsService,
-                                        PasswordEncoder passwordEncoder,
-                                        AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, UserRoleEntityRepository userRoleEntityRepository) {
+    public SocialNetUserRegisterService(SocialNetUserRepository socialNetUserRepository, SocialNetUserDetailsService socialNetUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, UserRoleEntityRepository userRoleEntityRepository) {
         this.socialNetUserRepository = socialNetUserRepository;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.passwordEncoder = passwordEncoder;

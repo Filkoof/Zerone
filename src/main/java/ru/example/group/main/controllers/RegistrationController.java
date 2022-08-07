@@ -2,7 +2,6 @@ package ru.example.group.main.controllers;
 
 import org.json.JSONException;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.entity.ApiResponseEntity;
 

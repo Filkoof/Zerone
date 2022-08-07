@@ -11,8 +11,6 @@ import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.repositories.JwtBlacklistRepository;
 import ru.example.group.main.service.JWTUtilService;
 import ru.example.group.main.service.SocialNetUserDetailsService;
-import ru.example.group.main.service.SocialNetUserRegisterService;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

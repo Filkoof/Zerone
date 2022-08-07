@@ -1,12 +1,10 @@
 package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.controllers.AuthUserController;
 import ru.example.group.main.controllers.GlobalExceptionHandlerController;
 import ru.example.group.main.data.dto.UserDto;
 import ru.example.group.main.entity.UserEntity;
