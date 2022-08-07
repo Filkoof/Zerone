@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #Session security
 auth:
   secret: SocialNetwork26
@@ -21,20 +22,44 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/soc_net
     username: postgres
-    password: postgres
-#Hfnfg123
+    password: Hfnfg123
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    database: POSTGRESQL
-    show-sql: true
     hibernate:
       ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   liquibase:
     enabled: false
   web:
     resources:
       static-locations: [classpath:/templates/]
+
+
+
+
+
+
+
+
+=======
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:postgresql://localhost:5432/zerone
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+#    liquibase:
+#      change-log: classpath:db/changelog/dbchangelog.xml
+#      enabled: true
+  liquibase:
+    enabled: false
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -42,16 +67,13 @@ spring:
     port: 465
     protocol: smtps
 
+server:
+  port: 8086
+
 mail:
   host: http://localhost:8086
   debug: true
-
-
-
-
-
-
-
+>>>>>>> pavel-security-reg-mailsender
 
 
 

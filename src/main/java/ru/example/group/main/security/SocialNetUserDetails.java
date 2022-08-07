@@ -49,7 +49,7 @@ public class SocialNetUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEMail();
+        return user.getEmail();
     }
 
     @Override

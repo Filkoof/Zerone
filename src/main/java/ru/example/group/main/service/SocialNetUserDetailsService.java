@@ -36,7 +36,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        UserEntity user = socialNetUserRepository.findUserEntityByEMail(s);
+        UserEntity user = socialNetUserRepository.findUserEntityByEmail(s);
         if (user != null) {
             return new SocialNetUserDetails(user);
         }
@@ -55,7 +55,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         userDto.setPassword(null);
         userDto.setRegDate(user.getRegDate());
         userDto.setDeleted(user.isDeleted());
-        userDto.seteMail(user.getEMail());
+        userDto.seteMail(user.getEmail());
         userDto.setFirstName(user.getFirstName());
         userDto.setId(user.getId());
         userDto.setLastName(user.getLastName());

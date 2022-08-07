@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers( "/test").authenticated()
                 .antMatchers( "/testAdmin").hasRole("ADMIN")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/**","/activate/*").permitAll()
                 .and().formLogin()
                 .loginPage("/signin").failureUrl("/signin");
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

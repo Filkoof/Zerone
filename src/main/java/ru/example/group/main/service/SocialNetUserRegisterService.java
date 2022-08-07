@@ -43,7 +43,9 @@ public class SocialNetUserRegisterService {
     private final Logger logger = Logger.getLogger(SocialNetUserRegisterService.class.getName());
 
     @Autowired
-    public SocialNetUserRegisterService(SocialNetUserRepository socialNetUserRepository, SocialNetUserDetailsService socialNetUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, UserRoleEntityRepository userRoleEntityRepository) {
+    public SocialNetUserRegisterService(SocialNetUserRepository socialNetUserRepository, SocialNetUserDetailsService socialNetUserDetailsService,
+                                        PasswordEncoder passwordEncoder,
+                                        AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, UserRoleEntityRepository userRoleEntityRepository) {
         this.socialNetUserRepository = socialNetUserRepository;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.passwordEncoder = passwordEncoder;
@@ -56,13 +58,13 @@ public class SocialNetUserRegisterService {
     public UserEntity registerTestUser() {
         UserEntity user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
-        user.setEMail("test@test.tu");
+        user.setEmail("test@test.tu");
         user.setPassword(passwordEncoder.encode("11111111"));
         socialNetUserRepository.save(user);
 
         user = new UserEntity();
         user.setRegDate(LocalDateTime.now());
-        user.setEMail("admin@admin.tu");
+        user.setEmail("admin@admin.tu");
         user.setPassword(passwordEncoder.encode("11111111"));
         socialNetUserRepository.save(user);
 

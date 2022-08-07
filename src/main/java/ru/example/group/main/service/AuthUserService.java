@@ -24,7 +24,6 @@ public class AuthUserService {
         try {
             loginResponse = userRegister.jwtLogin(payload);
             authLoginResponse.setData(loginResponse.getUserDto());
-            authLoginResponse.setError("");
         } catch (Exception e) {
             e.printStackTrace();
             authLoginResponse.setError("Wrong user name or password.");
