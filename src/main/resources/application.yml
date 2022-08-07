@@ -15,9 +15,9 @@ spring:
   liquibase:
     enabled: false
   mail:
-    host: smtp.rambler.ru
-    username: zerone.mail.sender@rambler.ru
-    password: 117513Qq
+    host: smtp.mail.ru
+    username: zerone.mail@mail.ru
+    password: UjCdaUFj8QwMhzMwRnbC
     port: 465
     protocol: smtps
 
