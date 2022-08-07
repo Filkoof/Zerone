@@ -1,5 +1,8 @@
 package ru.example.group.main.service;
 
+import liquibase.util.StringUtil;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,12 +12,29 @@ import ru.example.group.main.entity.dao.UserDao;
 import ru.example.group.main.repos.UserRepo;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Service
-public record UserService(UserRepo userRepo) {
+public class UserService {
 
-    public UserEntity addUser(UserDao userDao) {
+    @Value("${mail.host}")
+    private String mailHost;
+
+    private final UserRepo userRepo;
+
+    private final MailSender mailSender;
+
+    public UserService(UserRepo userRepo, MailSender mailSender) {
+        this.userRepo = userRepo;
+        this.mailSender = mailSender;
+    }
+
+    public boolean addUser(UserDao userDao) {
+        UserEntity userFromDB = userRepo.findByEmail(userDao.getEmail());
+        if(userFromDB != null) {
+            return false;
+        }
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         UserEntity user = new UserEntity();
         user.setStatus(true);
@@ -23,6 +43,29 @@ public record UserService(UserRepo userRepo) {
         user.setPassword(passwordEncoder.encode(userDao.getPasswd1()));
         user.setEmail(userDao.getEmail());
         user.setRegDate(LocalDateTime.now());
-        return user;
+        user.setConfirmationCode(UUID.randomUUID().toString());
+        userRepo.save(user);
+
+        if(!StringUtil.isEmpty(user.getEmail())) {
+            String message = String.format(
+                    "Hello, %s! \n" +
+                            "Welcome to Sweater. Please, visit next link: " + mailHost + "/activate/%s",
+                    user.getFirstName(),
+                    user.getConfirmationCode()
+            );
+            mailSender.send(user.getEmail(), "Activation Code from Zerone", message);
+        }
+
+        return true;
+    }
+
+    public boolean activateUser(String code) {
+        UserEntity user = userRepo.findByConfirmationCode(code);
+        if(user == null) {
+            return false;
+        }
+        user.setConfirmationCode(null);
+        userRepo.save(user);
+        return true;
     }
 }

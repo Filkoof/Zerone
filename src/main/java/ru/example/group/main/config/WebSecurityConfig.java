@@ -8,7 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 
 public class WebSecurityConfig {
-
+    /**
+     * For MailSender need add to andMatchers '/activate/**'
+     * @return
+     */
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();

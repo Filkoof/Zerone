@@ -2,9 +2,10 @@ package ru.example.group.main.controller;
 
 import org.json.JSONException;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.entity.ApiResponseEntity;
-import ru.example.group.main.entity.UserEntity;
+
 import ru.example.group.main.entity.dao.UserDao;
 import ru.example.group.main.repos.UserRepo;
 import ru.example.group.main.service.UserService;
@@ -32,10 +33,10 @@ public class RegistrationController {
             return response;
 
         }
-        UserEntity user = userService.addUser(userDao);
-        userRepo.save(user);
+        userService.addUser(userDao);
         response.setStatus(HttpStatus.OK);
         response.setMessage("User created");
         return response;
     }
+
 }

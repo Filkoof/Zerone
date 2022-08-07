@@ -7,4 +7,6 @@ public interface UserRepo extends CrudRepository<UserEntity, Long> {
     UserEntity findByEmail(String eMail);
 
     Boolean existsByEmail(String eMail);
+
+    UserEntity findByConfirmationCode(String code);
 }

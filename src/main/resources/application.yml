@@ -9,10 +9,24 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
-    liquibase:
-      change-log: classpath:db/changelog/dbchangelog.xml
-      enabled: true
+#    liquibase:
+#      change-log: classpath:db/changelog/dbchangelog.xml
+#      enabled: true
   liquibase:
     enabled: false
+  mail:
+    host: smtp.rambler.ru
+    username: zerone.mail.sender@rambler.ru
+    password: 117513Qq
+    port: 465
+    protocol: smtps
+
 server:
   port: 8086
+
+mail:
+  host: http://localhost:8086
+  debug: true
+
+
+
