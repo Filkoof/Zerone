@@ -469,7 +469,7 @@ databaseChangeLog:
                   value: "admin"
               - column:
                   name: password
-                  value: "admin"
+                  value: "$2a$10$cX6yjnDu5JbCGVk51Phdt.joLqLL3W7lnN81e/WsE2t7Pnyag.N7e"
               - column:
                   name: e_mail
                   value: "admin@server.com"
@@ -481,7 +481,7 @@ databaseChangeLog:
                   value: "guest"
               - column:
                   name: password
-                  value: "guest"
+                  value: "$2a$10$cX6yjnDu5JbCGVk51Phdt.joLqLL3W7lnN81e/WsE2t7Pnyag.N7e"
               - column:
                   name: e_mail
                   value: "guest@server.com"

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.data.AuthLoginResponse;
 
+import ru.example.group.main.data.AuthLogoutResponse;
 import ru.example.group.main.data.ContactConfirmationPayload;
 import ru.example.group.main.service.AuthUserService;
 
@@ -22,6 +23,11 @@ public class AuthUserController {
     @PostMapping("/api/v1/auth/login")
     public AuthLoginResponse handleLoginApi(@RequestBody ContactConfirmationPayload payload) {
         return authUserService.getAuthLoginResponse(payload);
+    }
+
+    @GetMapping("/api/v1/auth/logout")
+    public AuthLogoutResponse handleLogoutApi(){
+        return new AuthLogoutResponse();
     }
 
 }

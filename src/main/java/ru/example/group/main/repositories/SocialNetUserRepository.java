@@ -6,6 +6,7 @@ import ru.example.group.main.entity.UserEntity;
 
 public interface SocialNetUserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(value = "SELECT * FROM users u WHERE u.email = ?1", nativeQuery = true)
-    UserEntity findUserEntityByEmail(String email);
+    UserEntity findUserEntityByEmailQuery(String email);
 
+    UserEntity findUserEntityByEmail(String email);
 }

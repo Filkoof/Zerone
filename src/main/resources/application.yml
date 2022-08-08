@@ -22,7 +22,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/soc_net
     username: postgres
-    password: postgres
+    password: Hfnfg123
 #Hfnfg123
     driver-class-name: org.postgresql.Driver
 
@@ -30,7 +30,7 @@ spring:
     database: POSTGRESQL
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
   liquibase:
     enabled: false
   web:

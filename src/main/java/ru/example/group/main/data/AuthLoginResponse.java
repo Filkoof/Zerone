@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 public class AuthLoginResponse {
 
-    public UserDto data;
+    private UserDto data;
 
-    public String error;
+    private String error;
 
     @JsonProperty("timestamp")
-    public LocalDateTime timeStamp;
+    private LocalDateTime timeStamp;
 
     public UserDto getData() {
         return data;

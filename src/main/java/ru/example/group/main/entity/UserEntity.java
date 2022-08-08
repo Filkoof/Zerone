@@ -36,6 +36,7 @@ import lombok.Setter;
 
         private LocalDate birthDate;
 
+        @Column(name = "e_mail")
         private String email;
 
         private String phone;
