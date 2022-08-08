@@ -41,9 +41,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = null;
-        String username = null;
-        logger.info("origin " + httpServletRequest.getHeader("origin"));
+        String token;
+        String username;
         logger.info("token " + httpServletRequest.getHeader(authHeader));
 
        if (httpServletRequest.getHeader(authHeader) != null ) {
@@ -58,7 +57,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     private void checkAuthenticationToken(String username, String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = null;
+            UserDetails userDetails;
             userDetails = (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(username);
             if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
@@ -82,12 +81,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtilService.extractUsername(token);
             } catch (Exception e) {
-                logoutHeaderProcessing(httpServletRequest, httpServletResponse);
-                throw new ServletException("Expired token." + e.getMessage());
+                throw new ServletException("Wrong token." + e.getMessage());
             }
 
         } else {
-            logoutHeaderProcessing(httpServletRequest, httpServletResponse);
             throw new ServletException("Expired token.");
         }
         return username;
@@ -95,7 +92,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     public void logoutHeaderProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String token = null;
-        if (response.getHeader(authHeader) != null) {
+        if (request.getHeader(authHeader) != null) {
             token = response.getHeader(authHeader);
             JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
             jwtBlacklistEntity.setJwtBlacklistedToken(token);

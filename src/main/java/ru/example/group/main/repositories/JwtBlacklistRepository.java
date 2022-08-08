@@ -6,4 +6,5 @@ import ru.example.group.main.entity.JwtBlacklistEntity;
 public interface JwtBlacklistRepository extends JpaRepository<JwtBlacklistEntity, Integer> {
 
     JwtBlacklistEntity findJwtBlacklistEntityByJwtBlacklistedToken(String token);
+
 }

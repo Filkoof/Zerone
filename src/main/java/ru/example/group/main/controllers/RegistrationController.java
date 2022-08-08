@@ -1,6 +1,7 @@
 package ru.example.group.main.controllers;
 
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.entity.ApiResponseEntity;
@@ -16,6 +17,7 @@ public class RegistrationController {
 
     private final UserService userService;
 
+    @Autowired
     public RegistrationController(UserRepo userRepo, UserService userService) {
         this.userRepo = userRepo;
         this.userService = userService;

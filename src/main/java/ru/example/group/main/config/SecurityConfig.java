@@ -38,9 +38,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/test").authenticated()
-                .antMatchers( "/testAdmin").hasRole("ADMIN")
-                .antMatchers("/**","/activate/*").permitAll()
+                .antMatchers( "/me", "/profile", "fiends", "users", "settings", "im").authenticated()
+                .antMatchers("/**", "/login","/activate/*", "/registration", "/logout").permitAll()
                 .and().formLogin()
                 .loginPage("/login").failureUrl("/login");
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

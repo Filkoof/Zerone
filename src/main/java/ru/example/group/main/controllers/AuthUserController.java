@@ -9,6 +9,9 @@ import ru.example.group.main.data.AuthLogoutResponse;
 import ru.example.group.main.data.ContactConfirmationPayload;
 import ru.example.group.main.service.AuthUserService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @RestController
 public class AuthUserController {
@@ -26,8 +29,8 @@ public class AuthUserController {
     }
 
     @GetMapping("/api/v1/auth/logout")
-    public AuthLogoutResponse handleLogoutApi(){
-        return new AuthLogoutResponse();
+    public AuthLogoutResponse handleLogoutApi(HttpServletRequest request){
+        return authUserService.getAuthLogoutResponse(request);
     }
 
 }

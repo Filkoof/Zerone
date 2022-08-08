@@ -48,6 +48,9 @@ mail:
   host: http://localhost:8086
   debug: true
 
+#front
+front:
+  domen: "195.161.114.18:8082"
 
 
 

@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ru.example.group.main.data.AuthLoginResponse;
 import ru.example.group.main.data.ContactConfirmationPayload;
 import ru.example.group.main.data.ContactConfirmationResponse;
 import ru.example.group.main.entity.JwtBlacklistEntity;
@@ -74,19 +75,42 @@ public class SocialNetUserRegisterService {
         return user;
     }
 
-    public ContactConfirmationResponse jwtLogin(ContactConfirmationPayload payload) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
-                payload.getPassword()));
-        logger.info(socialNetUserDetailsService.loadUserByUsername(payload.getEmail()).getUsername());
-        SocialNetUserDetails userDetails =
-                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
-        String jwtToken = jwtUtilService.generateToken(userDetails);
+    public AuthLoginResponse jwtLogin(ContactConfirmationPayload payload) {
+        AuthLoginResponse authLoginResponse = new AuthLoginResponse();
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
+                    payload.getPassword()));
+            SocialNetUserDetails userDetails =
+                    (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+            authLoginResponse = setAuthLoginResponse(userDetails);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        return authLoginResponse;
 
+    }
+
+    private AuthLoginResponse setAuthLoginResponse(SocialNetUserDetails userDetails) {
+        AuthLoginResponse authLoginResponse = new AuthLoginResponse();
         ContactConfirmationResponse response = new ContactConfirmationResponse();
+        if (!userDetails.getUser().isApproved()) {
+            authLoginResponse.setTimeStamp(LocalDateTime.now());
+            authLoginResponse.setError("Пользователь еще не подтвержден администратором.");
+            return authLoginResponse;
+        }
+        if (userDetails.getUser().isBlocked()) {
+            authLoginResponse.setTimeStamp(LocalDateTime.now());
+            authLoginResponse.setError("Пользователь заблокирован.");
+            return authLoginResponse;
+        }
+        String jwtToken = null;
+        jwtToken = jwtUtilService.generateToken(userDetails);
         response.setResult(jwtToken);
-
         response.setUserDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
-        return response;
+        authLoginResponse.setData(response.getUserDto());
+        authLoginResponse.setError("");
+        authLoginResponse.setTimeStamp(LocalDateTime.now());
+        return authLoginResponse;
     }
 
     public Object getCurrentUser() {

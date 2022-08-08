@@ -28,4 +28,5 @@ public class MailSender {
 
         mailSender.send(mailMessage);
     }
+
 }

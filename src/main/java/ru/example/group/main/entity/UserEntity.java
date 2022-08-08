@@ -14,59 +14,60 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
 
-    @Entity
-    @Getter
-    @Setter
-    @Table(name = "users")
-    public class UserEntity {
+@Entity
+@Getter
+@Setter
+@Table(name = "users")
+public class UserEntity {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        private String firstName;
+    private String firstName;
 
-        private String lastName;
+    private String lastName;
 
-        private LocalDateTime regDate;
+    private LocalDateTime regDate;
 
-        private LocalDate birthDate;
+    private LocalDate birthDate;
 
-        @Column(name = "e_mail")
-        private String email;
+    @Column(name = "e_mail")
+    private String email;
 
-        private String phone;
+    private String phone;
 
-        private String password;
+    private String password;
 
-        private String photo;
+    private String photo;
 
-        @Column(columnDefinition = "text")
-        private String about;
+    @Column(columnDefinition = "text")
+    private String about;
 
-        private boolean status;
+    private boolean status;
 
-        private String city;
+    private String city;
 
-        private String country;
+    private String country;
 
-        private String confirmationCode;
+    private String confirmationCode;
 
-        private boolean isApproved;
+    private boolean isApproved;
 
-        private boolean messagePermissions;
+    private boolean messagePermissions;
 
-        private LocalDateTime lastOnlineTime;
+    private LocalDateTime lastOnlineTime;
 
-        private boolean isBlocked;
+    private boolean isBlocked;
 
-        private boolean isDeleted;
+    private boolean isDeleted;
 
-        @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
-        private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
+    @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
+    private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
-    }
+}
