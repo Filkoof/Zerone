@@ -7,7 +7,9 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+      persistent: false
   port: 8086
+
 
 #spring security session login
 spring:
@@ -16,7 +18,7 @@ spring:
       name: coder
       password: coder
 
-  #connect to DB
+#connect to DB
   datasource:
     url: jdbc:postgresql://localhost:5432/soc_net
     username: postgres
@@ -34,13 +36,14 @@ spring:
   web:
     resources:
       static-locations: [classpath:/templates/]
+
+#mail settings
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
     password: UjCdaUFj8QwMhzMwRnbC
     port: 465
     protocol: smtps
-
 mail:
   host: http://localhost:8086
   debug: true

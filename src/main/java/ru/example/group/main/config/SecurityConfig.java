@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .antMatchers( "/testAdmin").hasRole("ADMIN")
                 .antMatchers("/**","/activate/*").permitAll()
                 .and().formLogin()
-                .loginPage("/signin").failureUrl("/signin");
+                .loginPage("/login").failureUrl("/login");
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

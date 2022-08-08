@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.entity.ApiResponseEntity;
 
 import ru.example.group.main.entity.dao.UserDao;
-import ru.example.group.main.repos.UserRepo;
+import ru.example.group.main.repositories.UserRepo;
 import ru.example.group.main.service.UserService;
 
 @RestController

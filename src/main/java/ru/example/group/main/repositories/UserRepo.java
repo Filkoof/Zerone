@@ -1,4 +1,4 @@
-package ru.example.group.main.repos;
+package ru.example.group.main.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import ru.example.group.main.entity.UserEntity;
