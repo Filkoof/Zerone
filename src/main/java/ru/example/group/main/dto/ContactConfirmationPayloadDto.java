@@ -1,6 +1,6 @@
-package ru.example.group.main.data;
+package ru.example.group.main.dto;
 
-public class ContactConfirmationPayload {
+public class ContactConfirmationPayloadDto {
 
     private String password;
     private String email;

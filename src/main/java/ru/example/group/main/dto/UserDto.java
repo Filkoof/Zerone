@@ -1,4 +1,4 @@
-package ru.example.group.main.data.dto;
+package ru.example.group.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package ru.example.group.main.data.dto;
+package ru.example.group.main.dto;
 
 public class LogoutDataDto {
     private String additionalProp1;

@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.dao.UserDao;
-import ru.example.group.main.repositories.UserRepo;
+import ru.example.group.main.dto.UserRegisterDto;
+import ru.example.group.main.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,35 +20,35 @@ public class UserService {
     @Value("${mail.host}")
     private String mailHost;
 
-    private final UserRepo userRepo;
+    private final UserRepository userRepository;
 
     private final MailSender mailSender;
 
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserService(UserRepo userRepo, MailSender mailSender, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
+    public UserService(UserRepository userRepository, MailSender mailSender, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean addUser(UserDao userDao) {
-        UserEntity userFromDB = userRepo.findByEmail(userDao.getEmail());
+    public boolean addUser(UserRegisterDto userRegisterDto) {
+        UserEntity userFromDB = userRepository.findByEmail(userRegisterDto.getEmail());
         if(userFromDB != null) {
             return false;
         }
         UserEntity user = new UserEntity();
         user.setStatus(true);
-        user.setFirstName(userDao.getFirstName());
-        user.setLastName(userDao.getLastName());
-        user.setPassword(passwordEncoder.encode(userDao.getPasswd1()));
-        user.setEmail(userDao.getEmail());
+        user.setFirstName(userRegisterDto.getFirstName());
+        user.setLastName(userRegisterDto.getLastName());
+        user.setPassword(passwordEncoder.encode(userRegisterDto.getPasswd1()));
+        user.setEmail(userRegisterDto.getEmail());
         user.setRegDate(LocalDateTime.now());
         user.setApproved(false);
 
         user.setConfirmationCode(UUID.randomUUID().toString());
-        userRepo.save(user);
+        userRepository.save(user);
 
         if(!StringUtil.isEmpty(user.getEmail())) {
             String message = String.format(
@@ -64,13 +64,13 @@ public class UserService {
     }
 
     public boolean activateUser(String code) {
-        UserEntity user = userRepo.findByConfirmationCode(code);
+        UserEntity user = userRepository.findByConfirmationCode(code);
         if(user == null) {
             return false;
         }
         user.setConfirmationCode(null);
         user.setApproved(true);
-        userRepo.save(user);
+        userRepository.save(user);
         return true;
     }
 }

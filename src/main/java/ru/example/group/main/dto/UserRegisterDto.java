@@ -1,11 +1,11 @@
-package ru.example.group.main.entity.dao;
+package ru.example.group.main.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDao {
+public class UserRegisterDto {
 
     private String firstName;
     private String lastName;

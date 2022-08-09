@@ -3,13 +3,14 @@ package ru.example.group.main.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.data.AuthLoginResponse;
-import ru.example.group.main.data.AuthLogoutResponse;
-import ru.example.group.main.data.ContactConfirmationPayload;
-import ru.example.group.main.data.ContactConfirmationResponse;
-import ru.example.group.main.data.dto.LogoutDataDto;
+import ru.example.group.main.dto.AuthLoginResponseDto;
+import ru.example.group.main.dto.AuthLogoutResponseDto;
+import ru.example.group.main.dto.ContactConfirmationPayloadDto;
+import ru.example.group.main.dto.ContactConfirmationResponseDto;
+import ru.example.group.main.dto.LogoutDataDto;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.repositories.JwtBlacklistRepository;
+import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -28,31 +29,31 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
     }
 
-    public AuthLoginResponse getAuthLoginResponse(ContactConfirmationPayload payload) {
-        ContactConfirmationResponse loginResponse;
-        AuthLoginResponse authLoginResponse = new AuthLoginResponse();
+    public AuthLoginResponseDto getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
+        ContactConfirmationResponseDto loginResponse;
+        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
         try {
-            authLoginResponse = userRegister.jwtLogin(payload);
+            authLoginResponseDto = userRegister.jwtLogin(payload);
         } catch (Exception e) {
             e.getMessage();
-            authLoginResponse.setError("Wrong user name or password.");
+            authLoginResponseDto.setError("Wrong user name or password.");
         }
-        authLoginResponse.setTimeStamp(LocalDateTime.now());
-        return authLoginResponse;
+        authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+        return authLoginResponseDto;
     }
 
-    public AuthLogoutResponse getAuthLogoutResponse(HttpServletRequest request) {
-        AuthLogoutResponse authLogoutResponse = new AuthLogoutResponse();
+    public AuthLogoutResponseDto getAuthLogoutResponse(HttpServletRequest request) {
+        AuthLogoutResponseDto authLogoutResponseDto = new AuthLogoutResponseDto();
         try {
             //setJwtBlackList(request);
         } catch (Exception e) {
             e.printStackTrace();
-            authLogoutResponse.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
+            authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
         }
-        authLogoutResponse.setData(new LogoutDataDto());
-        authLogoutResponse.setError("");
-        authLogoutResponse.setTimestamp(LocalDateTime.now());
-        return authLogoutResponse;
+        authLogoutResponseDto.setData(new LogoutDataDto());
+        authLogoutResponseDto.setError("");
+        authLogoutResponseDto.setTimestamp(LocalDateTime.now());
+        return authLogoutResponseDto;
     }
 
     private void setJwtBlackList(HttpServletRequest request) {

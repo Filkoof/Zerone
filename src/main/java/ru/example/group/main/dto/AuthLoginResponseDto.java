@@ -1,11 +1,10 @@
-package ru.example.group.main.data;
+package ru.example.group.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.example.group.main.data.dto.UserDto;
 
 import java.time.LocalDateTime;
 
-public class AuthLoginResponse {
+public class AuthLoginResponseDto {
 
     private UserDto data;
 

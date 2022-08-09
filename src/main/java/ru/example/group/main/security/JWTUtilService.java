@@ -1,4 +1,4 @@
-package ru.example.group.main.service;
+package ru.example.group.main.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

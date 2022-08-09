@@ -1,8 +1,6 @@
-package ru.example.group.main.data;
+package ru.example.group.main.dto;
 
-import ru.example.group.main.data.dto.UserDto;
-
-public class ContactConfirmationResponse {
+public class ContactConfirmationResponseDto {
 
     private String result;
 

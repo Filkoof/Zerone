@@ -3,8 +3,8 @@ package ru.example.group.main.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.example.group.main.data.AuthLoginResponse;
-import ru.example.group.main.data.ContactConfirmationPayload;
+import ru.example.group.main.dto.AuthLoginResponseDto;
+import ru.example.group.main.dto.ContactConfirmationPayloadDto;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,12 +21,12 @@ class AuthUserServiceTests {
 
     @Test
     void getAuthLoginResponse() {
-        ContactConfirmationPayload confirmationPayload = new ContactConfirmationPayload();
+        ContactConfirmationPayloadDto confirmationPayload = new ContactConfirmationPayloadDto();
         confirmationPayload.setEmail("admin@admin.tu");
         confirmationPayload.setPassword("11111111");
-        AuthLoginResponse authLoginResponse = authUserService.getAuthLoginResponse(confirmationPayload);
-        assertNotNull(authLoginResponse);
-        assertTrue(authLoginResponse.getData().geteMail().equals("admin@admin.tu"));
+        AuthLoginResponseDto authLoginResponseDto = authUserService.getAuthLoginResponse(confirmationPayload);
+        assertNotNull(authLoginResponseDto);
+        assertTrue(authLoginResponseDto.getData().geteMail().equals("admin@admin.tu"));
     }
 
     @Test

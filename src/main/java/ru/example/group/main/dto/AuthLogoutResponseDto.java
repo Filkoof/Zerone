@@ -1,10 +1,8 @@
-package ru.example.group.main.data;
-
-import ru.example.group.main.data.dto.LogoutDataDto;
+package ru.example.group.main.dto;
 
 import java.time.LocalDateTime;
 
-public class AuthLogoutResponse {
+public class AuthLogoutResponseDto {
 
     private LogoutDataDto data;
     private String error;

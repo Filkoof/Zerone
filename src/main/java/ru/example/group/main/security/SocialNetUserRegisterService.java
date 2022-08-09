@@ -1,4 +1,4 @@
-package ru.example.group.main.service;
+package ru.example.group.main.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,22 +9,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ru.example.group.main.data.AuthLoginResponse;
-import ru.example.group.main.data.ContactConfirmationPayload;
-import ru.example.group.main.data.ContactConfirmationResponse;
+import ru.example.group.main.dto.AuthLoginResponseDto;
+import ru.example.group.main.dto.ContactConfirmationPayloadDto;
+import ru.example.group.main.dto.ContactConfirmationResponseDto;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 import ru.example.group.main.repositories.JwtBlacklistRepository;
 import ru.example.group.main.repositories.SocialNetUserRepository;
 import ru.example.group.main.repositories.UserRoleEntityRepository;
-import ru.example.group.main.security.SocialNetUserDetails;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
@@ -75,42 +73,42 @@ public class SocialNetUserRegisterService {
         return user;
     }
 
-    public AuthLoginResponse jwtLogin(ContactConfirmationPayload payload) {
-        AuthLoginResponse authLoginResponse = new AuthLoginResponse();
+    public AuthLoginResponseDto jwtLogin(ContactConfirmationPayloadDto payload) {
+        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                     payload.getPassword()));
             SocialNetUserDetails userDetails =
                     (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
-            authLoginResponse = setAuthLoginResponse(userDetails);
+            authLoginResponseDto = setAuthLoginResponse(userDetails);
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
-        return authLoginResponse;
+        return authLoginResponseDto;
 
     }
 
-    private AuthLoginResponse setAuthLoginResponse(SocialNetUserDetails userDetails) {
-        AuthLoginResponse authLoginResponse = new AuthLoginResponse();
-        ContactConfirmationResponse response = new ContactConfirmationResponse();
+    private AuthLoginResponseDto setAuthLoginResponse(SocialNetUserDetails userDetails) {
+        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
+        ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
-            authLoginResponse.setTimeStamp(LocalDateTime.now());
-            authLoginResponse.setError("Пользователь еще не подтвержден администратором.");
-            return authLoginResponse;
+            authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+            authLoginResponseDto.setError("Пользователь еще не подтвержден администратором.");
+            return authLoginResponseDto;
         }
         if (userDetails.getUser().isBlocked()) {
-            authLoginResponse.setTimeStamp(LocalDateTime.now());
-            authLoginResponse.setError("Пользователь заблокирован.");
-            return authLoginResponse;
+            authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+            authLoginResponseDto.setError("Пользователь заблокирован.");
+            return authLoginResponseDto;
         }
         String jwtToken = null;
         jwtToken = jwtUtilService.generateToken(userDetails);
         response.setResult(jwtToken);
         response.setUserDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
-        authLoginResponse.setData(response.getUserDto());
-        authLoginResponse.setError("");
-        authLoginResponse.setTimeStamp(LocalDateTime.now());
-        return authLoginResponse;
+        authLoginResponseDto.setData(response.getUserDto());
+        authLoginResponseDto.setError("");
+        authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+        return authLoginResponseDto;
     }
 
     public Object getCurrentUser() {
