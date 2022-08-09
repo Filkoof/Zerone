@@ -3,13 +3,9 @@ package ru.example.group.main.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.AuthLoginResponseDto;
-import ru.example.group.main.dto.AuthLogoutResponseDto;
-import ru.example.group.main.dto.ContactConfirmationPayloadDto;
-import ru.example.group.main.dto.ContactConfirmationResponseDto;
-import ru.example.group.main.dto.LogoutDataDto;
+import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
-import ru.example.group.main.repositories.JwtBlacklistRepository;
+import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +25,8 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
     }
 
-    public AuthLoginResponseDto getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
-        ContactConfirmationResponseDto loginResponse;
-        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
+    public FrontCommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
+        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<>();
         try {
             authLoginResponseDto = userRegister.jwtLogin(payload);
         } catch (Exception e) {
@@ -42,17 +37,17 @@ public class AuthUserService {
         return authLoginResponseDto;
     }
 
-    public AuthLogoutResponseDto getAuthLogoutResponse(HttpServletRequest request) {
-        AuthLogoutResponseDto authLogoutResponseDto = new AuthLogoutResponseDto();
+    public FrontCommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
+        FrontCommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new FrontCommonResponseDto<>();
         try {
-            //setJwtBlackList(request);
+            setJwtBlackList(request);
         } catch (Exception e) {
             e.printStackTrace();
             authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
         }
-        authLogoutResponseDto.setData(new LogoutDataDto());
+        authLogoutResponseDto.setData(new LogoutResponseDataDto());
         authLogoutResponseDto.setError("");
-        authLogoutResponseDto.setTimestamp(LocalDateTime.now());
+        authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
         return authLogoutResponseDto;
     }
 
@@ -62,5 +57,9 @@ public class AuthUserService {
         jwtBlacklistEntity.setJwtBlacklistedToken(jwtToken);
         jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
         jwtBlacklistRepository.save(jwtBlacklistEntity);
+    }
+
+    public String getAuthHeader(){
+        return authHeader;
     }
 }

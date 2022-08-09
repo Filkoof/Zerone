@@ -1,6 +1,6 @@
 package ru.example.group.main.dto;
 
-public class LogoutDataDto {
+public class LogoutResponseDataDto {
     private String additionalProp1;
     private String additionalProp2;
     private String additionalProp3;

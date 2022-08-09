@@ -4,14 +4,14 @@ public class ContactConfirmationResponseDto {
 
     private String result;
 
-    private UserDto userDto;
+    private UserLoginDataResponseDto userLoginDataResponseDto;
 
-    public UserDto getUserDto() {
-        return userDto;
+    public UserLoginDataResponseDto getUserDto() {
+        return userLoginDataResponseDto;
     }
 
-    public void setUserDto(UserDto userDto) {
-        this.userDto = userDto;
+    public void setUserDto(UserLoginDataResponseDto userLoginDataResponseDto) {
+        this.userLoginDataResponseDto = userLoginDataResponseDto;
     }
 
     public String getResult() {

@@ -1,24 +1,23 @@
-package ru.example.group.main.controllers;
+package ru.example.group.main.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.example.group.main.service.FrontService;
 import ru.example.group.main.service.UserService;
 
 @Controller
 public class MailSenderController {
-
+    @Value("${front.domen}")
+    private String domen;
     private final UserService userService;
 
-    private final FrontService frontService;
-
     @Autowired
-    public MailSenderController(UserService userService, FrontService frontService) {
+    public MailSenderController(UserService userService) {
         this.userService = userService;
-        this.frontService = frontService;
+
     }
 
     @GetMapping("/activate/{code}")
@@ -31,7 +30,7 @@ public class MailSenderController {
             model.addAttribute("message", "Activation code is not found!");
         }
         //сделать красиво
-        return "redirect:http://" + frontService.getDomen() +"/login";
+        return "redirect:http://" + domen +"/login";
     }
 
 }

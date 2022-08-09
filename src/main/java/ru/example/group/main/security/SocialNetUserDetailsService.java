@@ -5,11 +5,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.controllers.GlobalExceptionHandlerController;
-import ru.example.group.main.dto.UserDto;
+import ru.example.group.main.controller.GlobalExceptionHandlerController;
+import ru.example.group.main.dto.UserLoginDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
-import ru.example.group.main.repositories.SocialNetUserRepository;
+import ru.example.group.main.repository.SocialNetUserRepository;
 
 import java.util.logging.Logger;
 
@@ -41,27 +41,27 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("user not found doh!");
     }
 
-    public UserDto setUserDtoFromAuth(UserEntity user, String token) {
-        UserDto userDto = new UserDto();
+    public UserLoginDataResponseDto setUserDtoFromAuth(UserEntity user, String token) {
+        UserLoginDataResponseDto userLoginDataResponseDto = new UserLoginDataResponseDto();
 
-        userDto.setAbout(user.getAbout());
-        userDto.setBirthDate(user.getBirthDate());
-        userDto.setBlocked(user.isBlocked());
-        userDto.setCity(user.getCity());
-        userDto.setCountry(user.getCountry());
-        userDto.setPassword(null);
-        userDto.setRegDate(user.getRegDate());
-        userDto.setDeleted(user.isDeleted());
-        userDto.seteMail(user.getEmail());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setId(user.getId());
-        userDto.setLastName(user.getLastName());
-        userDto.setPhone(user.getPhone());
-        userDto.setLastOnlineTime(user.getLastOnlineTime());
+        userLoginDataResponseDto.setAbout(user.getAbout());
+        userLoginDataResponseDto.setBirthDate(user.getBirthDate());
+        userLoginDataResponseDto.setBlocked(user.isBlocked());
+        userLoginDataResponseDto.setCity(user.getCity());
+        userLoginDataResponseDto.setCountry(user.getCountry());
+        userLoginDataResponseDto.setPassword(null);
+        userLoginDataResponseDto.setRegDate(user.getRegDate());
+        userLoginDataResponseDto.setDeleted(user.isDeleted());
+        userLoginDataResponseDto.seteMail(user.getEmail());
+        userLoginDataResponseDto.setFirstName(user.getFirstName());
+        userLoginDataResponseDto.setId(user.getId());
+        userLoginDataResponseDto.setLastName(user.getLastName());
+        userLoginDataResponseDto.setPhone(user.getPhone());
+        userLoginDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
         MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
-        userDto.setMessagePermissions(messagesPermission);
-        userDto.setToken(token);
+        userLoginDataResponseDto.setMessagePermissions(messagesPermission);
+        userLoginDataResponseDto.setToken(token);
 
-        return userDto;
+        return userLoginDataResponseDto;
     }
 }

@@ -9,15 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ru.example.group.main.dto.AuthLoginResponseDto;
-import ru.example.group.main.dto.ContactConfirmationPayloadDto;
-import ru.example.group.main.dto.ContactConfirmationResponseDto;
+import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
-import ru.example.group.main.repositories.JwtBlacklistRepository;
-import ru.example.group.main.repositories.SocialNetUserRepository;
-import ru.example.group.main.repositories.UserRoleEntityRepository;
+import ru.example.group.main.repository.JwtBlacklistRepository;
+import ru.example.group.main.repository.SocialNetUserRepository;
+import ru.example.group.main.repository.UserRoleEntityRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,8 +71,8 @@ public class SocialNetUserRegisterService {
         return user;
     }
 
-    public AuthLoginResponseDto jwtLogin(ContactConfirmationPayloadDto payload) {
-        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
+    public FrontCommonResponseDto<UserLoginDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload) {
+        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<UserLoginDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                     payload.getPassword()));
@@ -88,8 +86,8 @@ public class SocialNetUserRegisterService {
 
     }
 
-    private AuthLoginResponseDto setAuthLoginResponse(SocialNetUserDetails userDetails) {
-        AuthLoginResponseDto authLoginResponseDto = new AuthLoginResponseDto();
+    private FrontCommonResponseDto<UserLoginDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
+        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<UserLoginDataResponseDto>();
         ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());

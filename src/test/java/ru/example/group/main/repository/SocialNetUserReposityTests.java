@@ -1,4 +1,4 @@
-package ru.example.group.main.repositories;
+package ru.example.group.main.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

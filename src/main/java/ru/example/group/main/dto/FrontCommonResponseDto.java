@@ -4,20 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
-public class AuthLoginResponseDto {
-
-    private UserDto data;
-
+public class FrontCommonResponseDto<T> {
+    private T data;
     private String error;
-
-    @JsonProperty("timestamp")
     private LocalDateTime timeStamp;
 
-    public UserDto getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(UserDto data) {
+    public void setData(T data) {
         this.data = data;
     }
 

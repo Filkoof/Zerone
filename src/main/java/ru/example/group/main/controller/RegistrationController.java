@@ -1,4 +1,4 @@
-package ru.example.group.main.controllers;
+package ru.example.group.main.controller;
 
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.entity.ApiResponseEntity;
 
 import ru.example.group.main.dto.UserRegisterDto;
-import ru.example.group.main.repositories.UserRepository;
+import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.service.UserService;
 
 @RestController

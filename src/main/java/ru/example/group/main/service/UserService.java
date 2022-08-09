@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.dto.UserRegisterDto;
-import ru.example.group.main.repositories.UserRepository;
+import ru.example.group.main.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
