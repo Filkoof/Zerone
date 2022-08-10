@@ -76,12 +76,14 @@
       <version>2.12.3</version>
     </dependency>
 
-    <!-- security and test -->
+    <!-- mail -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
-      <version>2.5.6</version>
+      <version>2.6.7</version>
     </dependency>
+
+    <!-- security and test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -128,7 +130,5 @@
     </dependency>
 
   </dependencies>
-
-
 
 </project>

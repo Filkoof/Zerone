@@ -1,8 +1,8 @@
 package ru.example.group.main.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +10,10 @@ import ru.example.group.main.service.UserService;
 
 @Controller
 public class MailSenderController {
-    @Value("${front.domen}")
-    private String domen;
+
+    @Value("${mail.hostFront}")
+    private String domain;
+
     private final UserService userService;
 
     @Autowired
@@ -30,7 +32,8 @@ public class MailSenderController {
             model.addAttribute("message", "Activation code is not found!");
         }
         //сделать красиво
-        return "redirect:http://" + domen +"/login";
+        return "redirect:http://" + domain + "/login";
     }
 
 }
+

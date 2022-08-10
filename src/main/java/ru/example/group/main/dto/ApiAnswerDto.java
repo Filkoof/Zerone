@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApiDto {
+public class ApiAnswerDto {
 
     private String message;
 
-    public ApiDto(String message) {
+    public ApiAnswerDto(String message) {
         this.message = message;
     }
 }
