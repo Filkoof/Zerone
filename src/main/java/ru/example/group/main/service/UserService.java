@@ -17,25 +17,25 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    @Value("${mail.host}")
+    @Value("${mail.hostBack}")
     private String mailHost;
 
     private final UserRepository userRepository;
 
-    private final MailSender mailSender;
+    private final ZeroneMailSender zeroneMailSender;
 
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserService(UserRepository userRepository, MailSender mailSender, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ZeroneMailSender zeroneMailSender, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.mailSender = mailSender;
+        this.zeroneMailSender = zeroneMailSender;
         this.passwordEncoder = passwordEncoder;
     }
 
     public boolean addUser(UserRegisterDto userRegisterDto) {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterDto.getEmail());
-        if(userFromDB != null) {
+        if (userFromDB != null) {
             return false;
         }
         UserEntity user = new UserEntity();
@@ -46,18 +46,17 @@ public class UserService {
         user.setEmail(userRegisterDto.getEmail());
         user.setRegDate(LocalDateTime.now());
         user.setApproved(false);
-
         user.setConfirmationCode(UUID.randomUUID().toString());
         userRepository.save(user);
 
-        if(!StringUtil.isEmpty(user.getEmail())) {
+        if (!StringUtil.isEmpty(user.getEmail())) {
             String message = String.format(
                     "Hello, %s! \n" +
-                            "Welcome to Sweater. Please, visit next link: " + mailHost + "/activate/%s",
+                            "Welcome to Sweater. Please, visit next link: http://" + mailHost + "/activate/%s",
                     user.getFirstName(),
                     user.getConfirmationCode()
             );
-            mailSender.send(user.getEmail(), "Activation Code from Zerone", message);
+            zeroneMailSender.send(user.getEmail(), "Activation Code from Zerone", message);
         }
 
         return true;
@@ -65,7 +64,7 @@ public class UserService {
 
     public boolean activateUser(String code) {
         UserEntity user = userRepository.findByConfirmationCode(code);
-        if(user == null) {
+        if (user == null) {
             return false;
         }
         user.setConfirmationCode(null);
