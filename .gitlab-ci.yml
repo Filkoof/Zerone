@@ -3,7 +3,7 @@ stages:
 
 sonarqube-check:
   stage: sonar-scan
-  image: maven:3.8.3-openjdk-17
+  image: maven:4.0.0-openjdk-17
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
