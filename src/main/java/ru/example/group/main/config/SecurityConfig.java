@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ru.example.group.main.security.JWTRequestFilter;
@@ -46,21 +47,9 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/auth/login","/api/v1/auth/logout","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery").permitAll()
                 .antMatchers("/api/v1/account/registration_complete", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
                 .antMatchers( "**").authenticated()
-                .and().formLogin()
-                .loginPage("/login").failureUrl("/login");
+                .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    //to enable cors
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(final CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("*").allowedHeaders("*");
-            }
-        };
     }
 
 }

@@ -2,8 +2,9 @@ package ru.example.group.main.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.group.main.config.ConfigProperties;
 import ru.example.group.main.dto.*;
 
 import ru.example.group.main.service.AuthUserService;
@@ -23,20 +24,18 @@ public class AuthUserController {
     }
 
     @PostMapping("/api/v1/auth/login")
-    public FrontCommonResponseDto<UserLoginDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadDto payload) {
+    public CommonResponseDto<UserLoginDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadDto payload) {
         return authUserService.getAuthLoginResponse(payload);
     }
 
     @GetMapping("/api/v1/auth/logout")
-    public FrontCommonResponseDto<LogoutResponseDataDto> handleLogoutApi(HttpServletRequest request){
+    public CommonResponseDto<LogoutResponseDataDto> handleLogoutApi(HttpServletRequest request){
         return authUserService.getAuthLogoutResponse(request);
     }
 
-
     @GetMapping("/auth/api/logout")
-    public HttpServletResponse handleFrontLogout(HttpServletResponse response){
-        response.setStatus(401);
-        return response;
+    public ResponseEntity handleFrontLogout(){
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
 }

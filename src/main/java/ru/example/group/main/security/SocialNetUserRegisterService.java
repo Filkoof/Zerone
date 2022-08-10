@@ -71,8 +71,8 @@ public class SocialNetUserRegisterService {
         return user;
     }
 
-    public FrontCommonResponseDto<UserLoginDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload) {
-        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<UserLoginDataResponseDto>();
+    public CommonResponseDto<UserLoginDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload) {
+        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserLoginDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                     payload.getPassword()));
@@ -80,14 +80,15 @@ public class SocialNetUserRegisterService {
                     (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
             authLoginResponseDto = setAuthLoginResponse(userDetails);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            logger.info("jwtLogin " + e.getMessage());
+            authLoginResponseDto.setError("Неверные данные учетной записи.");
+            authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         }
         return authLoginResponseDto;
-
     }
 
-    private FrontCommonResponseDto<UserLoginDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
-        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<UserLoginDataResponseDto>();
+    private CommonResponseDto<UserLoginDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
+        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserLoginDataResponseDto>();
         ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());
@@ -109,7 +110,7 @@ public class SocialNetUserRegisterService {
         return authLoginResponseDto;
     }
 
-    public Object getCurrentUser() {
+    public UserEntity getCurrentUser() {
         try {
             SocialNetUserDetails userDetails =
                     (SocialNetUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -119,21 +120,4 @@ public class SocialNetUserRegisterService {
         }
     }
 
-    public void logoutHeaderProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        String token = null;
-        if (response.getHeader(authHeader) != null) {
-            token = response.getHeader(authHeader);
-            JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-            jwtBlacklistEntity.setJwtBlacklistedToken(token);
-            jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
-            jwtBlacklistRepository.save(jwtBlacklistEntity);
-            response.setHeader(authHeader, null);
-            HttpSession session = request.getSession();
-            SecurityContextHolder.clearContext();
-            if (session != null) {
-                session.invalidate();
-            }
-        }
-        request.logout();
-    }
 }

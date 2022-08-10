@@ -17,21 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class GlobalExceptionHandlerController {
 
-    @Value("${front.domen}")
-    private String domen;
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public String handleUsernameNotFoundException(UsernameNotFoundException e) {
         log.info(e.getLocalizedMessage());
-        return "redirect:http://" + domen + "/login";
+        return "";
     }
 
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<Response> handleServletExceptions(ServletException e) {
+    public ResponseEntity handleServletExceptions(ServletException e) {
         log.info(e.getLocalizedMessage());
-        Response response = new Response(401);
-        response.setStatus(401);
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(WrongAuthorizationDataException.class)

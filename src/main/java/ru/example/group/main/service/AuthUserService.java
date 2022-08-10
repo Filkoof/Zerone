@@ -25,8 +25,8 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
     }
 
-    public FrontCommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
-        FrontCommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new FrontCommonResponseDto<>();
+    public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
+        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         try {
             authLoginResponseDto = userRegister.jwtLogin(payload);
         } catch (Exception e) {
@@ -37,8 +37,8 @@ public class AuthUserService {
         return authLoginResponseDto;
     }
 
-    public FrontCommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
-        FrontCommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new FrontCommonResponseDto<>();
+    public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
+        CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
         try {
             setJwtBlackList(request);
         } catch (Exception e) {

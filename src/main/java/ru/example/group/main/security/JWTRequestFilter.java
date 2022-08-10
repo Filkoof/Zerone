@@ -7,18 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.example.group.main.config.ConfigProperties;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.entity.JwtBlacklistEntity;
-import ru.example.group.main.exception.WrongAuthorizationDataException;
 import ru.example.group.main.repository.JwtBlacklistRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 @Component
@@ -31,12 +28,14 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final JWTUtilService jwtUtilService;
     private final JwtBlacklistRepository jwtBlacklistRepository;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
 
-    public JWTRequestFilter(SocialNetUserDetailsService socialNetUserDetailsService, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository) {
+    public JWTRequestFilter(SocialNetUserDetailsService socialNetUserDetailsService, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jwtUtilService = jwtUtilService;
         this.jwtBlacklistRepository = jwtBlacklistRepository;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -86,10 +85,12 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtilService.extractUsername(token);
             } catch (Exception e) {
+                handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Wrong token."));
                 throw new ServletException("Wrong token." + e.getMessage());
             }
 
         } else {
+            handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Expired token."));
             throw new ServletException("Expired token.");
             //throw new WrongAuthorizationDataException("Expired token.", httpServletResponse);
         }

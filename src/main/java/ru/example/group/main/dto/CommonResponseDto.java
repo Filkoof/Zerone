@@ -1,10 +1,8 @@
 package ru.example.group.main.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.LocalDateTime;
 
-public class FrontCommonResponseDto<T> {
+public class CommonResponseDto<T> {
     private T data;
     private String error;
     private LocalDateTime timeStamp;
