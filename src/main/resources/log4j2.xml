@@ -5,9 +5,9 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
 
-        <File name="MyFile" fileName="logs/info.log" immediateFlush="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </File>
+    </appenders>
+<!--
+
         <File name="MyFile2" fileName="logs/exceptions.log" immediateFlush="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
@@ -19,9 +19,7 @@
     </appenders>
     <loggers>
 
-        <Logger name="MyFile" level="info">
-            <appender-ref ref="MyFile"/>
-        </Logger>
+
 
         <Logger name="MyFile2" level="error">
             <appender-ref ref="MyFile2"/>
@@ -31,6 +29,8 @@
         </Logger>
 
 
+-->
+    <loggers>
 
         <root level="error">
             <appender-ref ref="Console"/>
