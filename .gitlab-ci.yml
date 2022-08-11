@@ -9,7 +9,7 @@ stage_build:
   tags:
     -prod
   script:
-    - echo 'building'
+    - echo "dasdas"
 
 test:
   stage: test
