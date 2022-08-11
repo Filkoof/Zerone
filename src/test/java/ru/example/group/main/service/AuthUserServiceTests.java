@@ -26,11 +26,11 @@ class AuthUserServiceTests {
     @Test
     void getAuthLoginResponse(HttpServletRequest request, HttpServletResponse response) {
         ContactConfirmationPayloadDto confirmationPayload = new ContactConfirmationPayloadDto();
-        confirmationPayload.setEmail("admin@admin.tu");
+        confirmationPayload.setEmail("test@test.tu");
         confirmationPayload.setPassword("11111111");
         CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = authUserService.getAuthLoginResponse(confirmationPayload, request, response);
         assertNotNull(authLoginResponseDto);
-        assertTrue(authLoginResponseDto.getData().geteMail().equals("admin@admin.tu"));
+        assertTrue(authLoginResponseDto.getData().getEMail().equals("test@test.tu"));
     }
 
     @Test

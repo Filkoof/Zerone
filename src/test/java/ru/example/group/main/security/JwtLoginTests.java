@@ -28,7 +28,7 @@ public class JwtLoginTests {
     void jwtLogin(HttpServletRequest request, HttpServletResponse response) {
         ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
         payload.setPassword("11111111");
-        payload.setEmail("admin@admin.tu");
+        payload.setEmail("test@test.tu");
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
 

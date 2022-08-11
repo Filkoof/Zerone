@@ -27,12 +27,12 @@ public class SecurityControllers {
     public void accessOnlyAuthorizedPageFailTest() throws Exception {
         mockMvc.perform(get("/my"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
     public void correctLoginByEmailTest() throws Exception {
-        mockMvc.perform(formLogin("/login").user("adimonk@yandex.ru").password("11111111"))
+        mockMvc.perform(formLogin("/login").user("test@test.tu").password("11111111"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));

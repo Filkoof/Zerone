@@ -121,6 +121,9 @@ databaseChangeLog:
                   name: e_mail
                   value: "test@test.tu"
               - column:
+                  name: city
+                  value: "Suzdal"
+              - column:
                   name: is_approved
                   value: "true"
               - column:
