@@ -1,8 +1,8 @@
 databaseChangeLog:
-  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - logicalFilePath: db/changelog/db.changelog.yaml
   - changeSet:
       id: 1
-      author: your_liquibase_username
+      author: dmitriev_aleksandr
       changes:
         - createTable:
             tableName: users
@@ -17,9 +17,13 @@ databaseChangeLog:
               - column:
                   name: first_name
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: last_name
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: reg_date
                   type: timestamp
@@ -29,21 +33,29 @@ databaseChangeLog:
               - column:
                   name: e_mail
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: phone
                   type: varchar(50)
               - column:
                   name: password
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: photo
                   type: varchar(510)
+                  constraints:
+                    nullable: false
               - column:
                   name: about
                   type: text
               - column:
                   name: status
                   type: boolean
+                  constraints:
+                    nullable: false
               - column:
                   name: city
                   type: varchar(50)
@@ -59,12 +71,14 @@ databaseChangeLog:
               - column:
                   name: message_permissions
                   type: boolean
+                  defaultValue: true
               - column:
                   name: last_online_time
                   type: timestamp
               - column:
                   name: is_blocked
                   type: boolean
+                  defaultValue: false
               - column:
                   name: is_deleted
                   type: boolean
