@@ -11,16 +11,19 @@ import ru.example.group.main.response.ListResponseLanguageDto;
 public class PlatformService {
   public ListResponseLanguageDto getLange(){
     ListResponseLanguageDto listResponseLanguageDto=new ListResponseLanguageDto();
-    listResponseLanguageDto.setTotal(0);
-    listResponseLanguageDto.setPerPage(0);
+    listResponseLanguageDto.setTotal(2);
+    listResponseLanguageDto.setPerPage(1);
     listResponseLanguageDto.setOffset(0);
-    List<LanguageDto>list=new ArrayList<>();
-    list.add(new LanguageDto());
-    list.get(0).setId(0);
-    list.get(0).setTitle("string");
-    listResponseLanguageDto.setData(list);
+    List<LanguageDto>linguage=new ArrayList<>();
+    linguage.add(new LanguageDto());
+    linguage.get(0).setId(1);
+    linguage.get(0).setTitle("ru");
     listResponseLanguageDto.setTimestamp(LocalDateTime.now());
-    listResponseLanguageDto.setError("string");
+    listResponseLanguageDto.setError("");
+    linguage.add(new LanguageDto());
+    linguage.get(1).setId(2);
+    linguage.get(1).setTitle("en");
+    listResponseLanguageDto.setData(linguage);
     return listResponseLanguageDto;
   }
 
