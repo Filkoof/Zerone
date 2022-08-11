@@ -47,6 +47,7 @@ public class UserService {
         user.setRegDate(LocalDateTime.now());
         user.setApproved(false);
         user.setConfirmationCode(UUID.randomUUID().toString().substring(0,24));
+        user.setPhoto("preliminary photo");
         userRepository.save(user);
 
         if (!StringUtil.isEmpty(user.getEmail())) {

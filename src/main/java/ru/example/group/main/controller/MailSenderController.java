@@ -11,7 +11,7 @@ import ru.example.group.main.service.UserService;
 @Controller
 public class MailSenderController {
 
-    @Value("${mail.hostFront}")
+    @Value("${config.domain}")
     private String domain;
 
     private final UserService userService;
