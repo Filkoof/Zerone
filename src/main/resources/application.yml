@@ -39,8 +39,8 @@ spring:
     port: 465
     protocol: smtps
 mail:
-    hostBack: "localhost:8086"
-    hostFront: "localhost:80"
+    hostBack: "195.161.114.18:8086"
+    hostFront: "195.161.114.18:80"
 
 config:
   domain: "195.161.114.18:8082"
