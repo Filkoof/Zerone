@@ -1,33 +1,13 @@
 package ru.example.group.main.dto;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class CommonResponseDto<T> {
     private T data;
     private String error;
     private LocalDateTime timeStamp;
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(LocalDateTime timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+    private String message;
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.*;
 
+import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.service.AuthUserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,15 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthUserController {
 
     private final AuthUserService authUserService;
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
 
     @Autowired
-    public AuthUserController(AuthUserService authUserService) {
+    public AuthUserController(AuthUserService authUserService, SocialNetUserRegisterService socialNetUserRegisterService) {
         this.authUserService = authUserService;
+        this.socialNetUserRegisterService = socialNetUserRegisterService;
     }
 
     @PostMapping("/api/v1/auth/login")
-    public CommonResponseDto<UserLoginDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadDto payload) {
-        return authUserService.getAuthLoginResponse(payload);
+    public CommonResponseDto<UserLoginDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+        return authUserService.getAuthLoginResponse(payload, request, response);
     }
 
     @GetMapping("/api/v1/auth/logout")

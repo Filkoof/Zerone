@@ -2,13 +2,16 @@ package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 @Service
@@ -19,18 +22,22 @@ public class AuthUserService {
     private SocialNetUserRegisterService userRegister;
     private JwtBlacklistRepository jwtBlacklistRepository;
 
+    private final HandlerExceptionResolver handlerExceptionResolver;
+
     @Autowired
-    public AuthUserService(SocialNetUserRegisterService userRegister, JwtBlacklistRepository jwtBlacklistRepository) {
+    public AuthUserService(SocialNetUserRegisterService userRegister, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
         this.userRegister = userRegister;
         this.jwtBlacklistRepository = jwtBlacklistRepository;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload) {
+    public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         try {
-            authLoginResponseDto = userRegister.jwtLogin(payload);
+            authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
         } catch (Exception e) {
             e.getMessage();
+            handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
             authLoginResponseDto.setError("Wrong user name or password.");
         }
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
@@ -59,7 +66,7 @@ public class AuthUserService {
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public String getAuthHeader(){
+    public String getAuthHeader() {
         return authHeader;
     }
 }

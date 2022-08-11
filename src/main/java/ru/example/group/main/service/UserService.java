@@ -46,7 +46,7 @@ public class UserService {
         user.setEmail(userRegisterDto.getEmail());
         user.setRegDate(LocalDateTime.now());
         user.setApproved(false);
-        user.setConfirmationCode(UUID.randomUUID().toString());
+        user.setConfirmationCode(UUID.randomUUID().toString().substring(0,24));
         userRepository.save(user);
 
         if (!StringUtil.isEmpty(user.getEmail())) {

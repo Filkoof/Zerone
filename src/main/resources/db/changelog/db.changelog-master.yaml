@@ -22,7 +22,7 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: reg_date # – дата и время регистрации
-                  type: date
+                  type: timestamp
               - column:
                   name: birth_date # – дата рождения
                   type: date
@@ -43,7 +43,7 @@ databaseChangeLog:
                   type: text
               - column:
                   name: status # – статус пользователя: активен или не активен
-                  type: text
+                  type: boolean
               - column:
                   name: city # – страна проживания
                   type: varchar(50)
@@ -449,12 +449,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: user_id
+                  name: user_for_role_id
                   type: bigint
               - column:
                   name: user_role
                   type: varchar(50)
-
 
   - changeSet:
       id: 2
@@ -469,7 +468,7 @@ databaseChangeLog:
                   value: "admin"
               - column:
                   name: password
-                  value: "$2a$10$cX6yjnDu5JbCGVk51Phdt.joLqLL3W7lnN81e/WsE2t7Pnyag.N7e"
+                  value: "$2a$10$NTEQGUkVp/E8jXbhNAWAkOli.P8sdT1cr7Q.vP0PZU25HqSmVeZKK"
               - column:
                   name: e_mail
                   value: "admin@admin.tu"
@@ -479,6 +478,16 @@ databaseChangeLog:
               - column:
                   name: is_blocked
                   value: "false"
+              - column:
+                  name: is_deleted
+                  value: "false"
+              - column:
+                  name: status
+                  value: "true"
+              - column:
+                  name: message_permissions
+                  value: "true"
+
         - insert:
             tableName: users
             columns:
