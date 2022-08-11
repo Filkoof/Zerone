@@ -1,11 +1,15 @@
 stages:
+  #  - build
   - sonar-scan
+#  - test
+#  - deploy
+
+#stage_build:
+#  stage: build
 
 sonarqube-check:
   stage: sonar-scan
-  image:
-    name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [ "" ]
+  image: maven:3.8.3-openjdk-17
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
@@ -14,8 +18,14 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script:
-    - sonar-scanner
+    - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
   only:
     - master
     - dev
+
+#testing:
+#  stage: test
+#
+#deploy:
+#  stage: deploy
