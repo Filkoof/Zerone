@@ -1,8 +1,9 @@
-server.port: ${PORT:8080}
-spring.datasource:
-  url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-  username: ${DATABASE_USERNAME:root}
-  password: ${DATABASE_PASSWORD:root}
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/soc_net
+    username: postgres
+    password: Hfnfg123
+    driver-class-name: org.postgresql.Driver
 server:
   servlet:
     session:
@@ -11,7 +12,6 @@ server:
   port: 8086
 
 #spring security session login
-spring:
   security:
     user:
       name: coder
@@ -36,8 +36,10 @@ spring:
     port: 465
     protocol: smtps
 mail:
-    hostBack: "195.161.114.18:8086"
-    hostFront: "195.161.114.18:80"
+    #hostBack: "195.161.114.18:8086"
+    #hostFront: "195.161.114.18:80"
+    hostBack: "localhost:8086"
+    hostFront: "localhost:80"
 
 config:
   domain: "195.161.114.18:8082"

@@ -127,7 +127,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: "test"
+                  value: "Test"
+              - column:
+                  name: last_name
+                  value: "Testov"
               - column:
                   name: password
                   value: "$2a$10$NTEQGUkVp/E8jXbhNAWAkOli.P8sdT1cr7Q.vP0PZU25HqSmVeZKK"
@@ -152,6 +155,12 @@ databaseChangeLog:
               - column:
                   name: message_permissions
                   value: "true"
+              - column:
+                  name: status
+                  value: "true"
+              - column:
+                  name: photo
+                  value: "photo path here"
 
       rollback:
         - delete:

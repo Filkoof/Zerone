@@ -19,7 +19,6 @@ public class MailSenderController {
     @Autowired
     public MailSenderController(UserService userService) {
         this.userService = userService;
-
     }
 
     @GetMapping("/activate/{code}")
