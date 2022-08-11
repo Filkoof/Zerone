@@ -1,6 +1,5 @@
 package ru.example.group.main.security;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +14,6 @@ import ru.example.group.main.entity.UserEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
 
 @Service
 public class SocialNetUserRegisterService {
@@ -65,8 +63,8 @@ public class SocialNetUserRegisterService {
         String jwtToken = null;
         jwtToken = jwtUtilService.generateToken(userDetails);
         response.setResult(jwtToken);
-        response.setUserDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
-        authLoginResponseDto.setData(response.getUserDto());
+        response.setUserLoginDataResponseDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
+        authLoginResponseDto.setData(response.getUserLoginDataResponseDto());
         authLoginResponseDto.setError("");
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         return authLoginResponseDto;

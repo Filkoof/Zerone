@@ -11,24 +11,16 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
 
-import java.util.logging.Logger;
-
 @Service
 public class SocialNetUserDetailsService implements UserDetailsService {
 
     private final SocialNetUserRepository socialNetUserRepository;
     private GlobalExceptionHandlerController handlerController;
-    private final Logger logger = Logger.getLogger(SocialNetUserDetailsService.class.getName());
-
 
     @Autowired
     public SocialNetUserDetailsService(SocialNetUserRepository socialNetUserRepository, GlobalExceptionHandlerController handlerController) {
         this.socialNetUserRepository = socialNetUserRepository;
         this.handlerController = handlerController;
-    }
-
-    public void save(UserEntity user) {
-        socialNetUserRepository.save(user);
     }
 
     @Override
@@ -52,7 +44,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         userLoginDataResponseDto.setPassword(null);
         userLoginDataResponseDto.setRegDate(user.getRegDate());
         userLoginDataResponseDto.setDeleted(user.isDeleted());
-        userLoginDataResponseDto.seteMail(user.getEmail());
+        userLoginDataResponseDto.setEMail(user.getEmail());
         userLoginDataResponseDto.setFirstName(user.getFirstName());
         userLoginDataResponseDto.setId(user.getId());
         userLoginDataResponseDto.setLastName(user.getLastName());

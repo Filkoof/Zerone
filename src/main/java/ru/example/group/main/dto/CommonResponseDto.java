@@ -1,7 +1,6 @@
 package ru.example.group.main.dto;
 
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Data

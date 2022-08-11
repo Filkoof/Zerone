@@ -1,25 +1,19 @@
 package ru.example.group.main.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.*;
-
 import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.service.AuthUserService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @RestController
 public class AuthUserController {
-
     private final AuthUserService authUserService;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
-
     @Autowired
     public AuthUserController(AuthUserService authUserService, SocialNetUserRegisterService socialNetUserRegisterService) {
         this.authUserService = authUserService;

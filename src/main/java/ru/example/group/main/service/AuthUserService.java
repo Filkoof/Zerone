@@ -30,7 +30,6 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
-
     public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         try {
@@ -66,7 +65,4 @@ public class AuthUserService {
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public String getAuthHeader() {
-        return authHeader;
-    }
 }
