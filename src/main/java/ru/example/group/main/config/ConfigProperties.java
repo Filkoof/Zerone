@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Data
 public class ConfigProperties {
-
     private String domain;
     private Integer tokenValidityHours;
     private String authorization;
     private String secret;
-
 }

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
 
-    @Value("${header.authorization}")
+    @Value("${config.authorization}")
     private String authHeader;
     private final Logger logger = Logger.getLogger(JWTRequestFilter.class.getName());
 

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Service
 public class AuthUserService {
 
-    @Value("${header.authorization}")
+    @Value("${config.authorization}")
     private String authHeader;
     private SocialNetUserRegisterService userRegister;
     private JwtBlacklistRepository jwtBlacklistRepository;

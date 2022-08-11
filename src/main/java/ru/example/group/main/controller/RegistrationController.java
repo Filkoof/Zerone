@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.example.group.main.entity.ApiResponseEntity;
+import ru.example.group.main.dto.ApiResponseDto;
 
 import ru.example.group.main.dto.UserRegisterDto;
 import ru.example.group.main.repository.UserRepository;
@@ -24,9 +24,9 @@ public class RegistrationController {
     }
 
     @PostMapping("/api/v1/account/register")
-    public ApiResponseEntity createUser(@RequestBody UserRegisterDto userRegisterDto) throws JSONException {
+    public ApiResponseDto createUser(@RequestBody UserRegisterDto userRegisterDto) throws JSONException {
 
-        ApiResponseEntity response = new ApiResponseEntity();
+        ApiResponseDto response = new ApiResponseDto();
 
         if (userRepository.existsByEmail(userRegisterDto.getEmail())) {
             response.setStatus(HttpStatus.BAD_REQUEST);

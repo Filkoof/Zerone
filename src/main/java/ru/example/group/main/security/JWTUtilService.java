@@ -15,7 +15,7 @@ import java.util.function.Function;
 @Service
 public class JWTUtilService {
 
-    @Value("${auth.secret}")
+    @Value("${config.secret}")
     private String secret;
 
     private final static int MILISINHOUR = 3600000;
