@@ -10,7 +10,6 @@ server:
       persistent: false
   port: 8086
 
-
 #spring security session login
 spring:
   security:
@@ -44,17 +43,14 @@ spring:
     password: hcaPst9hn8USn45TkqLW
     port: 465
     protocol: smtps
-
 mail:
     hostBack: "localhost:8086"
     hostFront: "localhost:80"
 
-#front
-front:
-  domen: "195.161.114.18:8082"
-
 config:
   domain: "195.161.114.18:8082"
+
+
 
 
 

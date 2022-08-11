@@ -9,5 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class ConfigProperties {
 
     private String domain;
+    private Integer tokenValidityHours;
+    private String authorization;
+    private String secret;
 
 }

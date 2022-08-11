@@ -5,395 +5,7 @@ databaseChangeLog:
       author: your_liquibase_username
       changes:
         - createTable:
-            tableName: users # – пользователи социальной сети
-            columns:
-              - column:
-                  name: id #
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: first_name # – имя
-                  type: varchar(255)
-              - column:
-                  name: last_name # – фамилия
-                  type: varchar(255)
-              - column:
-                  name: reg_date # – дата и время регистрации
-                  type: timestamp
-              - column:
-                  name: birth_date # – дата рождения
-                  type: date
-              - column:
-                  name: e_mail #
-                  type: varchar(255)
-              - column:
-                  name: phone #
-                  type: varchar(50)
-              - column:
-                  name: password #
-                  type: varchar(255)
-              - column:
-                  name: photo # – ссылка на изображение
-                  type: varchar(510)
-              - column:
-                  name: about # – текст о себе
-                  type: text
-              - column:
-                  name: status # – статус пользователя: активен или не активен
-                  type: boolean
-              - column:
-                  name: city # – страна проживания
-                  type: varchar(50)
-              - column:
-                  name: country # – город проживания
-                  type: varchar(50)
-              - column:
-                  name: confirmation_code # – код восстановления пароля / подтверждения регистрации
-                  type: varchar(25)
-              - column:
-                  name: is_approved # – подтверждена ли регистрация
-                  type: boolean
-              - column:
-                  name: message_permissions # – разрешение на получение сообщений: ALL – от всех пользователей (кроме заблокированных), FRIENDS – только от друзей
-                  type: boolean
-              - column:
-                  name: last_online_time # – время последнего пребывания онлайн
-                  type: timestamp
-              - column:
-                  name: is_blocked # – блокировка пользователя модератором / администратором
-                  type: boolean
-              - column:
-                  name: is_deleted # – помечен ли пользователь на удаление
-                  type: boolean
-        - createTable:
-            tableName: block_history # - история блокировок пользователей за пост / комментарий
-            columns:
-              - column:
-                  name: id #
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: time
-                  type: timestamp
-              - column:
-                  name: user_id # – пользователь, которого заблокировали
-                  type: bigint
-              - column:
-                  name: post_id
-                  type: bigint
-              - column:
-                  name: comment_id
-                  type: bigint
-              - column:
-                  name: action # – тип действия: BLOCK (блокировка) или UNBLOCK (разблокировка)
-                  type: varchar(10)
-        - createTable:
-            tableName: admins #  – модераторы и администраторы
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(50)
-              - column:
-                  name: e_mail
-                  type: varchar(255)
-              - column:
-                  name: password
-                  type: varchar(255)
-              - column:
-                  name: type
-                  type: varchar(10)
-        - createTable:
-            tableName: friendships
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: status_id
-                  type: bigint
-              - column:
-                  name: src_person_id
-                  type: bigint
-              - column:
-                  name: dst_person_id
-                  type: bigint
-              - column:
-                  name: type
-                  type: timestamp
-        - createTable:
-            tableName: friendship_statuses
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: time
-                  type: timestamp
-              - column:
-                  name: name
-                  type: varchar(50)
-              - column:
-                  name: code
-                  type: varchar(10)
-        - createTable:
-            tableName: messages
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: sent_time
-                  type: timestamp
-              - column:
-                  name: dialog_id
-                  type: bigint
-              - column:
-                  name: message_text
-                  type: text
-              - column:
-                  name: read_status
-                  type: varchar(10)
-        - createTable:
-            tableName: dialogs
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: sender_id
-                  type: bigint
-              - column:
-                  name: recipient_id
-                  type: bigint
-        - createTable:
-            tableName: posts
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: time
-                  type: timestamp
-              - column:
-                  name: author_id
-                  type: bigint
-              - column:
-                  name: title
-                  type: varchar(100)
-              - column:
-                  name: post_text
-                  type: text
-              - column:
-                  name: update_date
-                  type: timestamp
-              - column:
-                  name: is_blocked
-                  type: boolean
-              - column:
-                  name: is_deleted
-                  type: boolean
-        - createTable:
-            tableName: tags
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: tag
-                  type: varchar(50)
-        - createTable:
-            tableName: posts_to_tags
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: post_id
-                  type: bigint
-              - column:
-                  name: tag_id
-                  type: bigint
-        - createTable:
-            tableName: likes
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: time
-                  type: timestamp
-              - column:
-                  name: entity_id
-                  type: bigint
-              - column:
-                  name: type
-                  type: varchar(10)
-              - column:
-                  name: user_id
-                  type: bigint
-        - createTable:
-            tableName: post_files
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: post_id
-                  type: bigint
-              - column:
-                  name: path
-                  type: varchar(500)
-        - createTable:
-            tableName: post_comments
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: time
-                  type: timestamp
-              - column:
-                  name: post_id
-                  type: bigint
-              - column:
-                  name: parent_id
-                  type: bigint
-              - column:
-                  name: author_id
-                  type: bigint
-              - column:
-                  name: comment_text
-                  type: text
-              - column:
-                  name: is_blocked
-                  type: boolean
-              - column:
-                  name: is_deleted
-                  type: boolean
-        - createTable:
-            tableName: notifications
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: type_id
-                  type: smallint
-              - column:
-                  name: sent_time
-                  type: timestamp
-              - column:
-                  name: person_id
-                  type: bigint
-              - column:
-                  name: entity_id
-                  type: bigint
-              - column:
-                  name: status
-                  type: boolean
-        - createTable:
-            tableName: notification_types
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(25)
-        - createTable:
-            tableName: notification_settings
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: user_id
-                  type: bigint
-              - column:
-                  name: post_enabled
-                  type: boolean
-              - column:
-                  name: post_comment_enabled
-                  type: boolean
-              - column:
-                  name: comment_comment_enabled
-                  type: boolean
-              - column:
-                  name: friend_request_enabled
-                  type: boolean
-              - column:
-                  name: messages_enabled
-                  type: boolean
-              - column:
-                  name: friend_birthday_enabled
-                  type: boolean
-        - createTable:
-            tableName: support_requests
+            tableName: users
             columns:
               - column:
                   name: id
@@ -404,22 +16,58 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: first_name
-                  type: varchar(50)
+                  type: varchar(255)
               - column:
                   name: last_name
-                  type: varchar(50)
+                  type: varchar(255)
               - column:
-                  name: e_mail
-                  type: varchar(50)
-              - column:
-                  name: message
-                  type: text
-              - column:
-                  name: time
+                  name: reg_date
                   type: timestamp
               - column:
+                  name: birth_date
+                  type: date
+              - column:
+                  name: e_mail
+                  type: varchar(255)
+              - column:
+                  name: phone
+                  type: varchar(50)
+              - column:
+                  name: password
+                  type: varchar(255)
+              - column:
+                  name: photo
+                  type: varchar(510)
+              - column:
+                  name: about
+                  type: text
+              - column:
                   name: status
-                  type: varchar(10)
+                  type: boolean
+              - column:
+                  name: city
+                  type: varchar(50)
+              - column:
+                  name: country
+                  type: varchar(50)
+              - column:
+                  name: confirmation_code
+                  type: varchar(255)
+              - column:
+                  name: is_approved
+                  type: boolean
+              - column:
+                  name: message_permissions
+                  type: boolean
+              - column:
+                  name: last_online_time
+                  type: timestamp
+              - column:
+                  name: is_blocked
+                  type: boolean
+              - column:
+                  name: is_deleted
+                  type: boolean
 
         - createTable:
             tableName: blacklisted_tokens
@@ -465,13 +113,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: first_name
-                  value: "admin"
+                  value: "test"
               - column:
                   name: password
                   value: "$2a$10$NTEQGUkVp/E8jXbhNAWAkOli.P8sdT1cr7Q.vP0PZU25HqSmVeZKK"
               - column:
                   name: e_mail
-                  value: "admin@admin.tu"
+                  value: "test@test.tu"
               - column:
                   name: is_approved
                   value: "true"
@@ -488,24 +136,6 @@ databaseChangeLog:
                   name: message_permissions
                   value: "true"
 
-        - insert:
-            tableName: users
-            columns:
-              - column:
-                  name: first_name
-                  value: "guest"
-              - column:
-                  name: password
-                  value: "$2a$10$cX6yjnDu5JbCGVk51Phdt.joLqLL3W7lnN81e/WsE2t7Pnyag.N7e"
-              - column:
-                  name: e_mail
-                  value: "guest@server.com"
-              - column:
-                  name: is_approved
-                  value: "true"
-              - column:
-                  name: is_blocked
-                  value: "false"
       rollback:
         - delete:
             tableName: users
