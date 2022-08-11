@@ -1,11 +1,22 @@
 stages:
-  #  - build
+  - build
+  - test
   - sonar-scan
-#  - test
-#  - deploy
+  - deploy
 
-#stage_build:
-#  stage: build
+stage_build:
+  stage: build
+  tags:
+    -prod
+  script:
+    - echo 'building'
+
+test:
+  stage: test
+  tags:
+    -prod
+  script:
+    - echo 'testing'
 
 sonarqube-check:
   stage: sonar-scan
@@ -17,15 +28,19 @@ sonarqube-check:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
+  tags:
+    -prod
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
   only:
     - master
     - dev
+    - 12_CI/CD
 
-#testing:
-#  stage: test
-#
-#deploy:
-#  stage: deploy
+deploy:
+  stage: deploy
+  tags:
+    -prod
+  script:
+    - echo 'deploying'
