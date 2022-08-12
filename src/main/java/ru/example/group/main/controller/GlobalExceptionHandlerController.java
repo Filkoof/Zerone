@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.example.group.main.dto.CommonResponseDto;
 import ru.example.group.main.dto.LogoutResponseDataDto;
 import ru.example.group.main.dto.UserLoginDataResponseDto;
-import ru.example.group.main.exception.WrongAuthorizationDataException;
+
 import javax.servlet.ServletException;
 import java.time.LocalDateTime;
 
@@ -33,15 +33,6 @@ public class GlobalExceptionHandlerController {
         CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setError(e.getMessage());
         commonResponseDto.setMessage(e.getMessage());
-        commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(WrongAuthorizationDataException.class)
-    public ResponseEntity<CommonResponseDto<LogoutResponseDataDto>> handleWrongAuthorizationServletExceptions(WrongAuthorizationDataException e) {
-        log.info(e.getLocalizedMessage());
-        CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setError(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }

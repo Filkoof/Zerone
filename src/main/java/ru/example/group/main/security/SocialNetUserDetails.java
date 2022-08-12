@@ -1,5 +1,6 @@
 package ru.example.group.main.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,12 +9,10 @@ import ru.example.group.main.entity.UserRoleEntity;
 
 import java.util.*;
 import java.util.logging.Logger;
-
+@Slf4j
 public class SocialNetUserDetails implements UserDetails {
 
     private final UserEntity user;
-
-    private final Logger logger = Logger.getLogger(SocialNetUserDetails.class.getName());
 
     public SocialNetUserDetails(UserEntity user) {
         this.user = user;
@@ -32,7 +31,7 @@ public class SocialNetUserDetails implements UserDetails {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
             userRoleEntityList = new ArrayList<>();
-            logger.info("ОШИБКА " + e.getMessage());
+            log.info("ОШИБКА " + e.getMessage());
         }
         if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
             for (UserRoleEntity userRole : userRoleEntityList) {

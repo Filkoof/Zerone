@@ -21,10 +21,8 @@ public class AuthUserService {
     private String authHeader;
     private SocialNetUserRegisterService userRegister;
     private JwtBlacklistRepository jwtBlacklistRepository;
-
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    @Autowired
     public AuthUserService(SocialNetUserRegisterService userRegister, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
         this.userRegister = userRegister;
         this.jwtBlacklistRepository = jwtBlacklistRepository;

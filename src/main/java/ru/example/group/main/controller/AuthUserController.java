@@ -9,15 +9,14 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.service.AuthUserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.logging.Logger;
 
 @RestController
 public class AuthUserController {
     private final AuthUserService authUserService;
-    private final SocialNetUserRegisterService socialNetUserRegisterService;
-    @Autowired
-    public AuthUserController(AuthUserService authUserService, SocialNetUserRegisterService socialNetUserRegisterService) {
+
+    public AuthUserController(AuthUserService authUserService) {
         this.authUserService = authUserService;
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
     }
 
     @PostMapping("/api/v1/auth/login")

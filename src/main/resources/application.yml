@@ -1,9 +1,10 @@
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD:root}
+    url: jdbc:postgresql://localhost:5432/soc_net
+    username: postgres
+    password: Hfnfg123
+    driver-class-name: org.postgresql.Driver
 
   mail:
     host: smtp.mail.ru
@@ -12,30 +13,22 @@ spring:
     port: 465
     protocol: smtps
   jpa:
-    database: POSTGRESQL
-    show-sql: false
-    hibernate:
+     hibernate:
       ddl-auto: validate
   liquibase:
     enabled: true
-  web:
-    resources:
-      static-locations: [classpath:/templates/]
 
 server:
   servlet:
     session:
       tracking-modes: cookie
-      persistent: false
-  port: ${PORT:8080}
-
+  port: 8086
 
 mail:
-  hostBack: "195.161.114.18:8086"
-  hostFront: "195.161.114.18:80"
-    #hostBack: "localhost:8086"
-    #hostFront: "localhost:80"
-
+  hostBack: "localhost:8086"
+  hostFront: "localhost:80"
+  #hostBack: "195.161.114.18:8086"
+  #hostFront: "195.161.114.18:80"
 
 config:
   domain: "195.161.114.18:8086"

@@ -23,7 +23,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Value("${config.authorization}")
     private String authHeader;
-    private final Logger logger = Logger.getLogger(JWTRequestFilter.class.getName());
 
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final JWTUtilService jwtUtilService;
@@ -64,12 +63,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
-                logger.info("doFilterInternal - invalid token");
                 handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Invalid token."));
                 throw new ServletException("Invalid token.");
             }
         } else {
-            logger.info("doFilterInternal - wrong token");
             handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Wrong token."));
             throw new ServletException("Wrong token.");
         }

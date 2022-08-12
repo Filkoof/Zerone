@@ -1,37 +1,25 @@
 package ru.example.group.main.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+import ru.example.group.main.dto.RegistrationCompleteDto;
 import ru.example.group.main.service.UserService;
 
-@Controller
+@RestController
 public class MailSenderController {
-
-    @Value("${config.domain}")
-    private String domain;
 
     private final UserService userService;
 
-    @Autowired
     public MailSenderController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/activate/{code}")
-    public String activate(Model model, @PathVariable String code) {
-        boolean isActivated = userService.activateUser(code);
-
-        if (isActivated) {
-            model.addAttribute("message", "User successfully activated");
-        } else {
-            model.addAttribute("message", "Activation code is not found!");
-        }
-        //сделать красиво
-        return "redirect:http://" + domain + "/login";
+    @GetMapping("/api/v1/account/registration_complete/{code}")
+    public RegistrationCompleteDto activate(@PathVariable String code) {
+        return userService.activateUser(code);
     }
 
 }
