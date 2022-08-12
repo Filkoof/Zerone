@@ -1,4 +1,4 @@
-package ru.example.group.main.entity.enumerated;
+package ru.example.group.main.dto.enumerated;
 
 public enum MessagesPermission {
   ALL,

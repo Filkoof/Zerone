@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.example.group.main.controller.GlobalExceptionHandlerController;
 import ru.example.group.main.dto.UserLoginDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
+import ru.example.group.main.dto.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
 
 @Service

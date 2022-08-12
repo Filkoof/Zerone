@@ -25,13 +25,13 @@ public class JwtLoginTests {
     }
 
     @Test
-    void jwtLogin(HttpServletRequest request, HttpServletResponse response) {
+    void jwtLogin() {
         ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
         payload.setPassword("11111111");
         payload.setEmail("test@test.tu");
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
 
-        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, request, response).getData().getToken(), userDetails));
+        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken(), userDetails));
     }
 }
