@@ -1,10 +1,9 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/soc_net
-    username: postgres
-    password: Hfnfg123
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:root}
 
   mail:
     host: smtp.mail.ru
@@ -22,13 +21,10 @@ server:
   servlet:
     session:
       tracking-modes: cookie
-  port: 8086
+  port: ${PORT:8080}
 
 mail:
-  hostBack: "localhost:8086"
-  hostFront: "localhost:80"
-  #hostBack: "195.161.114.18:8086"
-  #hostFront: "195.161.114.18:80"
+  hostBack: "195.161.114.18:8086"
 
 config:
   domain: "195.161.114.18:8086"
