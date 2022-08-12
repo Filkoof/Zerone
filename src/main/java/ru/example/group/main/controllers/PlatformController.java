@@ -7,11 +7,9 @@ import ru.example.group.main.service.PlatformService;
 
 @RestController
 public class PlatformController {
-private final PlatformService platformService;
 
-  public PlatformController(PlatformService platformService) {
-    this.platformService = platformService;
-  }
+  private final PlatformService platformService = new PlatformService();
+
   @GetMapping("/api/v1/platform/languages")
   public ListResponseLanguageDto getLanguages() {
     return platformService.getLange();

@@ -1,13 +1,13 @@
 package ru.example.group.main.response;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 import ru.example.group.main.dto.LanguageDto;
 
 @Data
-public class ListResponseLanguageDto{
+public class ListResponseLanguageDto {
+
   private int total;
   private int perPage;
   private int offset;
