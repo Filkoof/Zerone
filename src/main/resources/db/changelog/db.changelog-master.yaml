@@ -60,11 +60,11 @@ databaseChangeLog:
                   name: city
                   type: varchar(50)
               - column:
-                  name: county
+                  name: country
                   type: varchar(50)
               - column:
                   name: confirmation_code
-                  type: varchar(25)
+                  type: varchar(255)
               - column:
                   name: is_approved
                   type: boolean
@@ -82,3 +82,87 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   type: boolean
+
+        - createTable:
+            tableName: blacklisted_tokens
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: jwt_blacklisted
+                  type: varchar(255)
+              - column:
+                  name: revocation_date
+                  type: timestamp
+
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_for_role_id
+                  type: bigint
+              - column:
+                  name: user_role
+                  type: varchar(50)
+
+  - changeSet:
+      id: 2
+      author: your_liquibase_username
+      comment: "Create test users"
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: first_name
+                  value: "Test"
+              - column:
+                  name: last_name
+                  value: "Testov"
+              - column:
+                  name: password
+                  value: "$2a$10$NTEQGUkVp/E8jXbhNAWAkOli.P8sdT1cr7Q.vP0PZU25HqSmVeZKK"
+              - column:
+                  name: e_mail
+                  value: "test@test.tu"
+              - column:
+                  name: city
+                  value: "Suzdal"
+              - column:
+                  name: is_approved
+                  value: "true"
+              - column:
+                  name: is_blocked
+                  value: "false"
+              - column:
+                  name: is_deleted
+                  value: "false"
+              - column:
+                  name: status
+                  value: "true"
+              - column:
+                  name: message_permissions
+                  value: "true"
+              - column:
+                  name: status
+                  value: "true"
+              - column:
+                  name: photo
+                  value: "photo path here"
+
+      rollback:
+        - delete:
+            tableName: users
+            where: first_name in ('admin', 'guest')
