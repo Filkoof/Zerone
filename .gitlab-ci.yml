@@ -4,21 +4,21 @@ stages:
   - sonar-scan
   - deploy
 
-stage_build:
+build:
   stage: build
   tags:
-    -prod
+    - prod
   script:
     - echo "dasdas"
 
 test:
   stage: test
   tags:
-    -prod
+    - prod
   script:
     - echo 'testing'
 
-sonarqube-check:
+sonar-scan:
   stage: sonar-scan
   image: maven:3.8.3-openjdk-17
   variables:
@@ -29,7 +29,7 @@ sonarqube-check:
     paths:
       - .sonar/cache
   tags:
-    -prod
+    - prod
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
@@ -41,6 +41,6 @@ sonarqube-check:
 deploy:
   stage: deploy
   tags:
-    -prod
+    - prod
   script:
     - echo 'deploying'
