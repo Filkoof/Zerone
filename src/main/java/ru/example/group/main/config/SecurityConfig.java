@@ -35,7 +35,7 @@ public class SecurityConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery").permitAll()
+                .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm").permitAll()
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
                 .antMatchers( "**").authenticated()
                 .and().formLogin();

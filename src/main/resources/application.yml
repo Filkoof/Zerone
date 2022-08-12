@@ -12,7 +12,7 @@ spring:
     port: 465
     protocol: smtps
   jpa:
-     hibernate:
+    hibernate:
       ddl-auto: validate
   liquibase:
     enabled: true
@@ -24,13 +24,14 @@ server:
   port: ${PORT:8080}
 
 mail:
-  hostBack: "195.161.114.18:8086"
+  hostBack: "195.161.114.18:80"
 
 config:
-  domain: "195.161.114.18:8086"
+  domain: "195.161.114.18:80"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
+
 
 
 
