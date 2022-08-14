@@ -1,16 +1,18 @@
 package ru.example.group.main.service;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
 @Service
-public class MailSender {
+@Component
+public class ZeroneMailSender {
 
     private final JavaMailSender mailSender;
 
-    public MailSender(JavaMailSender mailSender) {
+    public ZeroneMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -25,7 +27,6 @@ public class MailSender {
         mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
-
         mailSender.send(mailMessage);
     }
 

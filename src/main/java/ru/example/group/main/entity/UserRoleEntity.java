@@ -16,9 +16,6 @@ public class UserRoleEntity {
     private Long id;
 
     @Column
-    private Long userId;
-
-    @Column
     private String userRole;
 
     @ManyToOne

@@ -20,14 +20,11 @@ import ru.example.group.main.security.JWTRequestFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final JWTRequestFilter filter;
-
     @Bean
     PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -36,12 +33,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers( "/me", "/profile", "fiends", "users", "settings", "im").authenticated()
-                .antMatchers("/**", "/login","/activate/*", "/registration", "/logout").permitAll()
-                .and().formLogin()
-                .loginPage("/login").failureUrl("/login");
+            .cors().and().csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery").permitAll()
+            .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
+            .antMatchers( "**").authenticated()
+            .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

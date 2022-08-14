@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.example.group.main.dto.ContactConfirmationPayloadDto;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -22,13 +25,13 @@ public class JwtLoginTests {
     }
 
     @Test
-    void jwtLogin() {
+    void jwtLogin(HttpServletRequest request, HttpServletResponse response) {
         ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
         payload.setPassword("11111111");
-        payload.setEmail("admin@admin.tu");
+        payload.setEmail("test@test.tu");
         SocialNetUserDetails userDetails =
-                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+            (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
 
-        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload).getData().getToken(), userDetails));
+        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, request, response).getData().getToken(), userDetails));
     }
 }

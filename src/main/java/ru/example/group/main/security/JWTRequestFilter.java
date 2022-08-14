@@ -7,49 +7,46 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.entity.JwtBlacklistEntity;
-import ru.example.group.main.repositories.JwtBlacklistRepository;
+import ru.example.group.main.repository.JwtBlacklistRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
 
-    @Value("${header.authorization}")
+    @Value("${config.authorization}")
     private String authHeader;
-    private final Logger logger = Logger.getLogger(JWTRequestFilter.class.getName());
 
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final JWTUtilService jwtUtilService;
     private final JwtBlacklistRepository jwtBlacklistRepository;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-
-    public JWTRequestFilter(SocialNetUserDetailsService socialNetUserDetailsService, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository) {
+    public JWTRequestFilter(SocialNetUserDetailsService socialNetUserDetailsService, JWTUtilService jwtUtilService, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jwtUtilService = jwtUtilService;
         this.jwtBlacklistRepository = jwtBlacklistRepository;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-                                    FilterChain filterChain) throws ServletException, IOException {
+        FilterChain filterChain) throws ServletException, IOException {
         String token;
         String username;
-        logger.info("token " + httpServletRequest.getHeader(authHeader));
-
-       if (httpServletRequest.getHeader(authHeader) != null ) {
-           if (!httpServletRequest.getHeader(authHeader).equals("undefined")) {
-               token = httpServletRequest.getHeader(authHeader);
-               username = checkToken(token, httpServletRequest, httpServletResponse);
-               checkAuthenticationToken(username, token, httpServletRequest, httpServletResponse);
-           }
+        if (httpServletRequest.getHeader(authHeader) != null) {
+            if (!httpServletRequest.getHeader(authHeader).equals("undefined")) {
+                token = httpServletRequest.getHeader(authHeader);
+                username = checkToken(token, httpServletRequest, httpServletResponse);
+                checkAuthenticationToken(username, token, httpServletRequest, httpServletResponse);
+            }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
@@ -57,54 +54,40 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     private void checkAuthenticationToken(String username, String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails;
-            userDetails = (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(username);
+            userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
-                logger.info("doFilterInternal - invalid token");
-                logoutHeaderProcessing(httpServletRequest, httpServletResponse);
+                handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Invalid token."));
                 throw new ServletException("Invalid token.");
             }
+        } else {
+            handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Wrong token."));
+            throw new ServletException("Wrong token.");
         }
     }
 
     private String checkToken(String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
-        String username = null;
+        String username;
         JwtBlacklistEntity blacklist = this.jwtBlacklistRepository.findJwtBlacklistEntityByJwtBlacklistedToken(token);
         if (blacklist == null) {
             try {
                 username = jwtUtilService.extractUsername(token);
             } catch (Exception e) {
+                handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Wrong token."));
                 throw new ServletException("Wrong token." + e.getMessage());
             }
 
         } else {
+            handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Expired token."));
             throw new ServletException("Expired token.");
         }
         return username;
-    }
-
-    public void logoutHeaderProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        String token = null;
-        if (request.getHeader(authHeader) != null) {
-            token = response.getHeader(authHeader);
-            JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-            jwtBlacklistEntity.setJwtBlacklistedToken(token);
-            jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
-            jwtBlacklistRepository.save(jwtBlacklistEntity);
-            response.setHeader(authHeader, null);
-            HttpSession session = request.getSession();
-            SecurityContextHolder.clearContext();
-            if (session != null) {
-                session.invalidate();
-            }
-        }
-        request.logout();
     }
 
 }

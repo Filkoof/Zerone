@@ -15,19 +15,22 @@ import java.util.function.Function;
 @Service
 public class JWTUtilService {
 
-    @Value("${auth.secret}")
+    @Value("${config.secret}")
     private String secret;
 
-    private final static int MILISINHOUR = 3600000;
+    @Value("${config.token-validity-hours}")
+    private Integer hoursTokenValidity;
+
+    private final static int MILISINHOUR = 1000*60*60;
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts
-                .builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + MILISINHOUR * 24 * 3))
-                .signWith(SignatureAlgorithm.HS256, secret).compact();
+            .builder()
+            .setClaims(claims)
+            .setSubject(username)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + MILISINHOUR * hoursTokenValidity))
+            .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
     public String generateToken(UserDetails userDetails) {

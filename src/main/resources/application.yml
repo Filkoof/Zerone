@@ -1,58 +1,37 @@
-#Session security
-auth:
-  secret: SocialNetwork26
-header:
-  authorization: "AUTHORIZATION"
+
+spring:
+  datasource:
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:root}
+
+  mail:
+    host: smtp.mail.ru
+    username: zerone.mail@mail.ru
+    password: hcaPst9hn8USn45TkqLW
+    port: 465
+    protocol: smtps
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+
 server:
   servlet:
     session:
       tracking-modes: cookie
-      persistent: false
-  port: 8086
+  port: ${PORT:8080}
 
-
-#spring security session login
-spring:
-  security:
-    user:
-      name: coder
-      password: coder
-
-#connect to DB
-  datasource:
-    url: jdbc:postgresql://localhost:5432/soc_net
-    username: postgres
-    password: Hfnfg123
-#Hfnfg123
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    database: POSTGRESQL
-    show-sql: true
-    hibernate:
-      ddl-auto: validate
-  liquibase:
-    enabled: false
-  web:
-    resources:
-      static-locations: [classpath:/templates/]
-
-#mail settings
-  mail:
-    host: smtp.mail.ru
-    username: zerone.mail@mail.ru
-    password: UjCdaUFj8QwMhzMwRnbC
-    port: 465
-    protocol: smtps
 mail:
-  host: http://localhost:8086
-  debug: true
+  hostBack: "195.161.114.18:8086"
 
-#front
-front:
-  domen: "195.161.114.18:8082"
+config:
+  domain: "195.161.114.18:8086"
+  token-validity-hours: 72
+  authorization: "AUTHORIZATION"
+  secret: SocialNetwork26
 
-#log
 logging:
   file:
     path: logs

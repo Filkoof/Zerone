@@ -1,4 +1,4 @@
-package ru.example.group.main.controllers;
+package ru.example.group.main.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +26,16 @@ public class SecurityControllers {
     @Test
     public void accessOnlyAuthorizedPageFailTest() throws Exception {
         mockMvc.perform(get("/my"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
+            .andDo(print())
+            .andExpect(status().is3xxRedirection());
     }
 
     @Test
     public void correctLoginByEmailTest() throws Exception {
-        mockMvc.perform(formLogin("/login").user("adimonk@yandex.ru").password("11111111"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+        mockMvc.perform(formLogin("/login").user("test@test.tu").password("11111111"))
+            .andDo(print())
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/"));
     }
 
 }
