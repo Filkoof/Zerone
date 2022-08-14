@@ -60,10 +60,10 @@ public class UserService {
         try {
             if (!StringUtil.isEmpty(user.getEmail())) {
                 String message = String.format(
-                    "Hello, %s! \n" +
-                        "Welcome to Sweater. Please, visit next link: http://" + mailHost + "/api/v1/account/registration_complete/%s",
-                    user.getFirstName(),
-                    user.getConfirmationCode()
+                        "Hello, %s! \n" +
+                                "Welcome to Sweater. Please, visit next link: http://" + mailHost + "/api/v1/account/registration_complete/%s",
+                        user.getFirstName(),
+                        user.getConfirmationCode()
                 );
                 zeroneMailSender.send(user.getEmail(), "Activation Code from Zerone", message);
             }

@@ -38,7 +38,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
         String token;
         String username;
         if (httpServletRequest.getHeader(authHeader) != null) {
@@ -57,8 +57,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -86,7 +86,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         } else {
             handlerExceptionResolver.resolveException(httpServletRequest,httpServletResponse, null, new ServletException("Expired token."));
             throw new ServletException("Expired token.");
-        }
+         }
         return username;
     }
 

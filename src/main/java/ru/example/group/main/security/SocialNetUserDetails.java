@@ -31,7 +31,7 @@ public class SocialNetUserDetails implements UserDetails {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
             userRoleEntityList = new ArrayList<>();
-            log.info("РћРЁРР‘РљРђ " + e.getMessage());
+            log.info("ОШИБКА " + e.getMessage());
         }
         if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
             for (UserRoleEntity userRole : userRoleEntityList) {

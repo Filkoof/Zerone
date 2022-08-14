@@ -12,7 +12,7 @@ spring:
     port: 465
     protocol: smtps
   jpa:
-    hibernate:
+     hibernate:
       ddl-auto: validate
   liquibase:
     enabled: true
@@ -37,9 +37,3 @@ logging:
     path: logs
   level:
     ru.example.group.main: debug
-
-
-
-
-
-

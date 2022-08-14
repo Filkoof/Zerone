@@ -25,12 +25,12 @@ public class JWTUtilService {
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts
-            .builder()
-            .setClaims(claims)
-            .setSubject(username)
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + MILISINHOUR * hoursTokenValidity))
-            .signWith(SignatureAlgorithm.HS256, secret).compact();
+                .builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + MILISINHOUR * hoursTokenValidity))
+                .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
     public String generateToken(UserDetails userDetails) {

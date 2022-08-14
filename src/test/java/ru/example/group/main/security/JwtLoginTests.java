@@ -30,7 +30,7 @@ public class JwtLoginTests {
         payload.setPassword("11111111");
         payload.setEmail("test@test.tu");
         SocialNetUserDetails userDetails =
-            (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
 
         assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, request, response).getData().getToken(), userDetails));
     }

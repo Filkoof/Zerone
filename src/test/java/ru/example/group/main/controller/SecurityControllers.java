@@ -26,16 +26,16 @@ public class SecurityControllers {
     @Test
     public void accessOnlyAuthorizedPageFailTest() throws Exception {
         mockMvc.perform(get("/my"))
-            .andDo(print())
-            .andExpect(status().is3xxRedirection());
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
     public void correctLoginByEmailTest() throws Exception {
         mockMvc.perform(formLogin("/login").user("test@test.tu").password("11111111"))
-            .andDo(print())
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/"));
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
     }
 
 }

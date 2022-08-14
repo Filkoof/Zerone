@@ -35,13 +35,13 @@ public class SocialNetUserRegisterService {
         CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserLoginDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
-                payload.getPassword()));
+                    payload.getPassword()));
             SocialNetUserDetails userDetails =
-                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+                    (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
             authLoginResponseDto = setAuthLoginResponse(userDetails);
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException(e.getMessage()));
-            authLoginResponseDto.setError("РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё.");
+            authLoginResponseDto.setError("Неверные данные учетной записи.");
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         }
         return authLoginResponseDto;
@@ -52,12 +52,12 @@ public class SocialNetUserRegisterService {
         ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());
-            authLoginResponseDto.setError("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РµС‰Рµ РЅРµ РїРѕРґС‚РІРµСЂР¶РґРµРЅ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј.");
+            authLoginResponseDto.setError("Пользователь еще не подтвержден администратором.");
             return authLoginResponseDto;
         }
         if (userDetails.getUser().isBlocked()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());
-            authLoginResponseDto.setError("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ.");
+            authLoginResponseDto.setError("Пользователь заблокирован.");
             return authLoginResponseDto;
         }
         String jwtToken = null;
@@ -73,7 +73,7 @@ public class SocialNetUserRegisterService {
     public UserEntity getCurrentUser() {
         try {
             SocialNetUserDetails userDetails =
-                (SocialNetUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    (SocialNetUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return userDetails.getUser();
         } catch (Exception e) {
             return null;

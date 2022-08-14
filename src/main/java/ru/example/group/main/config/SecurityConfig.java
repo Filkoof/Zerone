@@ -33,12 +33,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors().and().csrf().disable()
-            .authorizeRequests()
-            .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery").permitAll()
-            .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
-            .antMatchers( "**").authenticated()
-            .and().formLogin();
+                .cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery").permitAll()
+                .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
+                .antMatchers( "**").authenticated()
+                .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
