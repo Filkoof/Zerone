@@ -19,7 +19,7 @@ build:
   tags:
     - prod
   script:
-    - 'mvn --settings $MAVEN_SETTINGS compile'
+    - mvn --settings $MAVEN_SETTINGS compile
   cache:
     paths:
       - ./target
@@ -58,7 +58,7 @@ package:
     - dev
     - master
   script:
-    - 'mvn --settings $MAVEN_SETTINGS package -Dmaven.test.skip=true'
+    - mvn --settings $MAVEN_SETTINGS package -Dmaven.test.skip=true
   artifacts:
     paths:
       - target/*.jar
