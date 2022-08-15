@@ -1,15 +1,29 @@
+image: maven:latest
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
+
 stages:
   - build
   - test
   - sonar-scan
+  - package
   - deploy
 
 build:
   stage: build
+  only:
+    - dev
+    - master
+    - 12_CI/CD
   tags:
     - prod
   script:
-    - echo "dasdas"
+    - 'mvn --settings $MAVEN_SETTINGS compile'
+  cache:
+    paths:
+      - ./target
+      - ./.m2
 
 test:
   stage: test
@@ -38,9 +52,36 @@ sonar-scan:
     - dev
     - 12_CI/CD
 
+package:
+  stage: package
+  only:
+    - dev
+    - master
+  script:
+    - 'mvn --settings $MAVEN_SETTINGS package -Dmaven.test.skip=true'
+  artifacts:
+    paths:
+      - target/*.jar
+  cache:
+    policy: pull
+    paths:
+      - ./target
+      - ./.m2
+
 deploy:
   stage: deploy
-  tags:
-    - prod
+  only:
+    - dev
+    - master
+  before_script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo 'deploying'
+    - ssh $DEV_USER@$DEV_HOST "[ ! -f $DEV_APP_PATH/app.jar ] || mv $DEV_APP_PATH/app.jar $DEV_APP_PATH/app-build-$CI_PIPELINE_ID.jar"
+    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
