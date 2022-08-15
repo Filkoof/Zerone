@@ -79,10 +79,9 @@ deploy:
   tags:
     - prod
   before_script:
-    -echo 'check1'
-#    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
 #    - eval $(ssh-agent -s)
-#    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - echo "check1" | ssh-add -
 #    - mkdir -p ~/.ssh
 #    - chmod 700 ~/.ssh
 #    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
