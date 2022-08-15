@@ -47,9 +47,9 @@ sonar-scan:
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
-#  only:
-#    - master
-#    - dev
+  only:
+    - master
+    - dev
 
 package:
   stage: package
@@ -79,8 +79,7 @@ deploy:
   before_script:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
-    - echo $SSH_PRIVATE_KEY
-    - echo $SSH_PRIVATE_KEY | ssh-add -
+    - echo "${SSH_PRIVATE_KEY}" | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
