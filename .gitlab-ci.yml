@@ -48,16 +48,16 @@ sonar-scan:
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
-  only:
-    - master
-    - dev
-    - 12_CI/CD
+#  only:
+#    - master
+#    - dev
+#    - 12_CI/CD
 
 package:
   stage: package
-  only:
-    - dev
-    - master
+#  only:
+#    - dev
+#    - master
   script:
     - mvn --settings $MAVEN_SETTINGS package -Dmaven.test.skip=true
   artifacts:
@@ -71,9 +71,9 @@ package:
 
 deploy:
   stage: deploy
-  only:
-    - dev
-    - master
+#  only:
+#    - dev
+#    - master
   before_script:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
