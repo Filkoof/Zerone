@@ -19,7 +19,6 @@ build:
   tags:
     - prod
   script:
-    - echo 'building'
     - mvn compile
   cache:
     paths:
