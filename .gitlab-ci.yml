@@ -12,10 +12,10 @@ stages:
 
 build:
   stage: build
-  only:
-    - dev
-    - master
-    - 12_CI/CD
+#  only:
+#    - dev
+#    - master
+#    - 12_CI/CD
   tags:
     - prod
   script:
