@@ -31,6 +31,7 @@ test:
     - prod
   script:
     - echo 'testing'
+#    - mvn test
 
 sonar-scan:
   stage: sonar-scan
@@ -78,15 +79,16 @@ deploy:
   tags:
     - prod
   before_script:
-    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
-    - eval $(ssh-agent -s)
-    - echo HT1Dq9vdojPG | ssh-add -
+    -echo 'check1'
+#    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+#    - eval $(ssh-agent -s)
+#    - echo "$SSH_PRIVATE_KEY" | ssh-add -
 #    - mkdir -p ~/.ssh
 #    - chmod 700 ~/.ssh
 #    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
 #    - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo 'check'
+    - echo 'check2'
 #    - ssh root@195.161.114.18 "[ ! -f target/zero-0.0.1-SNAPSHOT.jar ] || mv target/zero-0.0.1-SNAPSHOT.jar target/app-build-app.jar"
 #    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
 #    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
