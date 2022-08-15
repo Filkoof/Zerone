@@ -61,7 +61,7 @@ package:
   tags:
     - prod
   script:
-    - mvn package
+    - mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
       - target/*.jar
