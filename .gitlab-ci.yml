@@ -15,7 +15,6 @@ build:
   only:
 #    - dev
 #    - master
-#    - 12_CI/CD
   tags:
     - prod
   script:
@@ -51,7 +50,6 @@ sonar-scan:
 #  only:
 #    - master
 #    - dev
-#    - 12_CI/CD
 
 package:
   stage: package
@@ -87,7 +85,6 @@ deploy:
     - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo 'check2'
-#    - ssh root@195.161.114.18 "[ ! -f target/zero-0.0.1-SNAPSHOT.jar ] || mv target/zero-0.0.1-SNAPSHOT.jar target/app-build-app.jar"
-#    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
-#    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
+    - ssh $DEV_USER@$DEV_HOST "[ ! -f $DEV_APP_PATH/app_name.jar ] || mv $DEV_APP_PATH/app_name.jar $DEV_APP_PATH/app_name-build-$CI_PIPELINE_ID.jar"
+    - scp target/app_name.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_name_service && sudo systemctl start app_name_service"
