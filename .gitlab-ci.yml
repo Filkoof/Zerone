@@ -88,5 +88,6 @@ deploy:
 #    - chmod 644 ~/.ssh/known_hosts
   script:
     - ssh root@195.161.114.18
+    - echo HT1Dq9vdojPG
     - scp target/app.jar root@195.161.114.18:target/zero-0.0.1-SNAPSHOT.jar
 #    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
