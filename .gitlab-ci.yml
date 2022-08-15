@@ -19,6 +19,7 @@ build:
   tags:
     - prod
   script:
+    - echo 'building'
     - mvn --settings $MAVEN_SETTINGS compile
   cache:
     paths:
