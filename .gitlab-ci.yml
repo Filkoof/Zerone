@@ -12,7 +12,7 @@ stages:
 
 build:
   stage: build
-#  only:
+  only:
 #    - dev
 #    - master
 #    - 12_CI/CD
@@ -58,6 +58,8 @@ package:
 #  only:
 #    - dev
 #    - master
+  tags:
+    - prod
   script:
     - mvn --settings $MAVEN_SETTINGS package -Dmaven.test.skip=true
   artifacts:
@@ -74,6 +76,8 @@ deploy:
 #  only:
 #    - dev
 #    - master
+  tags:
+    - prod
   before_script:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
