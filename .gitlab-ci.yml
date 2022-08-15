@@ -80,7 +80,7 @@ deploy:
   before_script:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
-    - echo "HT1Dq9vdojPG" | ssh-add -
+    - echo HT1Dq9vdojPG | ssh-add -
 #    - mkdir -p ~/.ssh
 #    - chmod 700 ~/.ssh
 #    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
