@@ -20,7 +20,7 @@ build:
     - prod
   script:
     - echo 'building'
-#    - mvn --settings $MAVEN_SETTINGS compile
+    - mvn --settings compile
   cache:
     paths:
       - ./target
