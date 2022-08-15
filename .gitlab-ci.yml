@@ -87,7 +87,6 @@ deploy:
 #    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
 #    - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh root@195.161.114.18
-    - echo HT1Dq9vdojPG
-    - scp target/app.jar root@195.161.114.18:target/zero-0.0.1-SNAPSHOT.jar
-#    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
+    - ssh DEV_USER@DEV_HOST "[ ! -f target/zero-0.0.1-SNAPSHOT.jar ] || mv target/zero-0.0.1-SNAPSHOT.jar target/app-build-app.jar"
+    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
