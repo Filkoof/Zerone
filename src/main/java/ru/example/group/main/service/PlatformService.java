@@ -11,17 +11,16 @@ import ru.example.group.main.response.CommonListResponseDto;
 @RequiredArgsConstructor
 public class PlatformService {
 
-  public CommonListResponseDto<LanguageDto> getLanguage() {
-    CommonListResponseDto<LanguageDto> listResponseLanguageDto = new CommonListResponseDto<>();
-    listResponseLanguageDto.setTotal(2);
-    listResponseLanguageDto.setPerPage(1);
-    listResponseLanguageDto.setOffset(0);
-    listResponseLanguageDto.setData(new ArrayList<>());
-    listResponseLanguageDto.getData().add(new LanguageDto(0,"ru"));
-    listResponseLanguageDto.getData().add(new LanguageDto(1,"eng"));
-    listResponseLanguageDto.setTimestamp(LocalDateTime.now());
-    listResponseLanguageDto.setError("");
-    return listResponseLanguageDto;
+  public CommonListResponseDto getLanguage() {
+    //    listResponseLanguageDto.setTotal(2);
+//    listResponseLanguageDto.setPerPage(1);
+//    listResponseLanguageDto.setOffset(0);
+//    listResponseLanguageDto.setData(new ArrayList<>());
+//    listResponseLanguageDto.getData().add(new LanguageDto(0,"ru"));
+//    listResponseLanguageDto.getData().add(new LanguageDto(1,"eng"));
+//    listResponseLanguageDto.setTimestamp(LocalDateTime.now());
+//    listResponseLanguageDto.setError("");
+    return new CommonListResponseDto();
   }
 
 }
