@@ -1,10 +1,16 @@
 package ru.example.group.main.controller;
 
 
+import com.sun.istack.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.ApiResponseDto;
 import ru.example.group.main.dto.UserRegisterDto;
 import ru.example.group.main.service.UserService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class RegistrationController {
@@ -16,8 +22,8 @@ public class RegistrationController {
     }
 
     @PostMapping("/api/v1/account/register")
-    public ApiResponseDto createUser(@RequestBody UserRegisterDto userRegisterDto) throws Exception {
-        return userService.createUser(userRegisterDto);
+    public ResponseEntity<ApiResponseDto> createUser(@RequestBody UserRegisterDto userRegisterDto, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return new ResponseEntity<>(userService.createUser(request,response, userRegisterDto), HttpStatus.OK);
     }
 
 }

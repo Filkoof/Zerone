@@ -34,4 +34,9 @@ public class AuthUserController {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
+    @GetMapping("/api/v1/platform/languages")
+    public String getLanguagesList(){
+        return HttpStatus.OK.toString();
+    }
+
 }

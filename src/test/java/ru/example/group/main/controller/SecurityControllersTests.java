@@ -14,12 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SecurityControllers {
+public class SecurityControllersTests {
 
     private final MockMvc mockMvc;
 
     @Autowired
-    public SecurityControllers(MockMvc mockMvc) {
+    public SecurityControllersTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 

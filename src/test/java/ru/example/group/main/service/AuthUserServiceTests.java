@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import org.apache.catalina.connector.Request;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +34,5 @@ class AuthUserServiceTests {
         assertTrue(authLoginResponseDto.getData().getEMail().equals("test@test.tu"));
     }
 
-    @Test
-    void getAuthLogoutResponse() {
-    }
+
 }

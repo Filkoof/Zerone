@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.example.group.main.entity.UserEntity;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -25,6 +27,8 @@ public class SocialNetUserReposityTests {
         assertNotNull(user);
         assertThat(user.getCity().equals("Suzdal"));
     }
+
+
 
 
 

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.UserRoleEntity;
 
 @Repository
-public interface UserRoleEntityRepository extends JpaRepository<UserRoleEntity, Integer> {
+public interface UserRoleEntityRepository extends JpaRepository<UserRoleEntity, Long> {
+
+    UserRoleEntity findUserRoleEntitiesByUserRole(String role);
 
 }

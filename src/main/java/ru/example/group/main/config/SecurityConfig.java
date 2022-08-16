@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm").permitAll()
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
+                //.antMatchers("/api/v1/platform/languages").permitAll()
                 .antMatchers( "**").authenticated()
                 .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

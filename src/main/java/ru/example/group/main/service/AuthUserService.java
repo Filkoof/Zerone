@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
+import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
@@ -43,14 +44,15 @@ public class AuthUserService {
 
     public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
         CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
+        authLogoutResponseDto.setError("");
         try {
             setJwtBlackList(request);
         } catch (Exception e) {
             e.printStackTrace();
             authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
+            handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException(authLogoutResponseDto.getError()));
         }
         authLogoutResponseDto.setData(new LogoutResponseDataDto());
-        authLogoutResponseDto.setError("");
         authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
         return authLogoutResponseDto;
     }
