@@ -13,8 +13,8 @@ stages:
 build:
   stage: build
   only:
-#    - dev
-#    - master
+    - dev
+    - master
   tags:
     - prod
   script:
@@ -47,15 +47,12 @@ sonar-scan:
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
-  only:
-    - master
-    - dev
 
 package:
   stage: package
-#  only:
-#    - dev
-#    - master
+  only:
+    - dev
+    - master
   tags:
     - prod
   script:
@@ -71,9 +68,9 @@ package:
 
 deploy:
   stage: deploy
-#  only:
-#    - dev
-#    - master
+  only:
+    - dev
+    - master
   tags:
     - prod
   before_script:
