@@ -62,7 +62,7 @@ package:
     - mvn package -Dmaven.test.skip=true
   artifacts:
     paths:
-      - target/app.jar
+      - target/*.jar
   cache:
     policy: pull
     paths:
@@ -85,6 +85,6 @@ deploy:
     - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh $DEV_USER@$DEV_HOST "[ ! -f $DEV_APP_PATH/app.jar ] || mv $DEV_APP_PATH/app.jar $DEV_APP_PATH/app-build-$CI_PIPELINE_ID.jar"
-    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - ssh $DEV_USER@$DEV_HOST "[ ! -f $DEV_APP_PATH/zero-0.0.1-SNAPSHOT.jar ] || mv $DEV_APP_PATH/zero-0.0.1-SNAPSHOT.jar $DEV_APP_PATH/app-build-$CI_PIPELINE_ID.jar"
+    - scp target/zero-0.0.1-SNAPSHOT.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
     - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
