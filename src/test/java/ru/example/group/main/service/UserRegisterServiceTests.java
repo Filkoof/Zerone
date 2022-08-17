@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.ApiResponseDto;
 import ru.example.group.main.dto.RegisterConfirmDto;
 import ru.example.group.main.dto.UserRegisterDto;
@@ -16,9 +17,7 @@ import ru.example.group.main.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-@TestPropertySource("/application-test.yml")
-class UserRegisterServiceTests {
+class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 
     private final UserRegisterService userRegisterService;
     private final UserRepository userRepository;

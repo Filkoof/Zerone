@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 
@@ -14,10 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestPropertySource("/application-test.yml")
-class MailSenderControllerTests {
+class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
 
     private final UserRepository userRepository;
     private final MockMvc mockMvc;

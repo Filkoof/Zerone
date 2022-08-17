@@ -17,7 +17,6 @@ import ru.example.group.main.security.JWTRequestFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JWTRequestFilter filter;

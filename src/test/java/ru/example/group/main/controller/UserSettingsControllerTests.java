@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
@@ -17,10 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestPropertySource("/application-test.yml")
-class UserSettingsControllerTests {
+class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     private final static String EMAIL = "test@test.tu";
     private final MockMvc mockMvc;
     private final UserRepository userRepository;

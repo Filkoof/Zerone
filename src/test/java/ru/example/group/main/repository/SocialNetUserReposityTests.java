@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
-@TestPropertySource("/application-test.yml")
-public class SocialNetUserReposityTests {
+public class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
 
     private SocialNetUserRepository socialNetUserRepository;
 

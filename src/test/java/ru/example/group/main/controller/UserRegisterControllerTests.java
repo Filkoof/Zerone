@@ -10,19 +10,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestPropertySource("/application-test.yml")
-class UserRegisterControllerTests {
+class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
 
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
@@ -58,6 +57,7 @@ class UserRegisterControllerTests {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertTrue( userRepository.findByEmail(email) != null);
     }
 
     @Test

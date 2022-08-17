@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
+import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.ContactConfirmationPayloadDto;
 import ru.example.group.main.entity.UserEntity;
 
@@ -18,9 +19,7 @@ import java.net.http.HttpResponse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-@TestPropertySource("/application-test.yml")
-public class JwtTests {
+public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     private final static String EMAIL = "test@test.tu";
     private final SocialNetUserRegisterService socialNetUserRegisterService;
