@@ -31,6 +31,7 @@ mail:
 
 config:
   domain: "195.161.114.18:8082"
+  local: "localhost:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26

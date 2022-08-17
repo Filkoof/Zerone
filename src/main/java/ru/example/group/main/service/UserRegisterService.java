@@ -24,7 +24,7 @@ import java.util.UUID;
 
 
 @Service
-public class UserService {
+public class UserRegisterService {
 
     @Value("${mail.hostBack}")
     private String mailHost;
@@ -37,7 +37,7 @@ public class UserService {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public UserService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, HandlerExceptionResolver handlerExceptionResolver) {
+    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, HandlerExceptionResolver handlerExceptionResolver) {
         this.userRepository = userRepository;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.passwordEncoder = passwordEncoder;
@@ -57,19 +57,8 @@ public class UserService {
                         "http://"+ mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterDto.getEmail() + "\n" +
                         "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
         String title = "Код активации аккаунта Зерон";
-        emailSend(request, response, userRegisterDto.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(request, response, userRegisterDto.getEmail(), title, message);
         return newUserAddToDB(request, response, userRegisterDto, code);
-    }
-
-    private void emailSend(HttpServletRequest request, HttpServletResponse response, String email, String title, String message) throws EmailNotSentException {
-        try {
-            if (!StringUtil.isEmpty(email)) {
-                zeroneMailSenderService.send(email, title, message);
-            }
-        } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, new EmailNotSentException("Ошибка отправки письма с темой: "
-                    + title + " Ошибка: " + e.getMessage()));
-        }
     }
 
     private boolean newUserAddToDB(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto, String code) throws NewUserWasNotSavedToDBException {
@@ -117,7 +106,7 @@ public class UserService {
                         "Ваш аккаунт успешно активирован. Добро пожаловать в социальную сеть Зерон. " +
                         "\n\nСпасибо!";
         String title = "Ваш аккаунт Зерон успешно активирован.";
-        emailSend(request, response, user.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
     }
 
     public ApiResponseDto createUser(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto) throws Exception {

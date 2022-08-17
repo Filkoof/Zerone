@@ -1,7 +1,6 @@
 package ru.example.group.main.service;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +12,15 @@ import ru.example.group.main.dto.ApiResponseDto;
 import ru.example.group.main.dto.RegisterConfirmDto;
 import ru.example.group.main.dto.UserRegisterDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
 import ru.example.group.main.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestPropertySource("/application-test.yml")
-class UserServiceTests {
+class UserRegisterServiceTests {
 
-    private final UserService userService;
+    private final UserRegisterService userRegisterService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -31,8 +28,8 @@ class UserServiceTests {
     private String email;
 
     @Autowired
-    UserServiceTests(UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    UserRegisterServiceTests(UserRegisterService userRegisterService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRegisterService = userRegisterService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -64,19 +61,19 @@ class UserServiceTests {
 
     @Test
     void createUser() throws Exception {
-        ApiResponseDto apiResponseDto = userService.createUser(null, null, createUserRegisterDto());
+        ApiResponseDto apiResponseDto = userRegisterService.createUser(null, null, createUserRegisterDto());
         assertTrue(apiResponseDto.getMessage().equals("User created"));
     }
 
     @Test
     void activateUser() throws Exception {
-        ApiResponseDto apiResponseDto = userService.createUser(null, null, createUserRegisterDto());
+        ApiResponseDto apiResponseDto = userRegisterService.createUser(null, null, createUserRegisterDto());
         assertTrue(apiResponseDto.getMessage().equals("User created"));
         String code = userRepository.findByEmail(email).getConfirmationCode();
         RegisterConfirmDto registerConfirmDto = new RegisterConfirmDto();
         registerConfirmDto.setUserId(email);
         registerConfirmDto.setToken(code);
-        assertTrue(userService.activateUser(registerConfirmDto,null, null).getEMail().equals(email));
+        assertTrue(userRegisterService.activateUser(registerConfirmDto,null, null).getEMail().equals(email));
 
     }
 }

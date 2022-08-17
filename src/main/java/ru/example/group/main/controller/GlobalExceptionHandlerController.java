@@ -70,4 +70,10 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity(new CommonResponseDto(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmailOrPasswordChangeException.class)
+    public ResponseEntity handleEmailChangeException(EmailOrPasswordChangeException e){
+        log.info(e.getMessage());
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
 }

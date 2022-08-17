@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestPropertySource("/application-test.yml")
-class AuthUserServiceTests {
+class AuthUserRegisterServiceTests {
 
     private final AuthUserService authUserService;
 
     @Autowired
-    AuthUserServiceTests(AuthUserService authUserService) {
+    AuthUserRegisterServiceTests(AuthUserService authUserService) {
         this.authUserService = authUserService;
     }
 

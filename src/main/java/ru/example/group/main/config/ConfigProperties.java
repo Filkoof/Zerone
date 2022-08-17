@@ -12,4 +12,5 @@ public class ConfigProperties {
     private String authorization;
     private String secret;
     private String zeroneEmail;
+    private String local;
 }

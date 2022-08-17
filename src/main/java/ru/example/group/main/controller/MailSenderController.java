@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.RegisterConfirmDto;
 import ru.example.group.main.dto.RegistrationCompleteDto;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
-import ru.example.group.main.service.UserService;
+import ru.example.group.main.service.UserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,15 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class MailSenderController {
 
-    private final UserService userService;
+    private final UserRegisterService userRegisterService;
 
-    public MailSenderController(UserService userService) {
-        this.userService = userService;
+    public MailSenderController(UserRegisterService userRegisterService) {
+        this.userRegisterService = userRegisterService;
     }
 
     @PostMapping("/api/v1/account/register/confirm")
     public RegistrationCompleteDto activate(@RequestBody RegisterConfirmDto registerConfirmDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
-         return userService.activateUser(registerConfirmDto, request, response);
+         return userRegisterService.activateUser(registerConfirmDto, request, response);
     }
 
 }

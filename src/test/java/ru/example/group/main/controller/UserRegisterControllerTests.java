@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.yml")
-class RegistrationControllerTests {
+class UserRegisterControllerTests {
 
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
@@ -31,7 +31,7 @@ class RegistrationControllerTests {
     private String email;
 
     @Autowired
-    RegistrationControllerTests(UserRepository userRepository, MockMvc mockMvc) {
+    UserRegisterControllerTests(UserRepository userRepository, MockMvc mockMvc) {
         this.userRepository = userRepository;
         this.mockMvc = mockMvc;
     }
