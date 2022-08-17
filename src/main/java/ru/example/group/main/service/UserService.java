@@ -1,12 +1,13 @@
 package ru.example.group.main.service;
 
 import liquibase.util.StringUtil;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import ru.example.group.main.dto.ApiResponseDto;
-import ru.example.group.main.dto.RegisterConfirmDto;
 import ru.example.group.main.dto.RegistrationCompleteDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.dto.UserRegisterDto;
@@ -34,26 +35,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean addUser(UserRegisterDto userRegisterDto) {
+    public boolean addUser(UserRegisterDto userRegisterDto) throws Exception {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterDto.getEmail());
         if (userFromDB != null) {
             return false;
         }
         UserEntity user = new UserEntity();
-        String code = UUID.randomUUID().toString().substring(0,24);
-        try {
-            if (!StringUtil.isEmpty(userRegisterDto.getEmail())) {
-                String message =
-                        "Hello, %s! \n" +
-                                "Welcome to Sweater. Please, visit next link: \n\nhttp://" + mailHost + "/registration/complete?token=" + code
-                                + "&userId=" + userRegisterDto.getEmail() +
-                                "\n\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
-                zeroneMailSender.send(userRegisterDto.getEmail(), "Activation Code from Zerone", message);
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
         try{
             user.setStatus(true);
             user.setFirstName(userRegisterDto.getFirstName());
@@ -62,28 +49,42 @@ public class UserService {
             user.setEmail(userRegisterDto.getEmail());
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
-            user.setConfirmationCode(code);
+            user.setConfirmationCode(UUID.randomUUID().toString().substring(0,24));
             user.setPhoto("preliminary photo");
             userRepository.save(user);
         } catch (Exception e){
-            e.printStackTrace();
             return false;
+        }
+
+
+        try {
+            if (!StringUtil.isEmpty(user.getEmail())) {
+                String message = String.format(
+                        "Hello, %s! \n" +
+                                "Welcome to Sweater. Please, visit next link: http://" + mailHost + "/api/v1/account/registration_complete/%s",
+                        user.getFirstName(),
+                        user.getConfirmationCode()
+                );
+                zeroneMailSender.send(user.getEmail(), "Activation Code from Zerone", message);
+            }
+        } catch (Exception e){
+
         }
 
         return true;
     }
 
-    public RegistrationCompleteDto activateUser(RegisterConfirmDto registerConfirmDto) {
-        UserEntity user = userRepository.findByConfirmationCode(registerConfirmDto.getToken());
+    public RegistrationCompleteDto activateUser(String code) {
+        UserEntity user = userRepository.findByConfirmationCode(code);
         RegistrationCompleteDto registrationCompleteDto = new RegistrationCompleteDto();
-        if (user == null || !user.getEmail().equals(registerConfirmDto.getUserId())) {
+        if (user == null) {
             return registrationCompleteDto;
         }
         user.setConfirmationCode(null);
         user.setApproved(true);
         userRepository.save(user);
         registrationCompleteDto.setEMail(user.getEmail());
-        registrationCompleteDto.setKey(registerConfirmDto.getToken());
+        registrationCompleteDto.setKey(code);
         return registrationCompleteDto;
     }
 
