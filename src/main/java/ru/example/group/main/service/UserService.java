@@ -31,20 +31,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final ZeroneMailSender zeroneMailSender;
+    private final ZeroneMailSenderService zeroneMailSenderService;
 
     private final PasswordEncoder passwordEncoder;
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public UserService(UserRepository userRepository, ZeroneMailSender zeroneMailSender, PasswordEncoder passwordEncoder, HandlerExceptionResolver handlerExceptionResolver) {
+    public UserService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, HandlerExceptionResolver handlerExceptionResolver) {
         this.userRepository = userRepository;
-        this.zeroneMailSender = zeroneMailSender;
+        this.zeroneMailSenderService = zeroneMailSenderService;
         this.passwordEncoder = passwordEncoder;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    public boolean addUser(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
+    private boolean addUser(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterDto.getEmail());
         if (userFromDB != null) {
             return false;
@@ -64,7 +64,7 @@ public class UserService {
     private void emailSend(HttpServletRequest request, HttpServletResponse response, String email, String title, String message) throws EmailNotSentException {
         try {
             if (!StringUtil.isEmpty(email)) {
-                zeroneMailSender.send(email, title, message);
+                zeroneMailSenderService.send(email, title, message);
             }
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, new EmailNotSentException("Ошибка отправки письма с темой: "

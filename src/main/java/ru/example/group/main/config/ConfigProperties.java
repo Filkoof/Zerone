@@ -11,4 +11,5 @@ public class ConfigProperties {
     private Integer tokenValidityHours;
     private String authorization;
     private String secret;
+    private String zeroneEmail;
 }

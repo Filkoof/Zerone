@@ -3,10 +3,12 @@ package ru.example.group.main.controller;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
@@ -19,12 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource("/application-test.yml")
 class RegistrationControllerTests {
 
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
 
-    private final static String EMAIL = "testCreate@test.tu";
+    @Value("${config.zeroneEmail}")
+    private String email;
 
     @Autowired
     RegistrationControllerTests(UserRepository userRepository, MockMvc mockMvc) {
@@ -34,7 +38,7 @@ class RegistrationControllerTests {
 
     @Test
     void createUserCorrect() throws Exception {
-        UserEntity user = userRepository.findByEmail(EMAIL);
+        UserEntity user = userRepository.findByEmail(email);
         if (user != null){
             userRepository.delete(user);
         }
@@ -42,7 +46,7 @@ class RegistrationControllerTests {
         mockMvc.perform(post("/api/v1/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
-                                "\t\"email\": \"" + EMAIL + "\",\n" +
+                                "\t\"email\": \"" + email + "\",\n" +
                                 "\t\"firstName\": \"testCreate\",\n" +
                                 "\t\"lastName\": \"testCreate\",\n" +
                                 "\t\"passwd1\": \"11111111\",\n" +
@@ -59,10 +63,10 @@ class RegistrationControllerTests {
     @Test
     void createUserAlreadyExist() throws Exception {
 
-        UserEntity user = userRepository.findByEmail(EMAIL);
+        UserEntity user = userRepository.findByEmail(email);
         if (user == null){
             user = new UserEntity();
-            user.setEmail(EMAIL);
+            user.setEmail(email);
             user.setStatus(true);
             user.setFirstName("test");
             user.setLastName("test");
@@ -77,7 +81,7 @@ class RegistrationControllerTests {
         mockMvc.perform(post("/api/v1/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
-                                "\t\"email\": \"" + EMAIL + "\",\n" +
+                                "\t\"email\": \"" + email + "\",\n" +
                                 "\t\"firstName\": \"testCreate\",\n" +
                                 "\t\"lastName\": \"testCreate\",\n" +
                                 "\t\"passwd1\": \"11111111\",\n" +
@@ -96,7 +100,7 @@ class RegistrationControllerTests {
         mockMvc.perform(post("/api/v1/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
-                                "\t\"emaisal\": \"" + EMAIL + "\",\n" +
+                                "\t\"emaisal\": \"" + email + "\",\n" +
                                 "\t\"firastName\": \"testCreate\",\n" +
                                 "\t\"lasdtName\": \"testCreate\",\n" +
                                 "\t\"passwd1\": \"11111111\",\n" +
@@ -112,7 +116,7 @@ class RegistrationControllerTests {
 
     @AfterEach
     void tearDown() {
-        UserEntity user = userRepository.findByEmail(EMAIL);
+        UserEntity user = userRepository.findByEmail(email);
         if (user != null){
             userRepository.delete(user);
         }

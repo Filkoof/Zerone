@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.TestPropertySource;
 import ru.example.group.main.dto.ContactConfirmationPayloadDto;
 import ru.example.group.main.entity.UserEntity;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@TestPropertySource("/application-test.yml")
 public class JwtTests {
 
     private final static String EMAIL = "test@test.tu";
@@ -33,7 +35,7 @@ public class JwtTests {
     }
 
     @Test
-    void jwtLoginAndTokenValidation() {
+    void jwtLogin() {
         ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
         payload.setPassword("11111111");
         payload.setEmail(EMAIL);
@@ -41,7 +43,17 @@ public class JwtTests {
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         assertNotNull(userDetails);
         assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken(), userDetails));
-        assertTrue(jwtUtilService.generateToken(userDetails).equals(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken()));
+    }
+
+    @Test
+    void jwtTokenValidation() {
+        ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
+        payload.setPassword("11111111");
+        payload.setEmail(EMAIL);
+        SocialNetUserDetails userDetails =
+                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+        assertNotNull(userDetails);
+        assertTrue(jwtUtilService.validateToken(jwtUtilService.generateToken(userDetails), userDetails));
     }
 
     @Test

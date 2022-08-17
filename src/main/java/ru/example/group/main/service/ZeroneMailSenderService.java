@@ -8,11 +8,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 @Service
 @Component
-public class ZeroneMailSender {
+public class ZeroneMailSenderService {
 
     private final JavaMailSender mailSender;
 
-    public ZeroneMailSender(JavaMailSender mailSender) {
+    public ZeroneMailSenderService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -20,13 +20,14 @@ public class ZeroneMailSender {
     private String username;
 
 
-    public void send(String emailTo, String subject, String message) {
+    public boolean send(String emailTo, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(username);
         mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
         mailSender.send(mailMessage);
+        return true;
     }
 
 }

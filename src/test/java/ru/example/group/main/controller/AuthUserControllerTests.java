@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource("/application-test.yml")
 class AuthUserControllerTests {
 
     private final MockMvc mockMvc;
@@ -40,14 +42,6 @@ class AuthUserControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void handleLogoutApi() throws Exception {
-        mockMvc.perform(get("/api/v1/auth/logout"))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.error").value(""))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
     @Test
     void handleFrontLogout() throws Exception {
