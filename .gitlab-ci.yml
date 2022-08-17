@@ -30,7 +30,7 @@ test:
     - prod
   script:
     - echo 'testing'
-#    - mvn test
+#    - mvn test (раскоммитить тут)
 
 sonar-scan:
   stage: sonar-scan
