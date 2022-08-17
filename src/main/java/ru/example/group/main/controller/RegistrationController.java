@@ -14,18 +14,18 @@ import ru.example.group.main.service.UserService;
 @RestController
 public class RegistrationController {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    private final UserService userService;
+  private final UserService userService;
 
-    public RegistrationController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
+  public RegistrationController(UserRepository userRepository, UserService userService) {
+    this.userRepository = userRepository;
+    this.userService = userService;
+  }
 
-    @PostMapping("/api/v1/account/register")
-    public ApiResponseDto createUser(@RequestBody UserRegisterDto userRegisterDto) throws Exception {
-        return userService.createUser(userRegisterDto);
-    }
+  @PostMapping("/api/v1/account/register")
+  public ApiResponseDto createUser(@RequestBody UserRegisterDto userRegisterDto) throws Exception {
+    return userService.createUser(userRegisterDto);
+  }
 
 }

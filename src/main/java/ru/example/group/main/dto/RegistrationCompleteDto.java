@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 public class RegistrationCompleteDto {
-    private String key;
-    @JsonProperty("eMail")
-    private String eMail;
+
+  private String key;
+  @JsonProperty("eMail")
+  private String eMail;
 }

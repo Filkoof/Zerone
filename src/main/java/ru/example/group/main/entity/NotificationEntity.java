@@ -1,6 +1,6 @@
 package ru.example.group.main.entity;
 
-import javax.persistence.Column;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,18 +14,25 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "user_role")
-public class UserRoleEntity {
-
+@Table(name = "notifications")
+public class NotificationEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private String userRole;
+  @ManyToOne
+  @JoinColumn(name = "type_id")
+  private NotificationTypeEntity type;
+
+  private LocalDateTime sentTime;
 
   @ManyToOne
-  @JoinColumn(name = "user_for_role_id", referencedColumnName = "id")
-  private UserEntity userForRole;
+  @JoinColumn(name = "person_id")
+  private UserEntity user;
+
+  private Long entityId;
+
+
+  private boolean status;
 }

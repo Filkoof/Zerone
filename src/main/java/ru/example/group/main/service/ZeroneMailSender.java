@@ -10,24 +10,24 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Component
 public class ZeroneMailSender {
 
-    private final JavaMailSender mailSender;
+  private final JavaMailSender mailSender;
 
-    public ZeroneMailSender(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+  public ZeroneMailSender(JavaMailSender mailSender) {
+    this.mailSender = mailSender;
+  }
 
-    @Value("${spring.mail.username}")
-    private String username;
+  @Value("${spring.mail.username}")
+  private String username;
 
 
-    public void send(String emailTo, String subject, String message) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
+  public void send(String emailTo, String subject, String message) {
+    SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        mailMessage.setFrom(username);
-        mailMessage.setTo(emailTo);
-        mailMessage.setSubject(subject);
-        mailMessage.setText(message);
-        mailSender.send(mailMessage);
-    }
+    mailMessage.setFrom(username);
+    mailMessage.setTo(emailTo);
+    mailMessage.setSubject(subject);
+    mailMessage.setText(message);
+    mailSender.send(mailMessage);
+  }
 
 }
