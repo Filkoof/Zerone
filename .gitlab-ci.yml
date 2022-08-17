@@ -87,5 +87,5 @@ deploy:
   script:
     - echo $DEV_APP_PATH
     - ssh $DEV_USER@$DEV_HOST "[ ! -f $DEV_APP_PATH ] || mv $DEV_APP_PATH $DEV_APP_PATH/app.jar"
-    - scp target/app.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - scp target/zero-0.0.1-SNAPSHOT.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
     - ssh $DEV_USER@$DEV_HOST "sudo systemctl stop app_service && sudo systemctl start app_service"
