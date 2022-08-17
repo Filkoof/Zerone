@@ -1,13 +1,38 @@
+image: maven:latest
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
+
 stages:
-  #  - build
+  - build
+  - test
   - sonar-scan
-#  - test
-#  - deploy
+  - package
+  - deploy
 
-#stage_build:
-#  stage: build
+build:
+  stage: build
+  only:
+    - dev
+    - master
+  tags:
+    - prod
+  script:
+    - mvn compile
+  cache:
+    paths:
+      - ./target
+      - ./.m2
 
-sonarqube-check:
+test:
+  stage: test
+  tags:
+    - prod
+  script:
+    - echo 'testing'
+#    - mvn test
+
+sonar-scan:
   stage: sonar-scan
   image: maven:3.8.3-openjdk-17
   variables:
@@ -17,15 +42,46 @@ sonarqube-check:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
+  tags:
+    - prod
   script:
     - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
   allow_failure: true
-  only:
-    - master
-    - dev
 
-#testing:
-#  stage: test
-#
-#deploy:
-#  stage: deploy
+package:
+  stage: package
+  only:
+    - dev
+    - master
+  tags:
+    - prod
+  script:
+    - mvn package -Dmaven.test.skip=true
+  artifacts:
+    paths:
+      - target/*.jar
+  cache:
+    policy: pull
+    paths:
+      - ./target
+      - ./.m2
+
+deploy:
+  stage: deploy
+  only:
+    - dev
+    - master
+  tags:
+    - prod
+  before_script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - echo "${SSH_PRIVATE_KEY}" | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEV_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - scp target/zero-0.0.1-SNAPSHOT.jar $DEV_USER@$DEV_HOST:$DEV_APP_PATH/
+    - ssh $DEV_USER@$DEV_HOST "mv zero-0.0.1-SNAPSHOT.jar app.jar"
+    - ssh $DEV_USER@$DEV_HOST "docker-compose build && docker-compose up"
