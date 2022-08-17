@@ -224,6 +224,11 @@ databaseChangeLog:
                   type: varchar(10)
                   constraints:
                     nullable: false
+              - column:
+                  name: sender_id
+                  type: bigint
+                  constraints:
+                    nullable: false
         - createTable:
             tableName: dialogs
             columns:
@@ -429,7 +434,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: type_id
-                  type: smallint
+                  type: bigint
                   constraints:
                     nullable: false
               - column:
