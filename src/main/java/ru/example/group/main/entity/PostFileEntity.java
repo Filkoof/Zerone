@@ -1,6 +1,5 @@
 package ru.example.group.main.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,18 +13,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "user_role")
-public class UserRoleEntity {
-
+@Table(name = "post_files")
+public class PostFileEntity{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private String userRole;
-
   @ManyToOne
-  @JoinColumn(name = "user_for_role_id", referencedColumnName = "id")
-  private UserEntity userForRole;
+  @JoinColumn(name = "post_id")
+  private PostEntity post;
+
+  private String path;
+
 }
