@@ -32,11 +32,8 @@ config:
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
 
-
-
-
-
-
-
-
-
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: debug
