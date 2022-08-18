@@ -13,12 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryTests extends AbstractAllTestH2ContextLoad {
 
     private final static String EMAIL = "test@test.tu";
-    private final UserRepository userRepository;
-
     @Autowired
-    UserRepositoryTests(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
     @Test
     void findByEmail() {

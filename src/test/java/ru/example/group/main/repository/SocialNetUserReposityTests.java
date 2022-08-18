@@ -14,12 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
 
-    private SocialNetUserRepository socialNetUserRepository;
-
     @Autowired
-    public SocialNetUserReposityTests(SocialNetUserRepository socialNetUserRepository) {
-        this.socialNetUserRepository = socialNetUserRepository;
-    }
+    private SocialNetUserRepository socialNetUserRepository;
 
     @Test
     void findUserByEmailTest() {

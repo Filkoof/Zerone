@@ -22,16 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     private final static String EMAIL = "test@test.tu";
-    private final SocialNetUserRegisterService socialNetUserRegisterService;
-    private final SocialNetUserDetailsService socialNetUserDetailsService;
-    private final JWTUtilService jwtUtilService;
-
     @Autowired
-    public JwtTests(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, JWTUtilService jwtUtilService) {
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-        this.jwtUtilService = jwtUtilService;
-    }
+    private SocialNetUserRegisterService socialNetUserRegisterService;
+    @Autowired
+    private SocialNetUserDetailsService socialNetUserDetailsService;
+    @Autowired
+    private JWTUtilService jwtUtilService;
 
     @Test
     void jwtLogin() {

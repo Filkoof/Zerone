@@ -31,8 +31,8 @@ public class SocialNetUserRegisterService {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    public CommonResponseDto<UserLoginDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
-        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserLoginDataResponseDto>();
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                     payload.getPassword()));
@@ -47,8 +47,8 @@ public class SocialNetUserRegisterService {
         return authLoginResponseDto;
     }
 
-    private CommonResponseDto<UserLoginDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
-        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserLoginDataResponseDto>();
+    private CommonResponseDto<UserDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
         ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());
@@ -63,8 +63,8 @@ public class SocialNetUserRegisterService {
         String jwtToken = null;
         jwtToken = jwtUtilService.generateToken(userDetails);
         response.setResult(jwtToken);
-        response.setUserLoginDataResponseDto(socialNetUserDetailsService.setUserDtoFromAuth(userDetails.getUser(), jwtToken));
-        authLoginResponseDto.setData(response.getUserLoginDataResponseDto());
+        response.setUserDataResponseDto(socialNetUserDetailsService.setUserDataResponseDto(userDetails.getUser(), jwtToken));
+        authLoginResponseDto.setData(response.getUserDataResponseDto());
         authLoginResponseDto.setError("");
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         return authLoginResponseDto;

@@ -2,7 +2,10 @@ package ru.example.group.main.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 
@@ -12,14 +15,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AuthUserControllerTests extends AbstractAllTestH2ContextLoad{
-
-    private final MockMvc mockMvc;
+class AuthUserControllerTests  extends AbstractAllTestH2ContextLoad {
 
     @Autowired
-    AuthUserControllerTests(MockMvc mockMvc) {
-        this.mockMvc = mockMvc;
-    }
+    private MockMvc mockMvc;
 
     @Test
     void handleLoginApi() throws Exception {

@@ -4,15 +4,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
+import ru.example.group.main.service.ZeroneMailSenderService;
 
 import java.time.LocalDateTime;
 
@@ -23,17 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
 
-    private final UserRepository userRepository;
-    private final MockMvc mockMvc;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Value("${config.zeroneEmail}")
     private String email;
 
-    @Autowired
-    UserRegisterControllerTests(UserRepository userRepository, MockMvc mockMvc) {
-        this.userRepository = userRepository;
-        this.mockMvc = mockMvc;
-    }
 
     @Test
     void createUserCorrect() throws Exception {

@@ -16,12 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class SecurityControllersTests extends AbstractAllTestH2ContextLoad {
 
-    private final MockMvc mockMvc;
-
     @Autowired
-    public SecurityControllersTests(MockMvc mockMvc) {
-        this.mockMvc = mockMvc;
-    }
+    private MockMvc mockMvc;
 
     @Test
     public void accessOnlyAuthorizedPageFailTest() throws Exception {

@@ -19,19 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 
-    private final UserRegisterService userRegisterService;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRegisterService userRegisterService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${config.zeroneEmail}")
     private String email;
 
-    @Autowired
-    UserRegisterServiceTests(UserRegisterService userRegisterService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRegisterService = userRegisterService;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     UserRegisterDto createUserRegisterDto(){
         UserRegisterDto userRegisterDto = new UserRegisterDto();

@@ -1,6 +1,5 @@
 package ru.example.group.main.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,8 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
-    public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
-        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
+    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         try {
             authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
         } catch (Exception e) {

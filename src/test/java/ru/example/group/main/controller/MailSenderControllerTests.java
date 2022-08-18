@@ -17,17 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
 
-    private final UserRepository userRepository;
-    private final MockMvc mockMvc;
-
     @Autowired
-    MailSenderControllerTests(UserRepository userRepository, MockMvc mockMvc) {
-        this.userRepository = userRepository;
-        this.mockMvc = mockMvc;
-    }
+    private UserRepository userRepository;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
-    void activateUserTrueAndBadRequestCatchDuringConfirmationEmailSendAfterActivationDueNotRealEmail() throws Exception {
+    void activateUserTrue() throws Exception {
         UserEntity user = userRepository.findByEmail("test@test.tu");
         user.setConfirmationCode("test");
         userRepository.save(user);
@@ -43,7 +39,7 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
                 .andExpect(jsonPath("$.key").value("test"))
                 .andExpect(jsonPath("$.eMail").value("test@test.tu"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
     }
 

@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.controller.GlobalExceptionHandlerController;
-import ru.example.group.main.dto.UserLoginDataResponseDto;
+import ru.example.group.main.dto.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.dto.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
@@ -33,27 +33,27 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("user not found doh!");
     }
 
-    public UserLoginDataResponseDto setUserDtoFromAuth(UserEntity user, String token) {
-        UserLoginDataResponseDto userLoginDataResponseDto = new UserLoginDataResponseDto();
+    public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
+        UserDataResponseDto userDataResponseDto = new UserDataResponseDto();
 
-        userLoginDataResponseDto.setAbout(user.getAbout());
-        userLoginDataResponseDto.setBirthDate(user.getBirthDate());
-        userLoginDataResponseDto.setBlocked(user.isBlocked());
-        userLoginDataResponseDto.setCity(user.getCity());
-        userLoginDataResponseDto.setCountry(user.getCountry());
-        userLoginDataResponseDto.setPassword(null);
-        userLoginDataResponseDto.setRegDate(user.getRegDate());
-        userLoginDataResponseDto.setDeleted(user.isDeleted());
-        userLoginDataResponseDto.setEMail(user.getEmail());
-        userLoginDataResponseDto.setFirstName(user.getFirstName());
-        userLoginDataResponseDto.setId(user.getId());
-        userLoginDataResponseDto.setLastName(user.getLastName());
-        userLoginDataResponseDto.setPhone(user.getPhone());
-        userLoginDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
+        userDataResponseDto.setAbout(user.getAbout());
+        userDataResponseDto.setBirthDate(user.getBirthDate());
+        userDataResponseDto.setBlocked(user.isBlocked());
+        userDataResponseDto.setCity(user.getCity());
+        userDataResponseDto.setCountry(user.getCountry());
+        userDataResponseDto.setPassword(null);
+        userDataResponseDto.setRegDate(user.getRegDate());
+        userDataResponseDto.setDeleted(user.isDeleted());
+        userDataResponseDto.setEMail(user.getEmail());
+        userDataResponseDto.setFirstName(user.getFirstName());
+        userDataResponseDto.setId(user.getId());
+        userDataResponseDto.setLastName(user.getLastName());
+        userDataResponseDto.setPhone(user.getPhone());
+        userDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
         MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
-        userLoginDataResponseDto.setMessagePermissions(messagesPermission);
-        userLoginDataResponseDto.setToken(token);
+        userDataResponseDto.setMessagePermissions(messagesPermission);
+        userDataResponseDto.setToken(token);
 
-        return userLoginDataResponseDto;
+        return userDataResponseDto;
     }
 }

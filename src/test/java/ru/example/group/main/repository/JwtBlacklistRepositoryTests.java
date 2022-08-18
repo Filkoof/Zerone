@@ -14,12 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class JwtBlacklistRepositoryTests extends AbstractAllTestH2ContextLoad {
 
-    private final JwtBlacklistRepository jwtBlacklistRepository;
-
     @Autowired
-    JwtBlacklistRepositoryTests(JwtBlacklistRepository jwtBlacklistRepository) {
-        this.jwtBlacklistRepository = jwtBlacklistRepository;
-    }
+    private JwtBlacklistRepository jwtBlacklistRepository;
 
     @Test
     void saveFindDeleteJwtBlacklistEntityByJwtBlacklistedToken() {

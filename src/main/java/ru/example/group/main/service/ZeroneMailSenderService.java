@@ -39,11 +39,10 @@ public class ZeroneMailSenderService {
         return true;
     }
 
-    public Boolean emailSend(HttpServletRequest request, HttpServletResponse response, String email, String title, String message) throws EmailNotSentException {
+    public Boolean emailSend(HttpServletRequest request, HttpServletResponse response, String email, String title, String message) {
         try {
             if (!StringUtil.isEmpty(email)) {
-                send(email, title, message);
-                return true;
+                return send(email, title, message);
             }
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, new EmailNotSentException("Ошибка отправки письма с темой: "

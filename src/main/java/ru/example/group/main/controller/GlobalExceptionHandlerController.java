@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<CommonResponseDto<UserLoginDataResponseDto>> handleUsernameNotFoundException(UsernameNotFoundException e) {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> handleUsernameNotFoundException(UsernameNotFoundException e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<UserLoginDataResponseDto> commonResponseDto = new CommonResponseDto<>();
+        CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         commonResponseDto.setError(e.getMessage());
         commonResponseDto.setMessage(e.getMessage());

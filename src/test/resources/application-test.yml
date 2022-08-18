@@ -1,9 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
-    username: sa
-    password: sa
-    driver-class-name: org.h2.Driver
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -12,10 +7,20 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     show-sql: true
   liquibase:
     enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+    user: sa
+    password:
+    default-schema: soc_net
+    drop-first: true
+    url: jdbc:h2:mem:soc_net;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS soc_net
+    driver-class-name: org.h2.Driver
+  test:
+    database:
+      replace: none
 server:
   servlet:
     session:

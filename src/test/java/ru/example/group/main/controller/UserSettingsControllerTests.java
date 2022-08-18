@@ -19,18 +19,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
-    private final static String EMAIL = "test@test.tu";
-    private final MockMvc mockMvc;
-    private final UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
+    private static String EMAIL = "test@test.tu";
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    UserSettingsControllerTests(MockMvc mockMvc, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.mockMvc = mockMvc;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void emailChangeConfirmedAndRedirectToLogin() throws Exception {

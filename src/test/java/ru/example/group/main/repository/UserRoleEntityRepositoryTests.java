@@ -13,13 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserRoleEntityRepositoryTests extends AbstractAllTestH2ContextLoad {
 
-    private final UserRoleEntityRepository userRoleEntityRepository;
-
     @Autowired
-    UserRoleEntityRepositoryTests(UserRoleEntityRepository userRoleEntityRepository) {
-        this.userRoleEntityRepository = userRoleEntityRepository;
-    }
-
+    private UserRoleEntityRepository userRoleEntityRepository;
 
     @Test
     void checkUserRoleEntityRepositorySaveDelete(){
