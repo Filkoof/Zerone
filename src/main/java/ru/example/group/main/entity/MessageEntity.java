@@ -1,6 +1,7 @@
 package ru.example.group.main.entity;
 
-import javax.persistence.Column;
+
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,18 +15,26 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "user_role")
-public class UserRoleEntity {
-
+@Table(name = "messages")
+public class MessageEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private String userRole;
+  private LocalDateTime sent_time;
 
   @ManyToOne
-  @JoinColumn(name = "user_for_role_id", referencedColumnName = "id")
-  private UserEntity userForRole;
+  @JoinColumn(name = "dialog_id")
+  private DialogEntity dialog;
+
+  private String messageText;
+
+  private String readStatus;
+
+
+  @ManyToOne
+  @JoinColumn(name = "sender_id")
+  private UserEntity user;
+
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ContactConfirmationResponseDto {
-    private String result;
-    private UserLoginDataResponseDto userLoginDataResponseDto;
+
+  private String result;
+  private UserLoginDataResponseDto userLoginDataResponseDto;
 }

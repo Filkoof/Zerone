@@ -8,7 +8,8 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 
 import java.util.*;
-import java.util.logging.Logger;
+
+
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
 

@@ -1,31 +1,34 @@
 package ru.example.group.main.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import liquibase.pro.packaged.L;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "user_role")
-public class UserRoleEntity {
+@Table(name = "posts_to_tags")
+public class Post2TagEntity {
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private String userRole;
+  @OneToOne
+  @JoinColumn(name = "post_id")
+  private PostEntity post;
 
-  @ManyToOne
-  @JoinColumn(name = "user_for_role_id", referencedColumnName = "id")
-  private UserEntity userForRole;
+  @OneToOne
+  @JoinColumn(name = "tag_id")
+  private TagEntity tag;
+
+
 }

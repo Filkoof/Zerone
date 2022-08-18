@@ -17,24 +17,26 @@ import java.time.LocalDateTime;
 @Slf4j
 public class GlobalExceptionHandlerController {
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<CommonResponseDto<UserLoginDataResponseDto>> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        log.info(e.getLocalizedMessage());
-        CommonResponseDto<UserLoginDataResponseDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setTimeStamp(LocalDateTime.now());
-        commonResponseDto.setError(e.getMessage());
-        commonResponseDto.setMessage(e.getMessage());
-        return new ResponseEntity<>(commonResponseDto, HttpStatus.FORBIDDEN);
-    }
+  @ExceptionHandler(UsernameNotFoundException.class)
+  public ResponseEntity<CommonResponseDto<UserLoginDataResponseDto>> handleUsernameNotFoundException(
+      UsernameNotFoundException e) {
+    log.info(e.getLocalizedMessage());
+    CommonResponseDto<UserLoginDataResponseDto> commonResponseDto = new CommonResponseDto<>();
+    commonResponseDto.setTimeStamp(LocalDateTime.now());
+    commonResponseDto.setError(e.getMessage());
+    commonResponseDto.setMessage(e.getMessage());
+    return new ResponseEntity<>(commonResponseDto, HttpStatus.FORBIDDEN);
+  }
 
-    @ExceptionHandler(ServletException.class)
-    public ResponseEntity<CommonResponseDto<LogoutResponseDataDto>> handleServletExceptions(ServletException e) {
-        log.info(e.getLocalizedMessage());
-        CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setError(e.getMessage());
-        commonResponseDto.setMessage(e.getMessage());
-        commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
-    }
+  @ExceptionHandler(ServletException.class)
+  public ResponseEntity<CommonResponseDto<LogoutResponseDataDto>> handleServletExceptions(
+      ServletException e) {
+    log.info(e.getLocalizedMessage());
+    CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
+    commonResponseDto.setError(e.getMessage());
+    commonResponseDto.setMessage(e.getMessage());
+    commonResponseDto.setTimeStamp(LocalDateTime.now());
+    return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
+  }
 
 }

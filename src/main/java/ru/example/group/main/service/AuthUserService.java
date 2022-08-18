@@ -17,50 +17,58 @@ import java.time.LocalDateTime;
 @Service
 public class AuthUserService {
 
-    @Value("${config.authorization}")
-    private String authHeader;
-    private SocialNetUserRegisterService userRegister;
-    private JwtBlacklistRepository jwtBlacklistRepository;
-    private final HandlerExceptionResolver handlerExceptionResolver;
+  @Value("${config.authorization}")
+  private String authHeader;
+  private SocialNetUserRegisterService userRegister;
+  private JwtBlacklistRepository jwtBlacklistRepository;
+  private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public AuthUserService(SocialNetUserRegisterService userRegister, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
-        this.userRegister = userRegister;
-        this.jwtBlacklistRepository = jwtBlacklistRepository;
-        this.handlerExceptionResolver = handlerExceptionResolver;
-    }
-    public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
-        CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
-        try {
-            authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
-        } catch (Exception e) {
-            e.getMessage();
-            handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
-            authLoginResponseDto.setError("Wrong user name or password.");
-        }
-        authLoginResponseDto.setTimeStamp(LocalDateTime.now());
-        return authLoginResponseDto;
-    }
+  public AuthUserService(SocialNetUserRegisterService userRegister,
+      JwtBlacklistRepository jwtBlacklistRepository,
+      HandlerExceptionResolver handlerExceptionResolver) {
+    this.userRegister = userRegister;
+    this.jwtBlacklistRepository = jwtBlacklistRepository;
+    this.handlerExceptionResolver = handlerExceptionResolver;
+  }
 
-    public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
-        CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
-        try {
-            setJwtBlackList(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-            authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
-        }
-        authLogoutResponseDto.setData(new LogoutResponseDataDto());
-        authLogoutResponseDto.setError("");
-        authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
-        return authLogoutResponseDto;
+  public CommonResponseDto<UserLoginDataResponseDto> getAuthLoginResponse(
+      ContactConfirmationPayloadDto payload, HttpServletRequest request,
+      HttpServletResponse response) {
+    CommonResponseDto<UserLoginDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
+    try {
+      authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
+    } catch (Exception e) {
+      e.getMessage();
+      handlerExceptionResolver.resolveException(request, response, null,
+          new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
+      authLoginResponseDto.setError("Wrong user name or password.");
     }
+    authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+    return authLoginResponseDto;
+  }
 
-    private void setJwtBlackList(HttpServletRequest request) {
-        String jwtToken = request.getHeader(authHeader);
-        JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-        jwtBlacklistEntity.setJwtBlacklistedToken(jwtToken);
-        jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
-        jwtBlacklistRepository.save(jwtBlacklistEntity);
+  public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(
+      HttpServletRequest request) {
+    CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
+    try {
+      setJwtBlackList(request);
+    } catch (Exception e) {
+      e.printStackTrace();
+      authLogoutResponseDto.setError(
+          "Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
     }
+    authLogoutResponseDto.setData(new LogoutResponseDataDto());
+    authLogoutResponseDto.setError("");
+    authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
+    return authLogoutResponseDto;
+  }
+
+  private void setJwtBlackList(HttpServletRequest request) {
+    String jwtToken = request.getHeader(authHeader);
+    JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
+    jwtBlacklistEntity.setJwtBlacklistedToken(jwtToken);
+    jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
+    jwtBlacklistRepository.save(jwtBlacklistEntity);
+  }
 
 }

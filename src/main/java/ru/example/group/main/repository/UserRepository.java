@@ -6,7 +6,10 @@ import ru.example.group.main.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, Long> {
-    UserEntity findByEmail(String eMail);
-    Boolean existsByEmail(String eMail);
-    UserEntity findByConfirmationCode(String code);
+
+  UserEntity findByEmail(String eMail);
+
+  Boolean existsByEmail(String eMail);
+
+  UserEntity findByConfirmationCode(String code);
 }
