@@ -30,10 +30,12 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
 
         mockMvc.perform(post("/api/v1/account/register/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "\t\"token\": \"test\",\n" +
-                                "\t\"userId\": \"test@test.tu\"\n" +
-                                "}")
+                        .content("""     
+                                {
+                                "token": "test",
+                                "userId": "test@test.tu"
+                                }
+                                """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.key").value("test"))
@@ -48,10 +50,12 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
 
         mockMvc.perform(post("/api/v1/account/register/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "\t\"token\": \"testing\",\n" +
-                                "\t\"userId\": \"test@test.tu\"\n" +
-                                "}")
+                        .content("""     
+                                {
+                                "token": "wrong token",
+                                "userId": "test@test.tu"
+                                }
+                                """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.key").isEmpty())

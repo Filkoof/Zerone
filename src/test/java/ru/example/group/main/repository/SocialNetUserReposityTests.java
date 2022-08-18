@@ -10,6 +10,7 @@ import ru.example.group.main.entity.UserEntity;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
@@ -22,7 +23,7 @@ public class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
         String email = "test@test.tu";
         UserEntity user = socialNetUserRepository.findUserEntityByEmail(email);
         assertNotNull(user);
-        assertThat(user.getCity().equals("Suzdal"));
+        assertEquals(user.getCity(),"Suzdal");
     }
 
 
