@@ -4,15 +4,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
+import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -25,13 +28,15 @@ public class UserSettingsService {
     private String localhost;
 
     private final SocialNetUserRegisterService socialNetUserRegisterService;
+    private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
+        this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
@@ -112,5 +117,24 @@ public class UserSettingsService {
         } else {
             throw new EmailOrPasswordChangeException("Wrong password change confirmation code.");
         }
+    }
+
+    public UserDataResponseDto getMeResponse(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+        return socialNetUserDetailsService.setUserDataResponseDto(user, token);
+    }
+
+    public void updateUserMainSettings(UserDataResponseDto newDateUser) {
+        UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
+        currentUser.setFirstName(newDateUser.getFirstName());
+        currentUser.setLastName(newDateUser.getLastName());
+        currentUser.setPhone(newDateUser.getPhone());
+        currentUser.setCountry(newDateUser.getCountry());
+        currentUser.setCity(newDateUser.getCity());
+        currentUser.setBirthDate(LocalDate.now());
+        currentUser.setPhoto("https://");
+        currentUser.setAbout(newDateUser.getAbout());
+        userRepository.save(currentUser);
     }
 }

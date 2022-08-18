@@ -1,13 +1,17 @@
 package ru.example.group.main.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.example.group.main.dto.CommonResponseDto;
 import ru.example.group.main.dto.EmailChangeDto;
 import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.UserDataResponseDto;
+import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.service.UserSettingsService;
@@ -55,4 +59,16 @@ public class UserSettingsController {
         return new RedirectView("http://" + domain + "/login");
     }
 
+    @GetMapping("/api/v1/users/me")
+    public CommonResponseDto<UserDataResponseDto> getUser(HttpServletRequest request) {
+        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
+        response.setData(userSettingsService.getMeResponse(request));
+        return response;
+    }
+
+    @PutMapping("/api/v1/users/me")
+    public ResponseEntity editUserSettings(@RequestBody UserDataResponseDto updateUser) {
+        userSettingsService.updateUserMainSettings(updateUser);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
