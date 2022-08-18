@@ -1,6 +1,5 @@
 package ru.example.group.main.service;
 
-import liquibase.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -8,7 +8,8 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 
 import java.util.*;
-import java.util.logging.Logger;
+
+
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
 
@@ -33,11 +34,16 @@ public class SocialNetUserDetails implements UserDetails {
             userRoleEntityList = new ArrayList<>();
             log.info("ОШИБКА " + e.getMessage());
         }
-        if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
-            for (UserRoleEntity userRole : userRoleEntityList) {
-                simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
+        try {
+            if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
+                for (UserRoleEntity userRole : userRoleEntityList) {
+                    simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
+                }
             }
+        }catch (Exception e){
+
         }
+
         return Collections.unmodifiableList(simpleGrantedAuthorityList);
     }
 
