@@ -29,13 +29,11 @@ server:
   port: 8086
 
 mail:
-  #hostBack: "195.161.114.18:8086"
-  #hostFront: "195.161.114.18:80"
-  hostBack: "195.161.114.18:8082"
+  hostBack: "195.161.114.18:80"
 
 
 config:
-  domain: "195.161.114.18:8082"
+  domain: "195.161.114.18:80"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
