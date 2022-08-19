@@ -6,10 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.example.group.main.dto.CommonResponseDto;
 import ru.example.group.main.dto.EmailChangeDto;
+import ru.example.group.main.dto.LogoutResponseDataDto;
 import ru.example.group.main.dto.PasswordChangeDto;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.UserSetDeletedFail;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +56,11 @@ public class UserSettingsController {
         log.info("passwordChangeConfirmedAndRedirectToLogin started");
         userSettingsService.confirmPasswordChange(code, code1);
         return new RedirectView("http://" + front + "/login");
+    }
+
+    @DeleteMapping("/api/v1/users/me")
+    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete() throws UserSetDeletedFail {
+        return userSettingsService.handleUserDelete();
     }
 
 }

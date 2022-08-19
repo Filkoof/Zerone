@@ -30,5 +30,4 @@ public class AuthUserController {
     public ResponseEntity handleFrontLogout(){
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
-
 }

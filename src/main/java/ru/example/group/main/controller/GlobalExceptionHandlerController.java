@@ -76,4 +76,10 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserSetDeletedFail.class)
+    public ResponseEntity handleUserSetDeletedFail(UserSetDeletedFail e){
+        log.info(e.getMessage());
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
 }

@@ -8,6 +8,8 @@ import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.repository.JwtBlacklistRepository;
+import ru.example.group.main.security.SocialNetUserDetails;
+import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ public class AuthUserService {
     @Value("${config.authorization}")
     private String authHeader;
     private SocialNetUserRegisterService userRegister;
+
     private JwtBlacklistRepository jwtBlacklistRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
@@ -44,13 +47,17 @@ public class AuthUserService {
     public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
         CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
         authLogoutResponseDto.setError("");
-        try {
+        /*try {
             setJwtBlackList(request);
         } catch (Exception e) {
             e.printStackTrace();
             authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
             handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException(authLogoutResponseDto.getError()));
-        }
+        }*/
+        LogoutResponseDataDto logoutResponseDataDto = new LogoutResponseDataDto();
+        logoutResponseDataDto.setAdditionalProp1("prop1");
+        logoutResponseDataDto.setAdditionalProp2("prop2");
+        logoutResponseDataDto.setAdditionalProp3("prop3");
         authLogoutResponseDto.setData(new LogoutResponseDataDto());
         authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
         return authLogoutResponseDto;
@@ -63,5 +70,4 @@ public class AuthUserService {
         jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
-
 }

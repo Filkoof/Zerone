@@ -3,16 +3,20 @@ package ru.example.group.main.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.example.group.main.dto.CommonResponseDto;
+import ru.example.group.main.dto.LogoutResponseDataDto;
 import ru.example.group.main.dto.PasswordChangeDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.UserSetDeletedFail;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -129,5 +133,26 @@ public class UserSettingsService {
                         "\n\nСпасибо!";
         String title = "Успешное изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(null, null, email, title, message);
+    }
+
+    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete() throws UserSetDeletedFail {
+        CommonResponseDto<LogoutResponseDataDto> deleteResponse = new CommonResponseDto<>();
+        UserEntity userToDelete = new UserEntity();
+        try {
+            userToDelete = socialNetUserRegisterService.getCurrentUser();
+            userToDelete.setDeleted(true);
+            userRepository.save(userToDelete);
+            deleteResponse.setMessage("User deleted.");
+            deleteResponse.setError("");
+            deleteResponse.setTimeStamp(LocalDateTime.now());
+            LogoutResponseDataDto logoutResponseDataDto = new LogoutResponseDataDto();
+            logoutResponseDataDto.setAdditionalProp1("prop1del");
+            logoutResponseDataDto.setAdditionalProp2("prop2del");
+            logoutResponseDataDto.setAdditionalProp3("prop3del");
+            deleteResponse.setData(logoutResponseDataDto);
+        } catch (Exception e){
+            throw new UserSetDeletedFail("User id: " + userToDelete.getEmail() + " failed to updated deleted status, error: " + e.getMessage());
+        }
+        return deleteResponse;
     }
 }
