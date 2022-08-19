@@ -25,7 +25,7 @@ import java.util.UUID;
 @Service
 public class UserRegisterService {
 
-    @Value("${mail.hostBack}")
+    @Value("${config.frontend}")
     private String mailHost;
 
     private final UserRepository userRepository;

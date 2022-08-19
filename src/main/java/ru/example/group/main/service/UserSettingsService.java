@@ -18,11 +18,8 @@ import java.util.UUID;
 @Service
 public class UserSettingsService {
 
-    @Value("${mail.hostBack}")
-    private String mailHost;
-
-    @Value("${config.local}")
-    private String localhost;
+    @Value("${config.backend}")
+    private String backend;
 
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final ZeroneMailSenderService zeroneMailSenderService;
@@ -55,7 +52,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
                         "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ localhost + "/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
+                        "http://"+ backend + "/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
@@ -68,6 +65,7 @@ public class UserSettingsService {
             user.setEmail(newEmail);
             try {
                 userRepository.save(user);
+                sendEmailChangedNotice(user.getEmail());
             }catch (Exception e){
                 throw new EmailOrPasswordChangeException("Email was not changed via confirmation link. Error: " + e);
             }
@@ -75,6 +73,15 @@ public class UserSettingsService {
             throw new EmailOrPasswordChangeException("Wrong email change confirmation code.");
         }
 
+    }
+
+    private void sendEmailChangedNotice(String email) {
+        String message =
+                "Здравствуйте, " + email + "\n\n" +
+                        "Ваш email в сеть Зерон успешно изменен." +
+                        "\n\nСпасибо!";
+        String title = "Успешное изменение почты(логина) Вашего аккаунта Зерон";
+        zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 
     public Boolean changePasswordConfirmationSend(HttpServletRequest request, HttpServletResponse response, PasswordChangeDto passwordChangeDto) throws EmailNotSentException {
@@ -93,7 +100,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение пароля в сеть Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ localhost + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
+                        "http://"+ backend + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
@@ -106,11 +113,21 @@ public class UserSettingsService {
             user.setPassword(code1);
             try {
                 userRepository.save(user);
+                sendPasswordChangedNotice(user.getEmail());
             }catch (Exception e){
                 throw new EmailOrPasswordChangeException("Password was not changed via confirmation link. Error: " + e);
             }
         } else {
             throw new EmailOrPasswordChangeException("Wrong password change confirmation code.");
         }
+    }
+
+    private void sendPasswordChangedNotice(String email) {
+        String message =
+                "Здравствуйте, " + email + "\n\n" +
+                        "Ваш пароль в сеть Зерон успешно изменен." +
+                        "\n\nСпасибо!";
+        String title = "Успешное изменение пароля Вашего аккаунта Зерон";
+        zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 }

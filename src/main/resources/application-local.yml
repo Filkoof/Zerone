@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/soc_net
+    username: postgres
+    password: Hfnfg123
+    driver-class-name: org.postgresql.Driver
+
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -7,28 +13,16 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: validate
   liquibase:
     enabled: true
-    change-log: db/changelog/db.changelog-master.yaml
-    drop-first: true
-  test:
-    database:
-      replace: none
-  datasource:
-    url: jdbc:h2:mem:soc_net;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS soc_net
-    username: sa
-    password:
+
 server:
   servlet:
     session:
       tracking-modes: cookie
       persistent: false
   port: 8086
-
-mail:
-  #hostBack: "195.161.114.18:8082"
 
 config:
   frontend: "195.161.114.18:8082"
@@ -37,3 +31,16 @@ config:
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
+
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: debug
+
+
+
+
+
+
+
