@@ -34,11 +34,16 @@ public class SocialNetUserDetails implements UserDetails {
             userRoleEntityList = new ArrayList<>();
             log.info("ОШИБКА " + e.getMessage());
         }
-        if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
-            for (UserRoleEntity userRole : userRoleEntityList) {
-                simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
+        try {
+            if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
+                for (UserRoleEntity userRole : userRoleEntityList) {
+                    simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
+                }
             }
+        }catch (Exception e){
+
         }
+
         return Collections.unmodifiableList(simpleGrantedAuthorityList);
     }
 

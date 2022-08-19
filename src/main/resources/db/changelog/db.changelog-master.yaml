@@ -99,7 +99,7 @@ databaseChangeLog:
               - column:
                   name: time
                   type: timestamp
-                  defaultValue: now
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
               - column:
@@ -181,7 +181,7 @@ databaseChangeLog:
               - column:
                   name: time
                   type: timestamp
-                  defaultValue: now
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
               - column:

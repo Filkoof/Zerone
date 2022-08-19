@@ -1,26 +1,27 @@
 package ru.example.group.main.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.example.group.main.dto.RegisterConfirmDto;
 import ru.example.group.main.dto.RegistrationCompleteDto;
-import ru.example.group.main.service.UserService;
+import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
+import ru.example.group.main.service.UserRegisterService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class MailSenderController {
 
-  private final UserService userService;
+    private final UserRegisterService userRegisterService;
 
-  public MailSenderController(UserService userService) {
-    this.userService = userService;
-  }
+    public MailSenderController(UserRegisterService userRegisterService) {
+        this.userRegisterService = userRegisterService;
+    }
 
-  @GetMapping("/api/v1/account/registration_complete/{code}")
-  public RegistrationCompleteDto activate(@PathVariable String code) {
-    return userService.activateUser(code);
-  }
+    @PostMapping("/api/v1/account/register/confirm")
+    public RegistrationCompleteDto activate(@RequestBody RegisterConfirmDto registerConfirmDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
+         return userRegisterService.activateUser(registerConfirmDto, request, response);
+    }
 
 }
 
