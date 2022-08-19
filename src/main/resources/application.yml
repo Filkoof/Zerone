@@ -23,11 +23,9 @@ server:
       tracking-modes: cookie
   port: ${PORT:8080}
 
-mail:
-  hostBack: "195.161.114.18:80"
-
 config:
-  domain: "195.161.114.18:80"
+  frontend: "195.161.114.18:80"
+  backend: "195.161.114.18:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26

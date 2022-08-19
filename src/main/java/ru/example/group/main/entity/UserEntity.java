@@ -93,6 +93,6 @@ public class UserEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) 
   private List<MessageEntity> message = new LinkedList<>();
 
-  @OneToMany(mappedBy = "userForRole", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "userForRole", cascade = CascadeType.ALL)
   private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 }

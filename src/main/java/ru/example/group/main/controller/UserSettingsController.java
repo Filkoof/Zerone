@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @Slf4j
 public class UserSettingsController {
-    @Value("${config.domain}")
-    private String domain;
+    @Value("${config.frontend}")
+    private String front;
     private final UserSettingsService userSettingsService;
 
     public UserSettingsController(UserSettingsService userSettingsService) {
@@ -37,7 +37,7 @@ public class UserSettingsController {
     public RedirectView emailChangeConfirmedAndRedirectToLogin(@RequestParam String code, @RequestParam String newEmail) throws EmailOrPasswordChangeException {
         log.info("emailChangeConfirmedAndRedirectToLogin started");
         userSettingsService.confirmEmailChange(code, newEmail);
-        return new RedirectView("http://" + domain + "/login");
+        return new RedirectView("http://" + front + "/login");
     }
 
 
@@ -52,7 +52,7 @@ public class UserSettingsController {
     public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam String code, @RequestParam String code1) throws EmailOrPasswordChangeException {
         log.info("passwordChangeConfirmedAndRedirectToLogin started");
         userSettingsService.confirmPasswordChange(code, code1);
-        return new RedirectView("http://" + domain + "/login");
+        return new RedirectView("http://" + front + "/login");
     }
 
 }
