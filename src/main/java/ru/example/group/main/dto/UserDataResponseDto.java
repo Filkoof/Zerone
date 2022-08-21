@@ -2,11 +2,14 @@ package ru.example.group.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
-import ru.example.group.main.dto.enumerated.MessagesPermission;
+import ru.example.group.main.entity.enumerated.MessagesPermission;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Builder
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDataResponseDto {
