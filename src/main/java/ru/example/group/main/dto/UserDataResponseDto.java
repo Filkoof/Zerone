@@ -2,38 +2,43 @@ package ru.example.group.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import ru.example.group.main.dto.enumerated.MessagesPermission;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import ru.example.group.main.entity.enumerated.MessagesPermission;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+@Builder
+@Getter
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDataResponseDto {
-    private Long id;
+
+    private final Long id;
     @JsonProperty("first_name")
-    private String firstName;
+    private final String firstName;
     @JsonProperty("last_name")
-    private String lastName;
+    private final String lastName;
     @JsonProperty("reg_date")
-    private LocalDateTime regDate;
+    private final LocalDateTime regDate;
     @JsonProperty("birth_date")
-    private LocalDate birthDate;
+    private final LocalDate birthDate;
     @JsonProperty("email")
-    private String eMail;
-    private String phone;
-    private String password;
-    private String photo;
-    private String about;
-    private boolean status;
-    private String city;
-    private String token;
-    private String country;
-    private MessagesPermission messagePermissions;
+    private final String eMail;
+    private final String phone;
+    private final String password;
+    private final String photo;
+    private final String about;
+    private final boolean status;
+    private final String city;
+    private final String token;
+    private final String country;
+    private final MessagesPermission messagePermissions;
     @JsonProperty("last_online_time")
-    private LocalDateTime lastOnlineTime;
+    private final LocalDateTime lastOnlineTime;
     @JsonProperty("is_blocked")
-    private boolean isBlocked;
+    private final boolean isBlocked;
     @JsonProperty("deleted")
-    private boolean isDeleted;
+    private final boolean isDeleted;
 }
