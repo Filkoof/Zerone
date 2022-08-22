@@ -24,8 +24,4 @@ public class PostResponseDto {
     private final String postText;
     private final Integer likes;
     private final List<String> tags;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev
