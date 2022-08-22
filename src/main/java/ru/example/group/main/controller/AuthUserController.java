@@ -35,10 +35,4 @@ public class AuthUserController {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 
-
-    @GetMapping("/auth/api/logoutbl")
-    public ResponseEntity handleJwtBlacklistAddLogout(){
-        log.info("handleJwtBlacklistAddLogout");
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }

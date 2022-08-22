@@ -30,7 +30,8 @@ public class SocialNetUserDetailsService implements UserDetailsService {
             return new SocialNetUserDetails(user);
         }
         handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
-        throw new UsernameNotFoundException("user not found doh!");
+        //throw new UsernameNotFoundException("user not found doh!");
+        return null;
     }
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {

@@ -60,7 +60,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails;
             userDetails = socialNetUserDetailsService.loadUserByUsername(username);
-            if (jwtUtilService.validateToken(token, userDetails)) {
+            if (userDetails != null && jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
