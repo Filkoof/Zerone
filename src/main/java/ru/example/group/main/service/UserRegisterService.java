@@ -6,10 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.ApiResponseDto;
-import ru.example.group.main.dto.RegisterConfirmDto;
-import ru.example.group.main.dto.RegistrationCompleteDto;
+import ru.example.group.main.dto.RegisterConfirmRequestDto;
+import ru.example.group.main.dto.RegistrationCompleteResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.dto.UserRegisterDto;
+import ru.example.group.main.dto.UserRegisterRequestDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
 import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
@@ -43,31 +43,31 @@ public class UserRegisterService {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    private boolean addUser(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
-        UserEntity userFromDB = userRepository.findByEmail(userRegisterDto.getEmail());
+    private boolean addUser(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
+        UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
         if (userFromDB != null) {
             return false;
         }
         String code = UUID.randomUUID().toString().substring(0, 24);
         String message =
-                "Здравствуйте, " + userRegisterDto.getFirstName() + "\n\n" +
+                "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
                         "Добро пожаловать в социальную сеть Зерон. " +
                         "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterDto.getEmail() + "\n" +
+                        "http://"+ mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
                         "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
         String title = "Код активации аккаунта Зерон";
-        zeroneMailSenderService.emailSend(request, response, userRegisterDto.getEmail(), title, message);
-        return newUserAddToDB(request, response, userRegisterDto, code);
+        zeroneMailSenderService.emailSend(request, response, userRegisterRequestDto.getEmail(), title, message);
+        return newUserAddToDB(request, response, userRegisterRequestDto, code);
     }
 
-    private boolean newUserAddToDB(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto, String code) throws NewUserWasNotSavedToDBException {
+    private boolean newUserAddToDB(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
         UserEntity user = new UserEntity();
         try {
             user.setStatus(true);
-            user.setFirstName(userRegisterDto.getFirstName());
-            user.setLastName(userRegisterDto.getLastName());
-            user.setPassword(passwordEncoder.encode(userRegisterDto.getPasswd1()));
-            user.setEmail(userRegisterDto.getEmail());
+            user.setFirstName(userRegisterRequestDto.getFirstName());
+            user.setLastName(userRegisterRequestDto.getLastName());
+            user.setPassword(passwordEncoder.encode(userRegisterRequestDto.getPasswd1()));
+            user.setEmail(userRegisterRequestDto.getEmail());
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
             user.setConfirmationCode(code);
@@ -80,23 +80,23 @@ public class UserRegisterService {
         return true;
     }
 
-    public RegistrationCompleteDto activateUser(RegisterConfirmDto registerConfirmDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
-        UserEntity user = userRepository.findByConfirmationCode(registerConfirmDto.getToken());
-        RegistrationCompleteDto registrationCompleteDto = new RegistrationCompleteDto();
-        if (user == null || !user.getEmail().equals(registerConfirmDto.getUserId())) {
+    public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
+        UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
+        RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
+        if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
             throw new NewUserConfirmationViaEmailFailedException("No such user found during account activation via email.");
         }
         try {
             user.setConfirmationCode(null);
             user.setApproved(true);
             userRepository.save(user);
-            registrationCompleteDto.setEMail(user.getEmail());
-            registrationCompleteDto.setKey(registerConfirmDto.getToken());
+            registrationCompleteResponseDto.setEMail(user.getEmail());
+            registrationCompleteResponseDto.setKey(registerConfirmRequestDto.getToken());
             sendRegistrationConfirmationEmail(user, request, response);
         } catch (Exception e) {
             throw new NewUserConfirmationViaEmailFailedException("Failed to activate user via email: " + e.getMessage());
         }
-        return registrationCompleteDto;
+        return registrationCompleteResponseDto;
     }
 
     private void sendRegistrationConfirmationEmail(UserEntity user, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
@@ -108,19 +108,19 @@ public class UserRegisterService {
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
     }
 
-    public ApiResponseDto createUser(HttpServletRequest request, HttpServletResponse response, UserRegisterDto userRegisterDto) throws Exception {
+    public ApiResponseDto createUser(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         ApiResponseDto apiResponseDto = new ApiResponseDto();
-        if (userRegisterDto.getEmail() == null || userRegisterDto.getFirstName() == null || userRegisterDto.getLastName() == null || userRegisterDto.getPasswd1() == null){
-            handlerExceptionResolver.resolveException(request, response, null, new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterDto));
+        if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
+            handlerExceptionResolver.resolveException(request, response, null, new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto));
             return apiResponseDto;
         }
 
-        if (userRepository.existsByEmail(userRegisterDto.getEmail())) {
+        if (userRepository.existsByEmail(userRegisterRequestDto.getEmail())) {
             apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
             apiResponseDto.setMessage("User with that email already exists");
             throw new UserWithThatEmailALreadyExistException("User with that email already exist.", apiResponseDto);
         } else {
-            if (addUser(request, response, userRegisterDto)) {
+            if (addUser(request, response, userRegisterRequestDto)) {
                 apiResponseDto.setStatus(HttpStatus.OK);
                 apiResponseDto.setMessage("User created");
             } else {

@@ -1,19 +1,21 @@
 package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Service
@@ -33,7 +35,8 @@ public class AuthUserService {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
-    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+
+    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         UserEntity user = userRepository.findByEmail(payload.getEmail());
@@ -52,22 +55,16 @@ public class AuthUserService {
         return authLoginResponseDto;
     }
 
-    public CommonResponseDto<LogoutResponseDataDto> getAuthLogoutResponse(HttpServletRequest request) {
-        CommonResponseDto<LogoutResponseDataDto> authLogoutResponseDto = new CommonResponseDto<>();
+    public CommonResponseDto<LogoutDataResponseDto> getAuthLogoutResponse() {
+        CommonResponseDto<LogoutDataResponseDto> authLogoutResponseDto = new CommonResponseDto<>();
         authLogoutResponseDto.setError("");
-        /*try {
-            setJwtBlackList(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-            authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
-            handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException(authLogoutResponseDto.getError()));
-        }*/
-        LogoutResponseDataDto logoutResponseDataDto = new LogoutResponseDataDto();
-        logoutResponseDataDto.setAdditionalProp1("prop1");
-        logoutResponseDataDto.setAdditionalProp2("prop2");
-        logoutResponseDataDto.setAdditionalProp3("prop3");
-        authLogoutResponseDto.setData(new LogoutResponseDataDto());
+        LogoutDataResponseDto logoutDataResponseDto = new LogoutDataResponseDto();
+        logoutDataResponseDto.setAdditionalProp1("prop1");
+        logoutDataResponseDto.setAdditionalProp2("prop2");
+        logoutDataResponseDto.setAdditionalProp3("prop3");
+        authLogoutResponseDto.setData(new LogoutDataResponseDto());
         authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
+        SecurityContextHolder.clearContext();
         return authLogoutResponseDto;
     }
 
@@ -77,5 +74,21 @@ public class AuthUserService {
         jwtBlacklistEntity.setJwtBlacklistedToken(jwtToken);
         jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
         jwtBlacklistRepository.save(jwtBlacklistEntity);
+    }
+
+    public void logoutProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        /*try {
+            setJwtBlackList(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            authLogoutResponseDto.setError("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
+            handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException(authLogoutResponseDto.getError()));
+        }*/
+        HttpSession session = request.getSession();
+        SecurityContextHolder.clearContext();
+        if (session != null) {
+            session.invalidate();
+        }
+        request.logout();
     }
 }

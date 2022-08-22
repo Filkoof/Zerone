@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class RegistrationCompleteDto {
+public class RegistrationCompleteResponseDto {
 
   private String key;
   @JsonProperty("eMail")

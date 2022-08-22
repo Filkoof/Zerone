@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.CommonResponseDto;
-import ru.example.group.main.dto.LogoutResponseDataDto;
-import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.LogoutDataResponseDto;
+import ru.example.group.main.dto.PasswordChangeRequestDto;
 import ru.example.group.main.dto.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
@@ -67,7 +67,7 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
     }
 
-    public void confirmEmailChange(String code, String newEmail) throws EmailOrPasswordChangeException {
+    public boolean confirmEmailChange(String code, String newEmail) throws EmailOrPasswordChangeException {
         UserEntity user = userRepository.findByConfirmationCode(code);
         if (user != null){
             user.setConfirmationCode(null);
@@ -75,13 +75,13 @@ public class UserSettingsService {
             try {
                 userRepository.save(user);
                 sendEmailChangedNotice(user.getEmail());
+                return true;
             }catch (Exception e){
                 throw new EmailOrPasswordChangeException("Email was not changed via confirmation link. Error: " + e);
             }
         } else {
             throw new EmailOrPasswordChangeException("Wrong email change confirmation code.");
         }
-
     }
 
     private void sendEmailChangedNotice(String email) {
@@ -93,10 +93,11 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 
-    public Boolean changePasswordConfirmationSend(HttpServletRequest request, HttpServletResponse response, PasswordChangeDto passwordChangeDto) throws EmailNotSentException {
-        UserEntity user = userRepository.findByEmail(jwtUtilService.extractUsername(passwordChangeDto.getToken()));
+    public Boolean changePasswordConfirmationSend(HttpServletRequest request, HttpServletResponse response, PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
+        UserEntity user = userRepository.findByEmail(jwtUtilService.extractUsername(passwordChangeRequestDto.getToken()));
         if (user != null){
-            sendPasswordChangeConfirmation(request, response, passwordChangeDto.getPassword(), user);
+            sendPasswordChangeConfirmation(request, response, passwordChangeRequestDto.getPassword(), user);
+            return true;
         }
         return false;
     }
@@ -115,7 +116,7 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
     }
 
-    public void confirmPasswordChange(String code, String code1) throws EmailOrPasswordChangeException {
+    public Boolean confirmPasswordChange(String code, String code1) throws EmailOrPasswordChangeException {
         UserEntity user = userRepository.findByConfirmationCode(code);
         if (user != null){
             user.setConfirmationCode(null);
@@ -123,6 +124,7 @@ public class UserSettingsService {
             try {
                 userRepository.save(user);
                 sendPasswordChangedNotice(user.getEmail());
+                return true;
             }catch (Exception e){
                 throw new EmailOrPasswordChangeException("Password was not changed via confirmation link. Error: " + e);
             }
@@ -140,19 +142,19 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 
-    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        CommonResponseDto<LogoutResponseDataDto> deleteResponse = new CommonResponseDto<>();
+        CommonResponseDto<LogoutDataResponseDto> deleteResponse = new CommonResponseDto<>();
         if (user != null){
             sendUserDeleteConfirmation(request, response, user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
             deleteResponse.setTimeStamp(LocalDateTime.now());
-            LogoutResponseDataDto logoutResponseDataDto = new LogoutResponseDataDto();
-            logoutResponseDataDto.setAdditionalProp1("prop1del");
-            logoutResponseDataDto.setAdditionalProp2("prop2del");
-            logoutResponseDataDto.setAdditionalProp3("prop3del");
-            deleteResponse.setData(logoutResponseDataDto);
+            LogoutDataResponseDto logoutDataResponseDto = new LogoutDataResponseDto();
+            logoutDataResponseDto.setAdditionalProp1("prop1del");
+            logoutDataResponseDto.setAdditionalProp2("prop2del");
+            logoutDataResponseDto.setAdditionalProp3("prop3del");
+            deleteResponse.setData(logoutDataResponseDto);
             return deleteResponse;
         }
         deleteResponse.setMessage("Deletion fail.");
@@ -174,7 +176,7 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
     }
 
-    public void confirmUserDelete(String code) throws UserDeleteOrRecoveryException {
+    public Boolean confirmUserDelete(String code) throws UserDeleteOrRecoveryException {
         UserEntity userToDelete = userRepository.findByConfirmationCode(code);
         if (userToDelete != null){
             userToDelete.setDeleted(true);
@@ -183,6 +185,7 @@ public class UserSettingsService {
                 userToDelete.setConfirmationCode(code);
                 userRepository.save(userToDelete);
                 userDeletedNotice(userToDelete.getEmail(), code);
+                return true;
             }catch (Exception e){
                 throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
             }
@@ -212,7 +215,7 @@ public class UserSettingsService {
         return commonResponseDto;
     }
 
-    public void recoveryUserDelete(String code) throws UserDeleteOrRecoveryException {
+    public Boolean recoveryUserDelete(String code) throws UserDeleteOrRecoveryException {
         UserEntity userToDelete = userRepository.findByConfirmationCode(code);
         if (userToDelete != null){
             userToDelete.setDeleted(false);
@@ -220,6 +223,7 @@ public class UserSettingsService {
                 userToDelete.setConfirmationCode(null);
                 userRepository.save(userToDelete);
                 recoveryUserDeletedNotice(userToDelete.getEmail());
+                return true;
             }catch (Exception e){
                 throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status, error: " + e.getMessage());
             }

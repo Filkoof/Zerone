@@ -31,7 +31,7 @@ public class SocialNetUserRegisterService {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),

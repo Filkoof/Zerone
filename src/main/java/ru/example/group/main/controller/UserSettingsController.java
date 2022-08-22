@@ -27,7 +27,7 @@ public class UserSettingsController {
     }
 
     @PutMapping("/api/v1/account/email")
-    public ResponseEntity changeEmail(@RequestBody EmailChangeDto newEmail, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public ResponseEntity changeEmail(@RequestBody EmailChangeRequestDto newEmail, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("changeEmail started");
         userSettingsService.changeEmailConfirmationSend(request, response, newEmail.getEmail());
         return new ResponseEntity(HttpStatus.OK);
@@ -42,9 +42,9 @@ public class UserSettingsController {
 
 
     @PutMapping("/api/v1/account/password/set")
-    public ResponseEntity passwordChange(@RequestBody PasswordChangeDto passwordChangeDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public ResponseEntity passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("passwordChange started");
-        userSettingsService.changePasswordConfirmationSend(request, response, passwordChangeDto);
+        userSettingsService.changePasswordConfirmationSend(request, response, passwordChangeRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class UserSettingsController {
     }
 
     @DeleteMapping("/api/v1/users/me")
-    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
         log.info("handleUserDelete started");
         return userSettingsService.handleUserDelete(request, response);
     }

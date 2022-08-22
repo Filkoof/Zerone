@@ -57,7 +57,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     private void checkAuthenticationToken(String username, String token,
                                           HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws ServletException {
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null){
             UserDetails userDetails;
             userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             if (userDetails != null && jwtUtilService.validateToken(token, userDetails)) {
@@ -69,11 +69,13 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
+                SecurityContextHolder.clearContext();
                 handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                         new ServletException("Invalid token."));
                 throw new ServletException("Invalid token.");
             }
         } else {
+            SecurityContextHolder.clearContext();
             handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                     new ServletException("Wrong token."));
             throw new ServletException("Wrong token.");
