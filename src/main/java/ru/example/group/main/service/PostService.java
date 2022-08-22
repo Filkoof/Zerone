@@ -28,7 +28,7 @@ public class PostService {
                 .stream()
                 .filter(postEntity -> !postEntity.isDeleted())
                 .filter(postEntity -> !postEntity.isBlocked())
-                .filter(postEntity -> postEntity.getUpdateDate().isBefore(LocalDateTime.now()))
+                .filter(postEntity -> postEntity.getTime().isBefore(LocalDateTime.now()))
                 .map(this::getPostDtoFromEntity).toList();
 
         return CommonListResponseDto.<PostResponseDto>builder()
