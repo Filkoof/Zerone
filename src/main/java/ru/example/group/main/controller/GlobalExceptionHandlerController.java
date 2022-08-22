@@ -27,9 +27,9 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<CommonResponseDto<LogoutResponseDataDto>> handleServletExceptions(ServletException e) {
+    public ResponseEntity<CommonResponseDto<LogoutDataResponseDto>> handleServletExceptions(ServletException e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
+        CommonResponseDto<LogoutDataResponseDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setError(e.getMessage());
         commonResponseDto.setMessage(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
@@ -59,9 +59,9 @@ public class GlobalExceptionHandlerController {
 
 
     @ExceptionHandler(NewUserConfirmationViaEmailFailedException.class)
-    public ResponseEntity<RegistrationCompleteDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
+    public ResponseEntity<RegistrationCompleteResponseDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
         log.info(e.getMessage());
-        return new ResponseEntity(new RegistrationCompleteDto(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(new RegistrationCompleteResponseDto(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthLogoutException.class)
@@ -72,6 +72,12 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
     public ResponseEntity handleEmailChangeException(EmailOrPasswordChangeException e){
+        log.info(e.getMessage());
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserDeleteOrRecoveryException.class)
+    public ResponseEntity handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
         log.info(e.getMessage());
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }

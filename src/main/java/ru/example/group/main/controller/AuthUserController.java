@@ -1,14 +1,18 @@
 package ru.example.group.main.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.*;
 import ru.example.group.main.service.AuthUserService;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
+@Slf4j
 public class AuthUserController {
     private final AuthUserService authUserService;
 
@@ -17,17 +21,20 @@ public class AuthUserController {
     }
 
     @PostMapping("/api/v1/auth/login")
-    public CommonResponseDto<UserDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<UserDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
         return authUserService.getAuthLoginResponse(payload, request, response);
     }
 
     @GetMapping("/api/v1/auth/logout")
-    public CommonResponseDto<LogoutResponseDataDto> handleLogoutApi(HttpServletRequest request){
-        return authUserService.getAuthLogoutResponse(request);
+    public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        log.info("handleLogoutApi");
+        authUserService.logoutProcessing(request, response);
+        return authUserService.getAuthLogoutResponse();
     }
 
     @GetMapping("/auth/api/logout")
     public ResponseEntity handleFrontLogout(){
+        log.info("handleFrontLogout - return 401 for user-token cleanup");
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 

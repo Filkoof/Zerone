@@ -11,21 +11,18 @@ import java.util.List;
 @Builder
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostResponseDto {
+public class CommentDto {
 
+    private final String commentText;
     private final Boolean isBlocked;
-    private final List<Object> comments;
+    private final List<ImageDto> images;
+    private final Boolean isDeleted;
+    private final Integer postId;
     private final Boolean myLike;
     private final UserDataResponseDto author;
-    private final Long id;
+    private final Integer parentId;
+    private final Integer id;
     private final LocalDateTime time;
-    private final String title;
-    private final String type;
-    private final String postText;
-    private final Integer likes;
-    private final List<String> tags;
-<<<<<<< HEAD
+    private final List<CommentDto> subComments;
+    private final String likes;
 }
-=======
-}
->>>>>>> dev

@@ -17,6 +17,7 @@ class ZeroneMailSenderServiceTests extends AbstractAllTestH2ContextLoad{
 
     @Test
     void send() {
+
         assertTrue(zeroneMailSenderService.emailSend(null, null, email, "zerone test subject", "zerone test message"));
     }
 }

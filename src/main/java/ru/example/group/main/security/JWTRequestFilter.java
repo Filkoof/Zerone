@@ -45,7 +45,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         String token;
         String username;
         if (httpServletRequest.getHeader(authHeader) != null) {
-            if (!httpServletRequest.getHeader(authHeader).equals("undefined")) {
+            if (!httpServletRequest.getHeader(authHeader).equals("undefined") && !httpServletRequest.getHeader(authHeader).equals("")) {
                 token = httpServletRequest.getHeader(authHeader);
                 username = checkToken(token, httpServletRequest, httpServletResponse);
                 checkAuthenticationToken(username, token, httpServletRequest, httpServletResponse);
@@ -57,10 +57,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     private void checkAuthenticationToken(String username, String token,
                                           HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws ServletException {
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null){
             UserDetails userDetails;
             userDetails = socialNetUserDetailsService.loadUserByUsername(username);
-            if (jwtUtilService.validateToken(token, userDetails)) {
+            if (userDetails != null && jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
@@ -69,11 +69,13 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
+                SecurityContextHolder.clearContext();
                 handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                         new ServletException("Invalid token."));
                 throw new ServletException("Invalid token.");
             }
         } else {
+            SecurityContextHolder.clearContext();
             handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                     new ServletException("Wrong token."));
             throw new ServletException("Wrong token.");

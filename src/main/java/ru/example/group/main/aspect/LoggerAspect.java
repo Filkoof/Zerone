@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 public class LoggerAspect {
 
-
+/*
   @Pointcut("within(@org.springframework.web.bind.annotation.RestController *)"+
   "||within(@org.springframework.stereotype.Repository *)"+
   "||within(@org.springframework.stereotype.Service *)")
@@ -52,5 +52,5 @@ public class LoggerAspect {
         joinPoint.getSignature().getName(),
         joinPoint.getSourceLocation().getWithinType().getName(),
         exception.getMessage(), exception.getStackTrace());
-  }
+  }*/
 }
