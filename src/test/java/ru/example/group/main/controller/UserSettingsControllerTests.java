@@ -53,4 +53,28 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }
+
+    @Test
+    void userDeleteConfirmedAndRedirectToLogin() throws Exception {
+        UserEntity user = userRepository.findByEmail(EMAIL);
+        user.setConfirmationCode("testDelete");
+        userRepository.save(user);
+        mockMvc.perform(get("/user_delete/confirm")
+                        .param("code", "testDelete")
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void userDeleteRecoveryConfirmAndRedirectToLogin() throws Exception {
+        UserEntity user = userRepository.findByEmail(EMAIL);
+        user.setConfirmationCode("testRecovery");
+        userRepository.save(user);
+        mockMvc.perform(get("/user_delete_recovery/confirm")
+                        .param("code", "testRecovery")
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+    }
 }

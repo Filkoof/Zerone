@@ -221,10 +221,10 @@ public class UserSettingsService {
                 userRepository.save(userToDelete);
                 recoveryUserDeletedNotice(userToDelete.getEmail());
             }catch (Exception e){
-                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status, error: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status - wrong email code.");
+            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status - wrong email recovery code.");
         }
     }
 

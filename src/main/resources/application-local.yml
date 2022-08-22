@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/soc_net
+    username: postgres
+    password: Hfnfg123
+    driver-class-name: org.postgresql.Driver
+
+  mail:
+    host: smtp.mail.ru
+    username: zerone.mail@mail.ru
+    password: hcaPst9hn8USn45TkqLW
+    port: 465
+    protocol: smtps
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+      persistent: false
+  port: 8086
+
+config:
+  frontend: "195.161.114.18:8082"
+  backend: "localhost:8086"
+  token-validity-hours: 72
+  authorization: "AUTHORIZATION"
+  secret: SocialNetwork26
+  zeroneEmail: zerone.mail@mail.ru
+
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: debug
+
+
+
+
+
+
+
