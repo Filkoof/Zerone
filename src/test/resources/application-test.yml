@@ -1,10 +1,4 @@
-
 spring:
-  datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD:root}
-
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -13,14 +7,24 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
+    show-sql: true
   liquibase:
     enabled: true
-
+    change-log: db/changelog/db.changelog-master.yaml
+    drop-first: true
+  test:
+    database:
+      replace: none
+  datasource:
+    url: jdbc:h2:mem:soc_net;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS soc_net
+    username: sa
+    password:
 server:
   servlet:
     session:
       tracking-modes: cookie
+      persistent: false
   port: ${PORT:8080}
 
 config:
@@ -30,16 +34,3 @@ config:
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
-
-logging:
-  file:
-    path: logs
-  level:
-    ru.example.group.main: debug
-
-
-
-
-
-
-
