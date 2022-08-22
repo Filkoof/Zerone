@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,26 +26,19 @@ import lombok.Setter;
 @Table(name = "posts")
 public class PostEntity {
 
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   private LocalDateTime time;
+  private String title;
+  private String postText;
+  private LocalDateTime updateDate;
+  private boolean isBlocked;
+  private boolean isDeleted;
 
   @ManyToOne
   @JoinColumn(name = "author_id")
   private UserEntity user;
-
-  private String title;
-
-  private String postText;
-
-  private LocalDateTime updateDate;
-
-  private boolean isBlocked;
-
-  private boolean isDeleted;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private List<CommentEntity> comments = new LinkedList<>();
@@ -60,6 +54,4 @@ public class PostEntity {
       joinColumns = @JoinColumn(name = "post_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private Set<TagEntity> tagEntities = new LinkedHashSet<>();
-
-
 }
