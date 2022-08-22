@@ -7,7 +7,7 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
   liquibase:
     enabled: true

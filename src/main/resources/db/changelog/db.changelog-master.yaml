@@ -50,7 +50,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: about
-                  type: text
+                  type: varchar
               - column:
                   name: status
                   type: boolean
@@ -216,7 +216,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: message_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -276,7 +276,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: post_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -407,7 +407,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: comment_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -530,7 +530,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: message
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:

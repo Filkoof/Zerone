@@ -6,13 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import ru.example.group.main.dto.CommonResponseDto;
-import ru.example.group.main.dto.EmailChangeDto;
-import ru.example.group.main.dto.LogoutResponseDataDto;
-import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.*;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.UserSetDeletedFail;
+import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,9 +55,28 @@ public class UserSettingsController {
         return new RedirectView("http://" + front + "/login");
     }
 
-    @DeleteMapping("/api/v1/users/me")
-    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete() throws UserSetDeletedFail {
-        return userSettingsService.handleUserDelete();
+    @GetMapping("/api/v1/users/me")
+    public CommonResponseDto<UserDataResponseDto> getMe(HttpServletRequest request, HttpServletResponse response)  {
+        return userSettingsService.getMeData(request, response);
     }
 
+    @DeleteMapping("/api/v1/users/me")
+    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
+        log.info("handleUserDelete started");
+        return userSettingsService.handleUserDelete(request, response);
+    }
+
+    @GetMapping("/user_delete/confirm")
+    public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam String code)throws UserDeleteOrRecoveryException {
+        log.info("user delete started via email link");
+        userSettingsService.confirmUserDelete(code);
+        return new RedirectView("http://" + front + "/login");
+    }
+
+    @GetMapping("/user_delete_recovery/confirm")
+    public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam String code) throws UserDeleteOrRecoveryException {
+        log.info("user delete recovery started via user email link");
+        userSettingsService.recoveryUserDelete(code);
+        return new RedirectView("http://" + front + "/login");
+    }
 }

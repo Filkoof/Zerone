@@ -6,12 +6,14 @@ import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.CommonResponseDto;
 import ru.example.group.main.dto.LogoutResponseDataDto;
 import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.UserSetDeletedFail;
+import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
+import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +33,15 @@ public class UserSettingsService {
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
+    private final SocialNetUserDetailsService socialNetUserDetailsService;
+
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
+        this.socialNetUserDetailsService = socialNetUserDetailsService;
     }
 
     public Boolean changeEmailConfirmationSend(HttpServletRequest request, HttpServletResponse response, String newEmail) throws EmailNotSentException {
@@ -135,13 +140,11 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 
-    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete() throws UserSetDeletedFail {
+    public CommonResponseDto<LogoutResponseDataDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) {
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<LogoutResponseDataDto> deleteResponse = new CommonResponseDto<>();
-        UserEntity userToDelete = new UserEntity();
-        try {
-            userToDelete = socialNetUserRegisterService.getCurrentUser();
-            userToDelete.setDeleted(true);
-            userRepository.save(userToDelete);
+        if (user != null){
+            sendUserDeleteConfirmation(request, response, user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
             deleteResponse.setTimeStamp(LocalDateTime.now());
@@ -150,9 +153,87 @@ public class UserSettingsService {
             logoutResponseDataDto.setAdditionalProp2("prop2del");
             logoutResponseDataDto.setAdditionalProp3("prop3del");
             deleteResponse.setData(logoutResponseDataDto);
-        } catch (Exception e){
-            throw new UserSetDeletedFail("User id: " + userToDelete.getEmail() + " failed to updated deleted status, error: " + e.getMessage());
+            return deleteResponse;
         }
+        deleteResponse.setMessage("Deletion fail.");
+        deleteResponse.setError("User delition error.");
         return deleteResponse;
+    }
+
+    private void sendUserDeleteConfirmation(HttpServletRequest request, HttpServletResponse response, UserEntity user) {
+        String code = UUID.randomUUID().toString().substring(0, 24);
+        user.setConfirmationCode(code);
+        userRepository.save(user);
+        String message =
+                "Здравствуйте, " + user.getFirstName() + "\n\n" +
+                        "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
+                        "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
+                        "http://"+ backend + "/user_delete/confirm?code=" + code + "\n" +
+                        "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
+        String title = "Удаление Вашего аккаунта Зерон";
+        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
+    }
+
+    public void confirmUserDelete(String code) throws UserDeleteOrRecoveryException {
+        UserEntity userToDelete = userRepository.findByConfirmationCode(code);
+        if (userToDelete != null){
+            userToDelete.setDeleted(true);
+            try {
+                code = UUID.randomUUID().toString().substring(0, 24);
+                userToDelete.setConfirmationCode(code);
+                userRepository.save(userToDelete);
+                userDeletedNotice(userToDelete.getEmail(), code);
+            }catch (Exception e){
+                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
+            }
+        } else {
+            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status - wrong email code.");
+        }
+    }
+
+    private void userDeletedNotice(String email, String code) {
+        String message =
+                "Здравствуйте, " + email + "\n\n" +
+                        "Ваш аккаунт в сеть Зерон успешно удален. \n\n" +
+                        "Для восстановления аккаунта активируйте его по ссылке: \n\n" +
+                        "http://" + backend + "/user_delete_recovery/confirm?code=" + code + "\n" +
+                        "\n\nСпасибо!";
+        String title = "Успешное удаление Вашего аккаунта Зерон";
+        zeroneMailSenderService.emailSend(null, null, email, title, message);
+    }
+
+    public CommonResponseDto<UserDataResponseDto> getMeData(HttpServletRequest request, HttpServletResponse response) {
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+        CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setData(socialNetUserDetailsService.setUserDataResponseDto(user, ""));
+        commonResponseDto.setError("");
+        commonResponseDto.setMessage("ok");
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return commonResponseDto;
+    }
+
+    public void recoveryUserDelete(String code) throws UserDeleteOrRecoveryException {
+        UserEntity userToDelete = userRepository.findByConfirmationCode(code);
+        if (userToDelete != null){
+            userToDelete.setDeleted(false);
+            try {
+                userToDelete.setConfirmationCode(null);
+                userRepository.save(userToDelete);
+                recoveryUserDeletedNotice(userToDelete.getEmail());
+            }catch (Exception e){
+                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
+            }
+        } else {
+            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status - wrong email code.");
+        }
+    }
+
+    private void recoveryUserDeletedNotice(String email) {
+        String message =
+                "Здравствуйте, " + email + "\n\n" +
+                        "Ваш аккаунт успешно в сеть Зерон успешно восстановлен." +
+                        "\n\nСпасибо!";
+        String title = "Успешное восстановление Вашего аккаунта Зерон";
+        zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
 }

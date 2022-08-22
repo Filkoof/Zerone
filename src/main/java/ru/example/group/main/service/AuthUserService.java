@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.JwtBlacklistEntity;
+import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.repository.JwtBlacklistRepository;
-import ru.example.group.main.security.SocialNetUserDetails;
-import ru.example.group.main.security.SocialNetUserDetailsService;
+import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,25 +22,33 @@ public class AuthUserService {
     @Value("${config.authorization}")
     private String authHeader;
     private SocialNetUserRegisterService userRegister;
+    private UserRepository userRepository;
 
     private JwtBlacklistRepository jwtBlacklistRepository;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public AuthUserService(SocialNetUserRegisterService userRegister, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
+    public AuthUserService(SocialNetUserRegisterService userRegister, UserRepository userRepository, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver) {
         this.userRegister = userRegister;
+        this.userRepository = userRepository;
         this.jwtBlacklistRepository = jwtBlacklistRepository;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
     public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
-        try {
-            authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
-        } catch (Exception e) {
-            e.getMessage();
-            handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
-            authLoginResponseDto.setError("Wrong user name or password.");
-        }
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
+        UserEntity user = userRepository.findByEmail(payload.getEmail());
+        if (user == null || !user.isApproved() || user.isBlocked() || user.isDeleted()) {
+            authLoginResponseDto.setError("User is inactivated, blocked or deleted.");
+            authLoginResponseDto.setMessage("User is inactivated, blocked or deleted.");
+        } else {
+            try {
+                authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
+            } catch (Exception e) {
+                e.getMessage();
+                handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
+                authLoginResponseDto.setError("Wrong user name or password.");
+            }
+        }
         return authLoginResponseDto;
     }
 

@@ -1,5 +1,6 @@
 package ru.example.group.main.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
+@Slf4j
 public class AuthUserController {
     private final AuthUserService authUserService;
 
@@ -23,11 +25,20 @@ public class AuthUserController {
 
     @GetMapping("/api/v1/auth/logout")
     public CommonResponseDto<LogoutResponseDataDto> handleLogoutApi(HttpServletRequest request){
+        log.info("handleLogoutApi");
         return authUserService.getAuthLogoutResponse(request);
     }
 
     @GetMapping("/auth/api/logout")
     public ResponseEntity handleFrontLogout(){
+        log.info("handleFrontLogout");
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @GetMapping("/auth/api/logoutbl")
+    public ResponseEntity handleJwtBlacklistAddLogout(){
+        log.info("handleJwtBlacklistAddLogout");
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
