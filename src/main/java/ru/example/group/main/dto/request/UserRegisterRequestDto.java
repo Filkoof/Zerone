@@ -1,4 +1,4 @@
-package ru.example.group.main.dto;
+package ru.example.group.main.dto.request;
 
 import lombok.Data;
 

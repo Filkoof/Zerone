@@ -1,6 +1,6 @@
 package ru.example.group.main.exception;
 
-import ru.example.group.main.dto.ApiResponseDto;
+import ru.example.group.main.dto.response.ApiResponseDto;
 
 public class UserWithThatEmailALreadyExistException extends Exception{
 

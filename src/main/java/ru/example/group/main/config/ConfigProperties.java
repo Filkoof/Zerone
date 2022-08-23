@@ -14,4 +14,5 @@ public class ConfigProperties {
     private String secret;
     private String zeroneEmail;
     private String local;
+    private Boolean jwtBlackListOn;
 }

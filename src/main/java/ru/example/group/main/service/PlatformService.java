@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.LanguageResponseDto;
+import ru.example.group.main.dto.response.LanguageResponseDto;
 import ru.example.group.main.response.CommonListResponseDto;
 
 @Service

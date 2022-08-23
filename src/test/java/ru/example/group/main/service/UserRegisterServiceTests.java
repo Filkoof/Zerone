@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
-import ru.example.group.main.dto.ApiResponseDto;
-import ru.example.group.main.dto.RegisterConfirmRequestDto;
-import ru.example.group.main.dto.UserRegisterRequestDto;
+import ru.example.group.main.dto.response.ApiResponseDto;
+import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
+import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 

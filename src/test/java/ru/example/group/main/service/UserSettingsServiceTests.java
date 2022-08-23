@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
-import ru.example.group.main.dto.PasswordChangeRequestDto;
+import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;

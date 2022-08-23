@@ -4,8 +4,8 @@ package ru.example.group.main.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.group.main.dto.ApiResponseDto;
-import ru.example.group.main.dto.UserRegisterRequestDto;
+import ru.example.group.main.dto.response.ApiResponseDto;
+import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.service.UserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
