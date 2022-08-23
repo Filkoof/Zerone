@@ -3,10 +3,11 @@ package ru.example.group.main.service;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.CommonResponseDto;
-import ru.example.group.main.dto.UserDataResponseDto;
+
 import ru.example.group.main.dto.request.PostRequestDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.UserEntity;
