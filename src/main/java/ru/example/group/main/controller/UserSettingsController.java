@@ -1,33 +1,43 @@
 package ru.example.group.main.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
-import ru.example.group.main.dto.CommonResponseDto;
-import ru.example.group.main.dto.EmailChangeDto;
-import ru.example.group.main.dto.PasswordChangeDto;
-import ru.example.group.main.dto.UserDataResponseDto;
+import ru.example.group.main.dto.*;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.security.SocialNetUserRegisterService;
+//import ru.example.group.main.service.CloudinaryService;
+import ru.example.group.main.service.CloudinaryService;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import com.cloudinary.*;
+
 
 @RestController
 @Slf4j
 public class UserSettingsController {
     @Value("${config.domain}")
     private String domain;
-    private final UserSettingsService userSettingsService;
 
-    public UserSettingsController(UserSettingsService userSettingsService) {
+    private final UserSettingsService userSettingsService;
+    private final CloudinaryService cloudinaryService;
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
+
+    public UserSettingsController(UserSettingsService userSettingsService, CloudinaryService cloudinaryService, SocialNetUserRegisterService socialNetUserRegisterService) {
         this.userSettingsService = userSettingsService;
+        this.cloudinaryService = cloudinaryService;
+        this.socialNetUserRegisterService = socialNetUserRegisterService;
     }
 
     @PutMapping("/api/v1/account/email")
@@ -66,9 +76,12 @@ public class UserSettingsController {
         return response;
     }
 
+
     @PutMapping("/api/v1/users/me")
-    public ResponseEntity editUserSettings(@RequestBody UserDataResponseDto updateUser) {
+    public CommonResponseDto<UserDataResponseDto> editUserSettings(@RequestBody UserDataResponseDto updateUser,
+                                                                   HttpServletRequest request) {
         userSettingsService.updateUserMainSettings(updateUser);
-        return new ResponseEntity(HttpStatus.OK);
-    }
+    return getUser(request);
+}
+
 }

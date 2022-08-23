@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.PasswordChangeDto;
+import ru.example.group.main.dto.UrlImageDto;
 import ru.example.group.main.dto.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
@@ -33,14 +34,16 @@ public class UserSettingsService {
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public Boolean changeEmailConfirmationSend(HttpServletRequest request, HttpServletResponse response, String newEmail) throws EmailNotSentException {
@@ -132,9 +135,10 @@ public class UserSettingsService {
         currentUser.setPhone(newDateUser.getPhone());
         currentUser.setCountry(newDateUser.getCountry());
         currentUser.setCity(newDateUser.getCity());
-        currentUser.setBirthDate(LocalDate.now());
-        currentUser.setPhoto("https://");
+        currentUser.setBirthDate(newDateUser.getBirthDate());
+        currentUser.setPhoto(newDateUser.getPhoto());
         currentUser.setAbout(newDateUser.getAbout());
         userRepository.save(currentUser);
     }
+
 }

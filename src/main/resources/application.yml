@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/soc_net
+    url: jdbc:postgresql://localhost:5432/soc_nett
     username: postgres
-    password: Hfnfg123
+    password: postgres
     driver-class-name: org.postgresql.Driver
   mail:
     host: smtp.mail.ru
@@ -10,12 +10,17 @@ spring:
     password: hcaPst9hn8USn45TkqLW
     port: 465
     protocol: smtps
+    debug: true
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
   liquibase:
     enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 server:
   servlet:
     session:
@@ -36,3 +41,10 @@ config:
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
+
+cloudinary:
+  cloud_name: "permishin"
+  api_key: "957437892123721"
+  api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
+
+
