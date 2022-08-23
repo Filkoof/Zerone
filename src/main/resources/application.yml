@@ -30,7 +30,7 @@ config:
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
-  jwtBlackListOn: false
+  jwt-black-list-on: false
 
 logging:
   file:
