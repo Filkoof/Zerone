@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/soc_nett
+    url: jdbc:postgresql://localhost:5432/soc_net
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -10,10 +10,9 @@ spring:
     password: hcaPst9hn8USn45TkqLW
     port: 465
     protocol: smtps
-    debug: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   liquibase:
     enabled: true
