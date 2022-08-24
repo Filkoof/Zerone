@@ -35,7 +35,6 @@ public class SocialNetUserDetailsService implements UserDetailsService {
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
         UserDataResponseDto userDataResponseDto = new UserDataResponseDto();
-
         userDataResponseDto.setAbout(user.getAbout());
         userDataResponseDto.setBirthDate(user.getBirthDate());
         userDataResponseDto.setBlocked(user.isBlocked());
@@ -49,6 +48,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         userDataResponseDto.setId(user.getId());
         userDataResponseDto.setLastName(user.getLastName());
         userDataResponseDto.setPhone(user.getPhone());
+        userDataResponseDto.setPhoto(user.getPhoto());
         userDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
         MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
         userDataResponseDto.setMessagePermissions(messagesPermission);

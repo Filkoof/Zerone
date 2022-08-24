@@ -5,23 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.example.group.main.dto.*;
-import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.security.SocialNetUserRegisterService;
-//import ru.example.group.main.service.CloudinaryService;
-import ru.example.group.main.service.CloudinaryService;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import com.cloudinary.*;
 
 
 @RestController
@@ -31,13 +22,9 @@ public class UserSettingsController {
     private String domain;
 
     private final UserSettingsService userSettingsService;
-    private final CloudinaryService cloudinaryService;
-    private final SocialNetUserRegisterService socialNetUserRegisterService;
 
-    public UserSettingsController(UserSettingsService userSettingsService, CloudinaryService cloudinaryService, SocialNetUserRegisterService socialNetUserRegisterService) {
+    public UserSettingsController(UserSettingsService userSettingsService) {
         this.userSettingsService = userSettingsService;
-        this.cloudinaryService = cloudinaryService;
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
     }
 
     @PutMapping("/api/v1/account/email")
@@ -54,7 +41,6 @@ public class UserSettingsController {
         return new RedirectView("http://" + domain + "/login");
     }
 
-
     @PutMapping("/api/v1/account/password/set")
     public ResponseEntity passwordChange(@RequestBody PasswordChangeDto passwordChangeDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("passwordChange started");
@@ -68,20 +54,21 @@ public class UserSettingsController {
         userSettingsService.confirmPasswordChange(code, code1);
         return new RedirectView("http://" + domain + "/login");
     }
-
+    //TODO убрать токен из метода
     @GetMapping("/api/v1/users/me")
-    public CommonResponseDto<UserDataResponseDto> getUser(HttpServletRequest request) {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser(HttpServletRequest request) {
         CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         response.setData(userSettingsService.getMeResponse(request));
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PutMapping("/api/v1/users/me")
-    public CommonResponseDto<UserDataResponseDto> editUserSettings(@RequestBody UserDataResponseDto updateUser,
-                                                                   HttpServletRequest request) {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> editUserSettings(@RequestBody UserDataResponseDto updateUser,
+                                                                                   HttpServletRequest request) {
+        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         userSettingsService.updateUserMainSettings(updateUser);
-    return getUser(request);
+        response.setData(userSettingsService.getMeResponse(request));
+    return new ResponseEntity<>(response, HttpStatus.OK);
 }
 
 }
