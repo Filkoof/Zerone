@@ -240,4 +240,23 @@ public class UserSettingsService {
         String title = "Успешное восстановление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(null, null, email, title, message);
     }
+
+    public UserDataResponseDto getMeResponse(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+        return socialNetUserDetailsService.setUserDataResponseDto(user, token);
+    }
+
+    public void updateUserMainSettings(UserDataResponseDto newDateUser) {
+        UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
+        currentUser.setFirstName(newDateUser.getFirstName());
+        currentUser.setLastName(newDateUser.getLastName());
+        currentUser.setPhone(newDateUser.getPhone());
+        currentUser.setCountry(newDateUser.getCountry());
+        currentUser.setCity(newDateUser.getCity());
+        currentUser.setBirthDate(newDateUser.getBirthDate());
+        currentUser.setPhoto(newDateUser.getPhoto());
+        currentUser.setAbout(newDateUser.getAbout());
+        userRepository.save(currentUser);
+    }
 }

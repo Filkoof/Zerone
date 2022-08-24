@@ -19,9 +19,13 @@ spring:
 
 server:
   servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
     session:
       tracking-modes: cookie
   port: ${PORT:8080}
+
 
 config:
   frontend: "195.161.114.18:80"
@@ -37,6 +41,12 @@ logging:
     path: logs
   level:
     ru.example.group.main: debug
+
+cloudinary:
+  cloud_name: "permishin"
+  api_key: "957437892123721"
+  api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
+
 
 
 
