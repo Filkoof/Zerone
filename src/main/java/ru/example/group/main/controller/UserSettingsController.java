@@ -13,6 +13,7 @@ import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -59,6 +60,8 @@ public class UserSettingsController {
     public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser(HttpServletRequest request) {
         CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         response.setData(userSettingsService.getMeResponse(request));
+        response.setError("OK");
+        response.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -68,6 +71,8 @@ public class UserSettingsController {
         CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         userSettingsService.updateUserMainSettings(updateUser);
         response.setData(userSettingsService.getMeResponse(request));
+        response.setError("OK");
+        response.setTimeStamp(LocalDateTime.now());
     return new ResponseEntity<>(response, HttpStatus.OK);
 }
 

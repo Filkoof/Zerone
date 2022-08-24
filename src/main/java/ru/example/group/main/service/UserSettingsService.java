@@ -136,6 +136,7 @@ public class UserSettingsService {
         currentUser.setBirthDate(newDateUser.getBirthDate());
         currentUser.setPhoto(newDateUser.getPhoto());
         currentUser.setAbout(newDateUser.getAbout());
+      //  currentUser.setStatus(true);
         userRepository.save(currentUser);
     }
 

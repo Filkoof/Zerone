@@ -12,10 +12,10 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
   liquibase:
-    enabled: true
+    enabled: false
   servlet:
     multipart:
       max-file-size: 10MB

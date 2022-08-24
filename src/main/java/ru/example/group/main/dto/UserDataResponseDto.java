@@ -25,7 +25,8 @@ public class UserDataResponseDto {
     private String password;
     private String photo;
     private String about;
-    private boolean status;
+//    @JsonProperty("status")
+//    private boolean status;
     private String city;
     private String token;
     private String country;

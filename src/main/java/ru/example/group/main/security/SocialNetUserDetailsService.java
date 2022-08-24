@@ -52,8 +52,8 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         userDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
         MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
         userDataResponseDto.setMessagePermissions(messagesPermission);
+      //  userDataResponseDto.setStatus(true);
         userDataResponseDto.setToken(token);
-
         return userDataResponseDto;
     }
 }
