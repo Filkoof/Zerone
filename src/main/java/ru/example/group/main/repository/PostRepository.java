@@ -10,6 +10,6 @@ import ru.example.group.main.entity.PostEntity;
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
 
-    @Query("SELECT * FROM posts WHERE is_blocked != false AND is_deleted != false")
+    @Query(value = "SELECT * FROM posts WHERE is_blocked != false AND is_deleted != false", nativeQuery = true)
     Page<PostEntity> findAllPostsWithPagination(String text, Pageable pageable);
 }

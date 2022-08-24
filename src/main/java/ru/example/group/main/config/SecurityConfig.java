@@ -34,9 +34,10 @@ public class SecurityConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm").permitAll()
+                .antMatchers("/api/v1/auth/*", "/api/v1/auth/logout" ,"/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm").permitAll()
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
-                .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set").permitAll()
+                .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set", "/user_delete/confirm").permitAll()
+                .antMatchers("/user_delete_recovery/confirm").permitAll()
                 .antMatchers( "**").authenticated()
                 .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
