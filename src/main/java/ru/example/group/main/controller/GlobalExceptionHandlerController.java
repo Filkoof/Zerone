@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.example.group.main.dto.*;
+import ru.example.group.main.dto.response.*;
 import ru.example.group.main.exception.*;
 
 import javax.servlet.ServletException;

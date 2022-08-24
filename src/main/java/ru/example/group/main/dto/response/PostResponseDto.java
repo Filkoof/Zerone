@@ -3,7 +3,6 @@ package ru.example.group.main.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import ru.example.group.main.dto.UserDataResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

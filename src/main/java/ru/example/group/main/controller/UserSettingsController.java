@@ -6,7 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import ru.example.group.main.dto.*;
+import ru.example.group.main.dto.request.EmailChangeRequestDto;
+import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.dto.response.LogoutDataResponseDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
@@ -58,6 +62,15 @@ public class UserSettingsController {
     @GetMapping("/api/v1/users/me")
     public CommonResponseDto<UserDataResponseDto> getMe(HttpServletRequest request, HttpServletResponse response)  {
         return userSettingsService.getMeData(request, response);
+    }
+
+    @PutMapping("/api/v1/users/me")
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> editUserSettings(@RequestBody UserDataResponseDto updateUser,
+                                                                                   HttpServletRequest request) {
+        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
+        userSettingsService.updateUserMainSettings(updateUser);
+        response.setData(userSettingsService.getMeResponse(request));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/v1/users/me")

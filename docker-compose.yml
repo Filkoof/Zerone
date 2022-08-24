@@ -27,3 +27,10 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres/data:/var/lib/postgres/data
+
+  zerone_frontend:
+    container_name: zerone_frontend
+    restart: always
+    image: permishin/frontend_image_v4_external
+    ports:
+      - "80:80"

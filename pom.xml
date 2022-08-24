@@ -71,6 +71,13 @@
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
 
+    <!-- cloudinary -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http44</artifactId>
+      <version>1.32.2</version>
+    </dependency>
+
      <!-- mail -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

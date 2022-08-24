@@ -3,10 +3,10 @@ package ru.example.group.main.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.CommonResponseDto;
-import ru.example.group.main.dto.LogoutDataResponseDto;
-import ru.example.group.main.dto.PasswordChangeRequestDto;
-import ru.example.group.main.dto.UserDataResponseDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.dto.response.LogoutDataResponseDto;
+import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
@@ -239,5 +239,24 @@ public class UserSettingsService {
                         "\n\nСпасибо!";
         String title = "Успешное восстановление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(null, null, email, title, message);
+    }
+
+    public UserDataResponseDto getMeResponse(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+        return socialNetUserDetailsService.setUserDataResponseDto(user, token);
+    }
+
+    public void updateUserMainSettings(UserDataResponseDto newDateUser) {
+        UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
+        currentUser.setFirstName(newDateUser.getFirstName());
+        currentUser.setLastName(newDateUser.getLastName());
+        currentUser.setPhone(newDateUser.getPhone());
+        currentUser.setCountry(newDateUser.getCountry());
+        currentUser.setCity(newDateUser.getCity());
+        currentUser.setBirthDate(newDateUser.getBirthDate());
+        currentUser.setPhoto(newDateUser.getPhoto());
+        currentUser.setAbout(newDateUser.getAbout());
+        userRepository.save(currentUser);
     }
 }
