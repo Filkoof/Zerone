@@ -69,15 +69,11 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
-                SecurityContextHolder.getContext().setAuthentication(null);
-                SecurityContextHolder.clearContext();
                 handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                         new ServletException("Invalid token."));
                 throw new ServletException("Invalid token.");
             }
         } else {
-            SecurityContextHolder.getContext().setAuthentication(null);
-            SecurityContextHolder.clearContext();
             handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
                     new ServletException("Wrong token."));
             throw new ServletException("Wrong token.");

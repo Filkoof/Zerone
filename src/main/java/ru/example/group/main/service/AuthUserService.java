@@ -91,7 +91,6 @@ public class AuthUserService {
                     handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
                 }
             }
-            SecurityContextHolder.clearContext();
         }
     }
 }
