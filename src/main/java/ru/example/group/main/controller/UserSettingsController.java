@@ -13,6 +13,7 @@ import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserSettingsService;
 
@@ -61,23 +62,17 @@ public class UserSettingsController {
     }
 
     @GetMapping("/api/v1/users/me")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser(HttpServletRequest request) {
-        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
-        response.setData(userSettingsService.getMeResponse(request));
-        response.setError("OK");
-        response.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() {
+        log.info("getUser started");
+        return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }
 
     @PutMapping("/api/v1/users/me")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> editUserSettings(@RequestBody UserDataResponseDto updateUser,
-                                                                                   HttpServletRequest request) {
-        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> editUserSettings(@RequestBody UserDataResponseDto updateUser)
+            throws UpdateUserMainSettingsException {
+        log.info("editUserSettings started");
         userSettingsService.updateUserMainSettings(updateUser);
-        response.setData(userSettingsService.getMeResponse(request));
-        response.setError("OK");
-        response.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }
 
     @DeleteMapping("/api/v1/users/me")
