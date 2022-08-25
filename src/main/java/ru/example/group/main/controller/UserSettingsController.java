@@ -60,11 +60,11 @@ public class UserSettingsController {
     }
 
     @GetMapping("/api/v1/users/me")
-    public CommonResponseDto<UserDataResponseDto> getMe(HttpServletRequest request, HttpServletResponse response)  {
-        return userSettingsService.getMeData(request, response);
+    public CommonResponseDto<UserDataResponseDto> getMe()  {
+        return userSettingsService.getMeData();
     }
     @DeleteMapping("/api/v1/users/me")
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("handleUserDelete started");
         return userSettingsService.handleUserDelete(request, response);
     }

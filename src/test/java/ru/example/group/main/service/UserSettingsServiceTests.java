@@ -26,8 +26,6 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private SocialNetUserDetailsService socialNetUserDetailsService;
-    @Autowired
     private JWTUtilService jwtUtilService;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -85,7 +83,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @Test
-    void handleUserDelete() {
+    void handleUserDelete() throws EmailNotSentException {
         assertTrue(userSettingsService.handleUserDelete(null, null).getMessage().equals("User deleted."));
     }
 
@@ -100,7 +98,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void getMeData() {
-        assertTrue(userSettingsService.getMeData(null, null).getData().getEMail().equals(EMAIL));
+        assertTrue(userSettingsService.getMeData().getData().getEMail().equals(EMAIL));
     }
 
     @Test

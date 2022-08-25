@@ -1,5 +1,6 @@
 package ru.example.group.main.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 import ru.example.group.main.service.FriendsService;
 
 @RestController
+@Slf4j
 public class FriendsController {
 
     private final FriendsService friendsService;
@@ -17,13 +19,10 @@ public class FriendsController {
         this.friendsService = friendsService;
     }
 
-    /*@GetMapping("/api/v1/friends/recommendations")
-    public RecommendedFriendsResponseDto getRecommendedFriendsResponse(@RequestParam Integer offset, @RequestParam Integer itemPerPage){
-        return friendsService.getRecommendedFriendsResponse(offset, itemPerPage);
-    }*/
-
     @GetMapping("/api/v1/friends/recommendations")
-    public ResponseEntity getRecommendedFriendsResponse(){
-        return new ResponseEntity(HttpStatus.OK);
+    public RecommendedFriendsResponseDto getRecommendedFriendsResponse(@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer itemPerPage){
+        //log.info("getRecommendedFriendsResponse started");
+        return friendsService.getRecommendedFriendsResponse(offset, itemPerPage);
     }
+
 }

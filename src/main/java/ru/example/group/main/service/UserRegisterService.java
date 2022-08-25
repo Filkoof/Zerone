@@ -56,7 +56,7 @@ public class UserRegisterService {
                         "http://"+ mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
                         "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
         String title = "Код активации аккаунта Зерон";
-        zeroneMailSenderService.emailSend(request, response, userRegisterRequestDto.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);
         return newUserAddToDB(request, response, userRegisterRequestDto, code);
     }
 
@@ -105,7 +105,7 @@ public class UserRegisterService {
                         "Ваш аккаунт успешно активирован. Добро пожаловать в социальную сеть Зерон. " +
                         "\n\nСпасибо!";
         String title = "Ваш аккаунт Зерон успешно активирован.";
-        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
     public ApiResponseDto createUser(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto) throws Exception {
