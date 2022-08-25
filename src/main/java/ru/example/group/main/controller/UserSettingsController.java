@@ -63,7 +63,6 @@ public class UserSettingsController {
     public CommonResponseDto<UserDataResponseDto> getMe(HttpServletRequest request, HttpServletResponse response)  {
         return userSettingsService.getMeData(request, response);
     }
-
     @DeleteMapping("/api/v1/users/me")
     public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
         log.info("handleUserDelete started");

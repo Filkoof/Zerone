@@ -41,70 +41,44 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) {
         String token;
         String username;
-        String requestUrl = httpServletRequest.getRequestURI();
-        if (!requestUrl.equals("/api/v1/auth/logout")) {
-            if (httpServletRequest.getHeader(authHeader) != null) {
-                if (!httpServletRequest.getHeader(authHeader).equals("undefined") && !httpServletRequest.getHeader(authHeader).equals("")) {
-                    token = httpServletRequest.getHeader(authHeader);
-                    username = checkToken(token, httpServletRequest, httpServletResponse);
-                    checkAuthenticationToken(username, token, httpServletRequest, httpServletResponse);
-                }
-            }
+        try {
+            token = httpServletRequest.getHeader(authHeader);
+            username = checkToken(token);
+            checkAuthenticationToken(username, token, httpServletRequest);
+        } catch (Exception e) {
+            handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
+        }
+        try {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
+        }catch (Exception e){
+            handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
         }
     }
 
     private void checkAuthenticationToken(String username, String token,
-                                          HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-            throws ServletException {
-        if (username != null){
+                                          HttpServletRequest httpServletRequest) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails;
             userDetails = socialNetUserDetailsService.loadUserByUsername(username);
-            if (userDetails != null && jwtUtilService.validateToken(token, userDetails)) {
+            if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-
-                authenticationToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            } else {
-                SecurityContextHolder.clearContext();
-                handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
-                        new ServletException("Invalid token."));
-                throw new ServletException("Invalid token.");
             }
-        } else {
-            SecurityContextHolder.clearContext();
-            handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
-                    new ServletException("Wrong token."));
-            throw new ServletException("Wrong token.");
         }
     }
 
-    private String checkToken(String token, HttpServletRequest httpServletRequest,
-                              HttpServletResponse httpServletResponse) throws ServletException {
-        String username;
+    private String checkToken(String token) {
         JwtBlacklistEntity blacklist = this.jwtBlacklistRepository.findJwtBlacklistEntityByJwtBlacklistedToken(
                 token);
         if (blacklist == null) {
-            try {
-                username = jwtUtilService.extractUsername(token);
-            } catch (Exception e) {
-                handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
-                        new ServletException("Wrong token."));
-                return null;
-            }
-
-        } else {
-            handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null,
-                    new ServletException("Expired token."));
-            return null;
+            return jwtUtilService.extractUsername(token);
         }
-        return username;
+        return null;
     }
 
 }

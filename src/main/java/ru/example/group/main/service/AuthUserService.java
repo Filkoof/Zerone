@@ -92,6 +92,6 @@ public class AuthUserService {
                 }
             }
         }
-        SecurityContextHolder.clearContext();
+
     }
 }

@@ -35,10 +35,4 @@ public class AuthUserController {
         return authUserService.getAuthLogoutResponse();
     }
 
-    @GetMapping("/auth/api/logout")
-    public ResponseEntity handleFrontLogout(){
-        log.info("handleFrontLogout - return 401 for user-token cleanup");
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-    }
-
 }

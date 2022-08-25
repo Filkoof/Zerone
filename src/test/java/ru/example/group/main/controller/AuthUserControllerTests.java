@@ -38,11 +38,4 @@ class AuthUserControllerTests  extends AbstractAllTestH2ContextLoad {
                 .andExpect(status().isOk());
     }
 
-
-    @Test
-    void handleFrontLogout() throws Exception {
-        mockMvc.perform(get("/auth/api/logout"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
-    }
 }
