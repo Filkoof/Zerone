@@ -33,7 +33,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
     @Test
     void createUserCorrect() throws Exception {
         UserEntity user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userRepository.delete(user);
         }
 
@@ -41,25 +41,27 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "\t\"email\": \"" + email + "\",\n" +
-                                "\t\"firstName\": \"testCreate\",\n" +
-                                "\t\"lastName\": \"testCreate\",\n" +
-                                "\t\"passwd1\": \"11111111\",\n" +
-                                "\t\"token\": " + null + "\n" +
-                                "\n}")
+                                """
+                                        \t"firstName": "testCreate",
+                                        \t"lastName": "testCreate",
+                                        \t"passwd1": "11111111",
+                                        \t"token": null
+                                        }
+                                        """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("User created"))
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andDo(print())
                 .andExpect(status().isOk());
-        assertTrue( userRepository.findByEmail(email) != null);
+        assertTrue(userRepository.findByEmail(email) != null);
     }
 
     @Test
     void createUserAlreadyExist() throws Exception {
 
         UserEntity user = userRepository.findByEmail(email);
-        if (user == null){
+        if (user == null) {
             user = new UserEntity();
             user.setEmail(email);
             user.setStatus(true);
@@ -77,11 +79,13 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "\t\"email\": \"" + email + "\",\n" +
-                                "\t\"firstName\": \"testCreate\",\n" +
-                                "\t\"lastName\": \"testCreate\",\n" +
-                                "\t\"passwd1\": \"11111111\",\n" +
-                                "\t\"token\": " + null + "\n" +
-                                "\n}")
+                                """
+                                        \t"firstName": "testCreate",
+                                        \t"lastName": "testCreate",
+                                        \t"passwd1": "11111111",
+                                        \t"token": null
+                                        }
+                                        """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("User with that email already exists"))
@@ -95,12 +99,14 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
         mockMvc.perform(post("/api/v1/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
-                                "\t\"emaisal\": \"" + email + "\",\n" +
-                                "\t\"firastName\": \"testCreate\",\n" +
-                                "\t\"lasdtName\": \"testCreate\",\n" +
-                                "\t\"passwd1\": \"11111111\",\n" +
-                                "\t\"token\": " + null + "\n" +
-                                "\n}")
+                                "\t\"emaasdfil\": \"" + email + "\",\n" +
+                                """
+                                        \t"firstaName": "testCreate",
+                                        \t"lastasName": "testCreate",
+                                        \t"passdswd1": "11111111",
+                                        \t"token": null
+                                        }
+                                        """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("User creation mistake. Please contact support."))
@@ -112,7 +118,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
     @AfterEach
     void tearDown() {
         UserEntity user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userRepository.delete(user);
         }
     }

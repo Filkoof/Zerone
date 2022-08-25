@@ -1,20 +1,10 @@
 package ru.example.group.main.security;
 
-import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.TestPropertySource;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
-import ru.example.group.main.dto.ContactConfirmationPayloadDto;
-import ru.example.group.main.entity.UserEntity;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.http.HttpResponse;
+import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,7 +21,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void jwtLogin() {
-        ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
+        ContactConfirmationPayloadRequestDto payload = new ContactConfirmationPayloadRequestDto();
         payload.setPassword("11111111");
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =
@@ -42,7 +32,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void jwtTokenValidation() {
-        ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
+        ContactConfirmationPayloadRequestDto payload = new ContactConfirmationPayloadRequestDto();
         payload.setPassword("11111111");
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =
@@ -53,7 +43,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void jwtTokenValidationAndExpiredRegisterServiceAndUtilService() {
-        ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
+        ContactConfirmationPayloadRequestDto payload = new ContactConfirmationPayloadRequestDto();
         payload.setPassword("11111111");
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =
@@ -64,7 +54,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void jwtGenerateToken() {
-        ContactConfirmationPayloadDto payload = new ContactConfirmationPayloadDto();
+        ContactConfirmationPayloadRequestDto payload = new ContactConfirmationPayloadRequestDto();
         payload.setPassword("11111111");
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =

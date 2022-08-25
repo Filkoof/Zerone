@@ -24,10 +24,12 @@ class AuthUserControllerTests  extends AbstractAllTestH2ContextLoad {
     void handleLoginApi() throws Exception {
         mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "\t\"password\": \"11111111\",\n" +
-                                "\t\"email\": \"test@test.tu\"\n" +
-                                "}")
+                        .content("""     
+                                {
+                                "password": "11111111",
+                                "email": "test@test.tu"
+                                }
+                                """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data.city").value("Suzdal"))

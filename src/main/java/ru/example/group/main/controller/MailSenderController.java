@@ -1,8 +1,8 @@
 package ru.example.group.main.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ru.example.group.main.dto.RegisterConfirmDto;
-import ru.example.group.main.dto.RegistrationCompleteDto;
+import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
+import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
 import ru.example.group.main.service.UserRegisterService;
 
@@ -19,8 +19,8 @@ public class MailSenderController {
     }
 
     @PostMapping("/api/v1/account/register/confirm")
-    public RegistrationCompleteDto activate(@RequestBody RegisterConfirmDto registerConfirmDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
-         return userRegisterService.activateUser(registerConfirmDto, request, response);
+    public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
+         return userRegisterService.activateUser(registerConfirmRequestDto, request, response);
     }
 
 }

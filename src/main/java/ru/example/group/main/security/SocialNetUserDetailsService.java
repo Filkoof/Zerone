@@ -6,9 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.controller.GlobalExceptionHandlerController;
-import ru.example.group.main.dto.UserDataResponseDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.dto.enumerated.MessagesPermission;
+import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
 
 @Service
@@ -30,30 +30,28 @@ public class SocialNetUserDetailsService implements UserDetailsService {
             return new SocialNetUserDetails(user);
         }
         handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
-        throw new UsernameNotFoundException("user not found doh!");
+        //throw new UsernameNotFoundException("user not found doh!");
+        return null;
     }
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
-        UserDataResponseDto userDataResponseDto = new UserDataResponseDto();
-        userDataResponseDto.setAbout(user.getAbout());
-        userDataResponseDto.setBirthDate(user.getBirthDate());
-        userDataResponseDto.setBlocked(user.isBlocked());
-        userDataResponseDto.setCity(user.getCity());
-        userDataResponseDto.setCountry(user.getCountry());
-        userDataResponseDto.setPassword(null);
-        userDataResponseDto.setRegDate(user.getRegDate());
-        userDataResponseDto.setDeleted(user.isDeleted());
-        userDataResponseDto.setEMail(user.getEmail());
-        userDataResponseDto.setFirstName(user.getFirstName());
-        userDataResponseDto.setId(user.getId());
-        userDataResponseDto.setLastName(user.getLastName());
-        userDataResponseDto.setPhone(user.getPhone());
-        userDataResponseDto.setPhoto(user.getPhoto());
-        userDataResponseDto.setLastOnlineTime(user.getLastOnlineTime());
-        MessagesPermission messagesPermission = user.isMessagePermissions()? MessagesPermission.ALL : MessagesPermission.FRIENDS;
-        userDataResponseDto.setMessagePermissions(messagesPermission);
-      //  userDataResponseDto.setStatus(true);
-        userDataResponseDto.setToken(token);
-        return userDataResponseDto;
+        return UserDataResponseDto.builder()
+            .id(user.getId())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .regDate(user.getRegDate())
+            .birthDate(user.getBirthDate())
+            .eMail(user.getEmail())
+            .phone(user.getPhone())
+            .photo(user.getPhoto())
+            .about(user.getAbout())
+            .city(user.getCity())
+            .country(user.getCountry())
+            .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
+            .lastOnlineTime(user.getLastOnlineTime())
+            .isBlocked(user.isBlocked())
+            .isDeleted(user.isDeleted())
+            .token(token)
+            .build();
     }
 }

@@ -1,9 +1,10 @@
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/soc_net
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:root}
+
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -12,38 +13,44 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
   liquibase:
-    enabled: false
+    enabled: true
+
+server:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-server:
-  servlet:
     session:
       tracking-modes: cookie
-      persistent: false
-  port: 8086
-
-mail:
-  #hostBack: "195.161.114.18:8086"
-  #hostFront: "195.161.114.18:80"
-  hostBack: "195.161.114.18:8082"
+  port: ${PORT:8080}
 
 
 config:
-  domain: "195.161.114.18:8082"
-  local: "localhost:8086"
+  frontend: "195.161.114.18:80"
+  backend: "195.161.114.18:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
+  jwt-black-list-on: false
+
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: debug
 
 cloudinary:
   cloud_name: "permishin"
   api_key: "957437892123721"
   api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
+
+
+
+
+
+
 
 
