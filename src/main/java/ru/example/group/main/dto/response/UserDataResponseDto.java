@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
+@Setter
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

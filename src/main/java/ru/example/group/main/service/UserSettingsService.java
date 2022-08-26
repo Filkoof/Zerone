@@ -265,7 +265,7 @@ public class UserSettingsService {
                 userRepository.save(currentUser);
                 return true;
             } catch (Exception e) {
-                throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object");
+                throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
             }
     }
 }
