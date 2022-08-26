@@ -8,18 +8,54 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
+import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
 import ru.example.group.main.security.SocialNetUserDetailsService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
+
+    List<UserEntity> userEntityList;
+    UserEntity user1;
+    UserEntity user2;
+
+    @BeforeEach
+    void setUp() {
+        user1 = new UserEntity();
+        user1.setId(1L);
+        user1.setFirstName("Vasya");
+        user1.setLastName("Egorov");
+        user1.setRegDate(LocalDateTime.now());
+        user1.setBirthDate(LocalDate.now());
+        user1.setEmail("vasya@vasya.ru");
+        user1.setPhone("9999999999");
+        user1.setPhoto("https://");
+        user1.setAbout("About me");
+        user1.setCity("Moscow");
+        user1.setCountry("Russia");
+        user1.setMessagePermissions(true);
+        user1.setLastOnlineTime(LocalDateTime.now());
+        user1.setBlocked(false);
+        user1.setDeleted(false);
+
+        user2 = user1;
+        user2.setFirstName("Andrey");
+        user2.setEmail("andrey@andrey.ru");
+
+        }
+
     private final static String EMAIL = "test@test.tu";
     @Autowired
     private UserSettingsService userSettingsService;
@@ -110,5 +146,26 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
         user.setConfirmationCode(code);
         userRepository.save(user);
         assertTrue(userSettingsService.recoveryUserDelete(code));
+    }
+
+    @Test
+    @DisplayName("Тест на заполнение пользовательского DTO @GetMapping(/api/v1/users/me) данными")
+    void getUserMeResponse() {
+        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
+        assertNotNull(userDataResponseDto);
+    }
+
+    @Test
+    @DisplayName("Тест для проверки отсутствия токена для Dto после авторизации")
+    void updateUserMainSettings() {
+        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
+        assertNull(userDataResponseDto.getToken());
+    }
+
+    @Test
+    @DisplayName("Тест на обновление персональных данных пользователя метода @PutMapping(/api/v1/users/me)")
+    void setUserDataResponseDto() throws UpdateUserMainSettingsException {
+        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
+        assertTrue(userSettingsService.updateUserMainSettings(userDataResponseDto));
     }
 }

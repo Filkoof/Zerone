@@ -12,10 +12,10 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
 
 @Service
-public class SocialNetUserDetailsService implements UserDetailsService {
+public class SocialNetUserDetailsService  implements UserDetailsService {
 
     private final SocialNetUserRepository socialNetUserRepository;
-    private final GlobalExceptionHandlerController handlerController;
+    private GlobalExceptionHandlerController handlerController;
 
     @Autowired
     public SocialNetUserDetailsService(SocialNetUserRepository socialNetUserRepository, GlobalExceptionHandlerController handlerController) {
@@ -53,6 +53,8 @@ public class SocialNetUserDetailsService implements UserDetailsService {
             .isDeleted(user.isDeleted())
             .token(token)
             .build();
+<<<<<<< HEAD
+=======
     }
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user) {
@@ -73,5 +75,6 @@ public class SocialNetUserDetailsService implements UserDetailsService {
                 .isBlocked(user.isBlocked())
                 .isDeleted(user.isDeleted())
                 .build();
+>>>>>>> userMainSettings
     }
 }

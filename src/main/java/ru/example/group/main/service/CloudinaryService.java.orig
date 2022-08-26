@@ -4,9 +4,12 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+<<<<<<< HEAD
+=======
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.UrlImageResponseDto;
 import ru.example.group.main.exception.CloudinaryException;
+>>>>>>> userMainSettings
 
 @Service
 public class CloudinaryService {
@@ -16,11 +19,21 @@ public class CloudinaryService {
     public CloudinaryService(Cloudinary cloudinaryConfig) {
         this.cloudinaryConfig = cloudinaryConfig;}
 
+<<<<<<< HEAD
+    public String uploadFile(MultipartFile file) {
+=======
     private String uploadFile(MultipartFile file) throws CloudinaryException {
+>>>>>>> userMainSettings
         try {
             var uploadResult = cloudinaryConfig.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
             return  uploadResult.get("url").toString();
         } catch (Exception e) {
+<<<<<<< HEAD
+            throw new RuntimeException(e);
+        }
+    }
+
+=======
             throw new CloudinaryException("Не удалось загрузить файл на сервер Cloudinary! " + e.getMessage());
         }
     }
@@ -33,4 +46,5 @@ public class CloudinaryService {
         return response;
     }
 
+>>>>>>> userMainSettings
 }

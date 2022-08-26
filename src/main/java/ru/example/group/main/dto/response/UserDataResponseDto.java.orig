@@ -5,11 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+<<<<<<< HEAD
+=======
+import lombok.Setter;
+>>>>>>> userMainSettings
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
+<<<<<<< HEAD
+=======
+@Setter
+>>>>>>> userMainSettings
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -34,7 +42,10 @@ public class UserDataResponseDto {
     private final String city;
     private final String token;
     private final String country;
+<<<<<<< HEAD
+=======
     @JsonProperty("messages_permission")
+>>>>>>> userMainSettings
     private final MessagesPermission messagePermissions;
     @JsonProperty("last_online_time")
     private final LocalDateTime lastOnlineTime;

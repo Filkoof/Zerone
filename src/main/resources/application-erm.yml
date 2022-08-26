@@ -1,0 +1,57 @@
+
+spring:
+  datasource:
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/soc_net?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+
+  mail:
+    host: smtp.mail.ru
+    username: zerone.mail@mail.ru
+    password: hcaPst9hn8USn45TkqLW
+    port: 465
+    protocol: smtps
+  jpa:
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    enabled: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+  port: ${PORT:8086}
+
+
+config:
+  frontend: "localhost:8082"
+  backend: "localhost:8086"
+  token-validity-hours: 72
+  authorization: "AUTHORIZATION"
+  secret: SocialNetwork26
+  zeroneEmail: zerone.mail@mail.ru
+  jwt-black-list-on: false
+
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: debug
+
+cloudinary:
+  cloud_name: "permishin"
+  api_key: "957437892123721"
+  api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
+
+
+
+
+
+
+
+
