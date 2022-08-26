@@ -636,10 +636,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: classpath:db/changelog/sql/users.sql
+            path: db/changelog/sql/users.sql
         - sqlFile:
             encoding: utf8
-            path: classpath:db/changelog/sql/posts.sql
+            path: db/changelog/sql/posts.sql
 
       rollback:
         - delete:
