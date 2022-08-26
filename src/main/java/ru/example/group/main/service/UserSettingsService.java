@@ -10,7 +10,6 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
@@ -47,7 +46,7 @@ public class UserSettingsService {
 
     public Boolean changeEmailConfirmationSend(HttpServletRequest request, HttpServletResponse response, String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        if (!newEmail.isEmpty()) {
+        if (!newEmail.isEmpty()){
             sendEmailChangeConfirmation(request, response, newEmail, user);
             return true;
         }
@@ -61,23 +60,23 @@ public class UserSettingsService {
         String message =
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
-                        "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в адресную строку браузера): \n\n" +
+                        "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
                         "http://"+ backend + "/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
     public boolean confirmEmailChange(String code, String newEmail) throws EmailOrPasswordChangeException {
         UserEntity user = userRepository.findByConfirmationCode(code);
-        if (user != null) {
+        if (user != null){
             user.setConfirmationCode(null);
             user.setEmail(newEmail);
             try {
                 userRepository.save(user);
                 sendEmailChangedNotice(user.getEmail());
                 return true;
-            } catch (Exception e) {
+            }catch (Exception e){
                 throw new EmailOrPasswordChangeException("Email was not changed via confirmation link. Error: " + e);
             }
         } else {
@@ -85,18 +84,18 @@ public class UserSettingsService {
         }
     }
 
-    private void sendEmailChangedNotice(String email) {
+    private void sendEmailChangedNotice(String email) throws EmailNotSentException {
         String message =
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш email в сеть Зерон успешно изменен." +
                         "\n\nСпасибо!";
         String title = "Успешное изменение почты(логина) Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(null, null, email, title, message);
+        zeroneMailSenderService.emailSend( email, title, message);
     }
 
     public Boolean changePasswordConfirmationSend(HttpServletRequest request, HttpServletResponse response, PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
         UserEntity user = userRepository.findByEmail(jwtUtilService.extractUsername(passwordChangeRequestDto.getToken()));
-        if (user != null) {
+        if (user != null){
             sendPasswordChangeConfirmation(request, response, passwordChangeRequestDto.getPassword(), user);
             return true;
         }
@@ -111,10 +110,10 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение пароля в сеть Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://" + backend + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
+                        "http://"+ backend + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение пароля Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
     public Boolean confirmPasswordChange(String code, String code1) throws EmailOrPasswordChangeException {
@@ -134,20 +133,19 @@ public class UserSettingsService {
         }
     }
 
-
-    private void sendPasswordChangedNotice(String email) {
+    private void sendPasswordChangedNotice(String email) throws EmailNotSentException {
         String message =
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш пароль в сеть Зерон успешно изменен." +
                         "\n\nСпасибо!";
         String title = "Успешное изменение пароля Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(null, null, email, title, message);
+        zeroneMailSenderService.emailSend( email, title, message);
     }
 
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<LogoutDataResponseDto> deleteResponse = new CommonResponseDto<>();
-        if (user != null) {
+        if (user != null){
             sendUserDeleteConfirmation(request, response, user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
@@ -164,7 +162,7 @@ public class UserSettingsService {
         return deleteResponse;
     }
 
-    private void sendUserDeleteConfirmation(HttpServletRequest request, HttpServletResponse response, UserEntity user) {
+    private void sendUserDeleteConfirmation(HttpServletRequest request, HttpServletResponse response, UserEntity user) throws EmailNotSentException {
         String code = UUID.randomUUID().toString().substring(0, 24);
         user.setConfirmationCode(code);
         userRepository.save(user);
@@ -172,15 +170,15 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
                         "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
-                        "http://" + backend + "/user_delete/confirm?code=" + code + "\n" +
+                        "http://"+ backend + "/user_delete/confirm?code=" + code + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Удаление Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(request, response, user.getEmail(), title, message);
+        zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
     public Boolean confirmUserDelete(String code) throws UserDeleteOrRecoveryException {
         UserEntity userToDelete = userRepository.findByConfirmationCode(code);
-        if (userToDelete != null) {
+        if (userToDelete != null){
             userToDelete.setDeleted(true);
             try {
                 code = UUID.randomUUID().toString().substring(0, 24);
@@ -188,7 +186,7 @@ public class UserSettingsService {
                 userRepository.save(userToDelete);
                 userDeletedNotice(userToDelete.getEmail(), code);
                 return true;
-            } catch (Exception e) {
+            }catch (Exception e){
                 throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
             }
         } else {
@@ -196,7 +194,7 @@ public class UserSettingsService {
         }
     }
 
-    private void userDeletedNotice(String email, String code) {
+    private void userDeletedNotice(String email, String code) throws EmailNotSentException {
         String message =
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш аккаунт в сеть Зерон успешно удален. \n\n" +
@@ -204,10 +202,10 @@ public class UserSettingsService {
                         "http://" + backend + "/user_delete_recovery/confirm?code=" + code + "\n" +
                         "\n\nСпасибо!";
         String title = "Успешное удаление Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(null, null, email, title, message);
+        zeroneMailSenderService.emailSend(email, title, message);
     }
 
-    public CommonResponseDto<UserDataResponseDto> getMeData(HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<UserDataResponseDto> getMeData() {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setData(socialNetUserDetailsService.setUserDataResponseDto(user, ""));
@@ -234,13 +232,13 @@ public class UserSettingsService {
         }
     }
 
-    private void recoveryUserDeletedNotice(String email) {
+    private void recoveryUserDeletedNotice(String email) throws EmailNotSentException {
         String message =
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш аккаунт успешно в сеть Зерон успешно восстановлен." +
                         "\n\nСпасибо!";
         String title = "Успешное восстановление Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend(null, null, email, title, message);
+        zeroneMailSenderService.emailSend(email, title, message);
     }
 
     public CommonResponseDto<UserDataResponseDto> getUserMeResponse() {

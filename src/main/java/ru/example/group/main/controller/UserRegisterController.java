@@ -21,8 +21,8 @@ public class UserRegisterController {
     }
 
     @PostMapping("/api/v1/account/register")
-    public ResponseEntity<ApiResponseDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return new ResponseEntity<>(userRegisterService.createUser(request,response, userRegisterRequestDto), HttpStatus.OK);
+    public ResponseEntity<ApiResponseDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+        return new ResponseEntity<>(userRegisterService.createUser(userRegisterRequestDto), HttpStatus.OK);
     }
 
 }

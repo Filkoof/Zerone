@@ -18,12 +18,10 @@ public class ZeroneMailSenderService {
 
     private final JavaMailSender mailSender;
 
-    public ZeroneMailSenderService(JavaMailSender mailSender, HandlerExceptionResolver handlerExceptionResolver) {
+    public ZeroneMailSenderService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
-        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Value("${spring.mail.username}")
     private String username;
@@ -39,14 +37,13 @@ public class ZeroneMailSenderService {
         return true;
     }
 
-    public Boolean emailSend(HttpServletRequest request, HttpServletResponse response, String email, String title, String message) {
+    public Boolean emailSend(String email, String title, String message) throws EmailNotSentException {
         try {
             if (!StringUtil.isEmpty(email)) {
                 return send(email, title, message);
             }
         } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, new EmailNotSentException("Ошибка отправки письма с темой: "
-                    + title + " Ошибка: " + e.getMessage()));
+            throw new EmailNotSentException("Ошибка отправки письма с темой: " + title + " Ошибка: " + e.getMessage());
         }
         return false;
     }

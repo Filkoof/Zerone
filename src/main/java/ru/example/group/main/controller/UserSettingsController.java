@@ -13,13 +13,11 @@ import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -76,7 +74,7 @@ public class UserSettingsController {
     }
 
     @DeleteMapping("/api/v1/users/me")
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response)  {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("handleUserDelete started");
         return userSettingsService.handleUserDelete(request, response);
     }
