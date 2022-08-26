@@ -629,6 +629,18 @@ databaseChangeLog:
                   name: photo
                   value: "photo path here"
 
+  - changeSet:
+      id: 4
+      author: Artem_Filkov
+      comment: "заполнение таблиц пользователей и постов"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: classpath:db/changelog/sql/users.sql
+        - sqlFile:
+            encoding: utf8
+            path: classpath:db/changelog/sql/posts.sql
+
       rollback:
         - delete:
             tableName: users
