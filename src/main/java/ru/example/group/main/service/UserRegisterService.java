@@ -43,24 +43,27 @@ public class UserRegisterService {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    private boolean addUser(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
+    private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
         if (userFromDB != null) {
             return false;
         }
         String code = UUID.randomUUID().toString().substring(0, 24);
-        String message =
-                "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
-                        "Добро пожаловать в социальную сеть Зерон. " +
-                        "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
-                        "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
-        String title = "Код активации аккаунта Зерон";
-        zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);
-        return newUserAddToDB(request, response, userRegisterRequestDto, code);
+        if (newUserAddToDB(userRegisterRequestDto, code)) {
+            String message =
+                    "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
+                            "Добро пожаловать в социальную сеть Зерон. " +
+                            "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
+                            "http://" + mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
+                            "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
+            String title = "Код активации аккаунта Зерон";
+            zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);
+            return true;
+        }
+        return false;
     }
 
-    private boolean newUserAddToDB(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
+    private boolean newUserAddToDB( UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
         UserEntity user = new UserEntity();
         try {
             user.setStatus(true);
@@ -74,8 +77,7 @@ public class UserRegisterService {
             user.setPhoto("preliminary photo");
             userRepository.save(user);
         } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB: " + e.getMessage()));
-            //throw new NewUserWasNotSavedToDBException("New user registration failed, User was not added to DB: " + e.getMessage());
+            throw new NewUserWasNotSavedToDBException("New user registration failed, User was not added to DB: " + e.getMessage());
         }
         return true;
     }
@@ -108,11 +110,10 @@ public class UserRegisterService {
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
-    public ApiResponseDto createUser(HttpServletRequest request, HttpServletResponse response, UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+    public ApiResponseDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         ApiResponseDto apiResponseDto = new ApiResponseDto();
         if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
-            handlerExceptionResolver.resolveException(request, response, null, new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto));
-            return apiResponseDto;
+            throw new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto);
         }
 
         if (userRepository.existsByEmail(userRegisterRequestDto.getEmail())) {
@@ -120,7 +121,7 @@ public class UserRegisterService {
             apiResponseDto.setMessage("User with that email already exists");
             throw new UserWithThatEmailALreadyExistException("User with that email already exist.", apiResponseDto);
         } else {
-            if (addUser(request, response, userRegisterRequestDto)) {
+            if (addUser(userRegisterRequestDto)) {
                 apiResponseDto.setStatus(HttpStatus.OK);
                 apiResponseDto.setMessage("User created");
             } else {
