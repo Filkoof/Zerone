@@ -39,7 +39,7 @@ public class UserDataResponseDto {
     @JsonProperty("last_online_time")
     private final LocalDateTime lastOnlineTime;
     @JsonProperty("is_blocked")
-    private final boolean isBlocked;
+    private final Boolean isBlocked;
     @JsonProperty("deleted")
-    private final boolean isDeleted;
+    private final Boolean isDeleted;
 }
