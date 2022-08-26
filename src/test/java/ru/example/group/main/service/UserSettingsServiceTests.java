@@ -65,6 +65,9 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     private JWTUtilService jwtUtilService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SocialNetUserDetailsService socialNetUserDetailsService;
+
 
     @BeforeEach
      void setUpAuthContext(){

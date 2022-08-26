@@ -13,6 +13,7 @@ import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserSettingsService;
 
