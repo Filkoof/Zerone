@@ -20,8 +20,10 @@ public class FriendsController {
     }
 
     @GetMapping("/api/v1/friends/recommendations")
-    public RecommendedFriendsResponseDto getRecommendedFriendsResponse(@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer itemPerPage){
-        //log.info("getRecommendedFriendsResponse started");
+    public RecommendedFriendsResponseDto getRecommendedFriendsResponse(
+            @RequestParam(required = false, defaultValue = "0") Integer offset,
+            @RequestParam(required = false, defaultValue = "20") Integer itemPerPage){
+        log.info("getRecommendedFriendsResponse started");
         return friendsService.getRecommendedFriendsResponse(offset, itemPerPage);
     }
 
