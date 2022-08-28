@@ -13,7 +13,7 @@ import java.util.List;
 public class PostResponseDto {
 
     private final Boolean isBlocked;
-    private final List<Object> comments;
+    private final CommonListResponseDto<CommentDto> comments;
     private final Boolean myLike;
     private final UserDataResponseDto author;
     private final Long id;

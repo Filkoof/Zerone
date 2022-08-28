@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import java.util.ArrayList;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.dto.request.PostRequestDto;
+import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
@@ -69,7 +71,7 @@ public class PostService {
     public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsWithPagination(text, pageable)
-            .stream().map(this::getPostDtoFromEntity).toList();
+            .stream().map(postEntity -> getPostDto(postEntity,postEntity.getUser())).toList();
 
         return CommonListResponseDto.<PostResponseDto>builder()
             .total(statePage.size())
@@ -93,13 +95,13 @@ public class PostService {
             .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(Collectors.toList()));
     }
 
-    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
-        return getDefaultBuilder(postEntity)
-            .comments(Collections.singletonList(postEntity.getComments()))
-            .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(PostType.POSTED.name())
-            .build();
-    }
+//    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
+//        return getDefaultBuilder(postEntity)
+//            .comments(Collections.singletonList(postEntity.getComments()))
+//            .author(getUserDtoFromEntity(postEntity.getUser()))
+//            .type(PostType.POSTED.name())
+//            .build();
+//    }
 
     private PostResponseDto getFromAddRequest(
         final boolean isQueued,
@@ -186,7 +188,13 @@ public class PostService {
     private PostResponseDto getPostDto(PostEntity post, UserEntity user) {
         return PostResponseDto.builder()
             .isBlocked(post.isBlocked())
-            .comments(null)
+            .comments(CommonListResponseDto.<CommentDto>builder()
+                .perPage(0)
+                .offset(0)
+                .total(0)
+                .error("")
+                .timestamp(LocalDateTime.now())
+                .data(new ArrayList<>()).build())
             .myLike(false)
             .author(getUserDtoFromEntity(user))
             .id(post.getId())
