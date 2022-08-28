@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,11 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.UserRepository;
+import ru.example.group.main.response.CommonListResponseDto;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,29 +51,53 @@ public class PostService {
 
         var post = postRepository.save(postEntity);
 
-        response.setData(getFromAddRequest(publishDateTime, isQueued, userDto, post));
+        response.setData(getFromAddRequest(isQueued, userDto, post));
         return ResponseEntity.ok(response);
     }
 
+    public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
+        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        var statePage = postRepository.findAllPostsWithPagination(text, pageable)
+                .stream().map(this::getPostDtoFromEntity).toList();
+
+        return CommonListResponseDto.<PostResponseDto>builder()
+                .total(statePage.size())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(statePage)
+                .error("")
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
+        return PostResponseDto.builder()
+                .isBlocked(false)
+                .myLike(false)
+                .id(postEntity.getId())
+                .time(postEntity.getTime())
+                .title(postEntity.getTitle())
+                .postText(postEntity.getPostText())
+                .likes(0)
+                .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(Collectors.toList()));
+    }
+
+    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
+        return getDefaultBuilder(postEntity)
+                .comments(Collections.singletonList(postEntity.getComments()))
+                .author(getUserDtoFromEntity(postEntity.getUser()))
+                .type(PostType.POSTED.name())
+                .build();
+    }
+
     private PostResponseDto getFromAddRequest(
-        final LocalDateTime publishDateTime,
         final boolean isQueued,
         final UserDataResponseDto userDto,
         final PostEntity post
     ) {
-        return PostResponseDto.builder()
-            .isBlocked(false)
-            .myLike(false)
+        return getDefaultBuilder(post)
             .author(userDto)
-            .id(post.getId())
-            .time(publishDateTime)
-            .title(post.getTitle())
             .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
-            .postText(post.getPostText())
-            .likes(0)
-            .tags(post.getTagEntities().stream()
-                .map(TagEntity::getTag)
-                .collect(Collectors.toList()))
             .build();
     }
 

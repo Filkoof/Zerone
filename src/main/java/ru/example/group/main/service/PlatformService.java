@@ -3,7 +3,9 @@ package ru.example.group.main.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.LanguageResponseDto;
@@ -22,16 +24,16 @@ public class PlatformService {
   }
 
   public CommonListResponseDto<LanguageResponseDto> getLanguage() {
-    CommonListResponseDto<LanguageResponseDto> responseDto = new CommonListResponseDto<>();
-    responseDto.setTotal(2);
-    responseDto.setPerPage(1);
-    responseDto.setOffset(0);
-    responseDto.setData(new ArrayList<>());
-    responseDto.getData().add(map.get("ru"));
-    responseDto.getData().add(map.get("eng"));
-    responseDto.setError("Ошибка");
-    responseDto.setTimestamp(LocalDateTime.now());
-    return responseDto;
+    List<LanguageResponseDto> languages = new ArrayList<>();
+    languages.add(map.get("ru"));
+    languages.add(map.get("eng"));
+    return CommonListResponseDto.<LanguageResponseDto>builder()
+            .total(2)
+            .perPage(1)
+            .offset(0)
+            .data(languages)
+            .error("Ошибка")
+            .timestamp(LocalDateTime.now())
+            .build();
   }
-
 }
