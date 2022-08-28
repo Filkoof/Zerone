@@ -17,7 +17,11 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/feeds")
-    public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
+    public CommonListResponseDto<PostResponseDto> getNewsfeed(
+            String text,
+            @RequestParam(name = "offset", defaultValue = "0") int offset,
+            @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage
+    ) {
         return postService.getNewsfeed(text, offset, itemPerPage);
     }
 

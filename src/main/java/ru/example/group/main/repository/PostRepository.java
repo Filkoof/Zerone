@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.PostEntity;
 
 @Repository
-public interface PostRepository extends JpaRepository<PostEntity, Integer> {
+public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
-    @Query("SELECT pe FROM PostEntity pe WHERE pe.isBlocked != false AND pe.isDeleted != false")
+    @Query("SELECT pe FROM PostEntity pe WHERE pe.isBlocked = false AND pe.isDeleted = false")
     Page<PostEntity> findAllPostsWithPagination(String text, Pageable pageable);
 }
