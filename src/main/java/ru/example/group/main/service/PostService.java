@@ -28,9 +28,9 @@ import ru.example.group.main.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.stream.Collectors;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -71,7 +71,7 @@ public class PostService {
     public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsWithPagination(text, pageable)
-            .stream().map(postEntity -> getPostDto(postEntity,postEntity.getUser())).toList();
+            .stream().map(this::getPostDtoFromEntity).toList();
 
         return CommonListResponseDto.<PostResponseDto>builder()
             .total(statePage.size())
@@ -83,76 +83,24 @@ public class PostService {
             .build();
     }
 
-    private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
-        return PostResponseDto.builder()
-            .isBlocked(false)
-            .myLike(false)
-            .id(postEntity.getId())
-            .time(postEntity.getTime())
-            .title(postEntity.getTitle())
-            .postText(postEntity.getPostText())
-            .likes(0)
-            .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(Collectors.toList()));
-    }
-
-//    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
-//        return getDefaultBuilder(postEntity)
-//            .comments(Collections.singletonList(postEntity.getComments()))
-//            .author(getUserDtoFromEntity(postEntity.getUser()))
-//            .type(PostType.POSTED.name())
-//            .build();
-//    }
-
-    private PostResponseDto getFromAddRequest(
-        final boolean isQueued,
-        final UserDataResponseDto userDto,
-        final PostEntity post
-    ) {
-        return getDefaultBuilder(post)
-            .author(userDto)
-            .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
-            .build();
-    }
-
-    private UserDataResponseDto getUserDtoFromEntity(final UserEntity userEntity) {
-        return UserDataResponseDto.builder()
-            .id(userEntity.getId())
-            .firstName(userEntity.getFirstName())
-            .lastName(userEntity.getLastName())
-            .regDate(userEntity.getRegDate())
-            .birthDate(userEntity.getBirthDate())
-            .eMail(userEntity.getEmail())
-            .phone(userEntity.getPhone())
-            .photo(userEntity.getPhoto())
-            .about(userEntity.getAbout())
-            .city(userEntity.getCity())
-            .country(userEntity.getCountry())
-            .messagePermissions(MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))
-            .lastOnlineTime(userEntity.getLastOnlineTime())
-            .isBlocked(userEntity.isBlocked())
-            .isDeleted(userEntity.isDeleted())
-            .build();
-    }
-    @Scheduled(cron = "@daily")
-    public void deletePostAfter30Days() {
-        postRepository.deletePostEntity(LocalDateTime.now().minusDays(postLife));
-
-    }
-
     @Transactional
     public ResponseEntity<CommonResponseDto<PostResponseDto>> deletePost(Long id)
-        throws EntityNotFoundException {
+            throws EntityNotFoundException {
         try {
             var post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
             var user = registerService.getCurrentUser();
             if (!post.getUser().getId().equals(user.getId())) {
                 throw new IdUserException(
-                    "id пользователя не совпадает с id пользователя опубликовавшего данный пост");
+                        "id пользователя не совпадает с id пользователя опубликовавшего данный пост");
             }
             post.setDeleted(true);
             postRepository.saveAndFlush(post);
 
-            return ResponseEntity.ok(getResponse(post, user));
+            var response = new CommonResponseDto<PostResponseDto>();
+            response.setError("ERROR");
+            response.setTimeStamp(LocalDateTime.now());
+            response.setData(getPostDtoFromEntity(post));
+            return ResponseEntity.ok(response);
         }catch (EntityNotFoundException|IdUserException e){
             log.debug(e.getMessage());
             var dto=new CommonResponseDto<PostResponseDto>();
@@ -177,33 +125,66 @@ public class PostService {
             return ResponseEntity.ok(PostResponseDto.builder().build());
         }
     }
-    private CommonResponseDto<PostResponseDto> getResponse(PostEntity post, UserEntity user) {
-        var responseDto = new CommonResponseDto<PostResponseDto>();
-        responseDto.setError("ERROR");
-        responseDto.setTimeStamp(LocalDateTime.now());
-        responseDto.setData(getPostDto(post, user));
-        return responseDto;
+
+    @Scheduled(cron = "@daily")
+    public void deletePostAfter30Days() {
+        postRepository.deletePostEntity(LocalDateTime.now().minusDays(postLife));
     }
 
-    private PostResponseDto getPostDto(PostEntity post, UserEntity user) {
+    private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
         return PostResponseDto.builder()
-            .isBlocked(post.isBlocked())
-            .comments(CommonListResponseDto.<CommentDto>builder()
-                .perPage(0)
-                .offset(0)
-                .total(0)
-                .error("")
-                .timestamp(LocalDateTime.now())
-                .data(new ArrayList<>()).build())
+            .isBlocked(false)
             .myLike(false)
-            .author(getUserDtoFromEntity(user))
-            .id(post.getId())
+            .id(postEntity.getId())
+            .time(postEntity.getTime())
+            .title(postEntity.getTitle())
+            .postText(postEntity.getPostText())
             .likes(0)
-            .tags(new ArrayList<>())
-            .postText(post.getPostText())
-            .time(post.getTime())
-            .title(post.getTitle())
+            .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList()));
+    }
+
+    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
+        return getDefaultBuilder(postEntity)
+            .comments(CommonListResponseDto.<CommentDto>builder()
+                    .perPage(0)
+                    .offset(0)
+                    .total(0)
+                    .error("")
+                    .timestamp(LocalDateTime.now())
+                    .data(new ArrayList<>())
+                    .build())
+            .author(getUserDtoFromEntity(postEntity.getUser()))
+            .type(PostType.POSTED.name())
             .build();
     }
 
+    private PostResponseDto getFromAddRequest(
+        final boolean isQueued,
+        final UserDataResponseDto userDto,
+        final PostEntity post
+    ) {
+        return getDefaultBuilder(post)
+            .author(userDto)
+            .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
+            .build();
+    }
+    private UserDataResponseDto getUserDtoFromEntity(final UserEntity userEntity) {
+        return UserDataResponseDto.builder()
+            .id(userEntity.getId())
+            .firstName(userEntity.getFirstName())
+            .lastName(userEntity.getLastName())
+            .regDate(userEntity.getRegDate())
+            .birthDate(userEntity.getBirthDate())
+            .eMail(userEntity.getEmail())
+            .phone(userEntity.getPhone())
+            .photo(userEntity.getPhoto())
+            .about(userEntity.getAbout())
+            .city(userEntity.getCity())
+            .country(userEntity.getCountry())
+            .messagePermissions(MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))
+            .lastOnlineTime(userEntity.getLastOnlineTime())
+            .isBlocked(userEntity.isBlocked())
+            .isDeleted(userEntity.isDeleted())
+            .build();
+    }
 }
