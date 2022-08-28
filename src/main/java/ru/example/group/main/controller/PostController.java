@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.request.PostRequestDto;
+import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
-import ru.example.group.main.response.CommonListResponseDto;
 import ru.example.group.main.service.PostService;
 
 @RestController

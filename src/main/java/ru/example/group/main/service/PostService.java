@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import ru.example.group.main.dto.request.PostRequestDto;
+import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
@@ -16,7 +17,6 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.UserRepository;
-import ru.example.group.main.response.CommonListResponseDto;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

@@ -2,8 +2,8 @@
 spring:
   datasource:
     url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD:root}
+    username: ${DATABASE_USERNAME:zerone}
+    password: ${DATABASE_PASSWORD:7tsfft}
 
   mail:
     host: smtp.mail.ru
