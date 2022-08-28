@@ -14,7 +14,9 @@ import ru.example.group.main.entity.PostEntity;
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
-    @Query("SELECT pe FROM PostEntity pe WHERE pe.isBlocked = false AND pe.isDeleted = false")
+    @Query("SELECT pe FROM PostEntity pe "
+        + "left join UserEntity u on u.id = pe.user.id "
+        + "WHERE pe.isBlocked = false AND pe.isDeleted = false and u.isDeleted=false")
     Page<PostEntity> findAllPostsWithPagination(String text, Pageable pageable);
 
     @Transactional
