@@ -2,11 +2,14 @@ package ru.example.group.main.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@Data
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommonListResponseDto<T> {
 
   private int total;
