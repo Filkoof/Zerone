@@ -199,7 +199,7 @@ public class PostService {
             .author(getUserDtoFromEntity(user))
             .id(post.getId())
             .likes(0)
-            .tags(null)
+            .tags(new ArrayList<>())
             .postText(post.getPostText())
             .time(post.getTime())
             .title(post.getTitle())
