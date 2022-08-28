@@ -49,6 +49,11 @@ cloudinary:
 
 
 
+post:
+  time:
+    Life:
+      Auto-Delete: 31
+
 
 
 

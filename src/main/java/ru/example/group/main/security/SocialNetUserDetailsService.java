@@ -10,6 +10,7 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
+import ru.example.group.main.security.SocialNetUserDetails;
 
 @Service
 public class SocialNetUserDetailsService implements UserDetailsService {

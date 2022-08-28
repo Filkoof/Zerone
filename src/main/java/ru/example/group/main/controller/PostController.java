@@ -1,12 +1,15 @@
 package ru.example.group.main.controller;
 
+import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.request.PostRequestDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
+import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.service.PostService;
 
 @RestController
@@ -33,4 +36,22 @@ public class PostController {
     ) {
         return postService.addNewPost(request, id, publishDate);
     }
+
+  @GetMapping ("/users/{id}/wall")
+  public ResponseEntity addNewPost(@PathVariable long id){
+    return new ResponseEntity(HttpStatus.OK);
+  }
+
+
+  @DeleteMapping("/post/{id}")
+  public ResponseEntity<CommonResponseDto<PostResponseDto>> postDeletedById(@PathVariable long id)
+      throws EntityNotFoundException, IdUserException {
+    return postService.deletePost(id);
+  }
+
+  @PutMapping("/post/{id}/recover")
+  public ResponseEntity<PostResponseDto> postRecover(@PathVariable Long id){
+    return postService.recoverPost(id);
+  }
+
 }
