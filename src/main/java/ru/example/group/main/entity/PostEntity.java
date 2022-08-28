@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
@@ -32,6 +33,8 @@ public class PostEntity {
   private LocalDateTime time;
   private String title;
   private String postText;
+
+  @UpdateTimestamp
   private LocalDateTime updateDate;
   private boolean isBlocked;
   private boolean isDeleted;
