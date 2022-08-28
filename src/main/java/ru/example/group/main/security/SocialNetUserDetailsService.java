@@ -15,7 +15,7 @@ import ru.example.group.main.repository.SocialNetUserRepository;
 public class SocialNetUserDetailsService implements UserDetailsService {
 
     private final SocialNetUserRepository socialNetUserRepository;
-    private GlobalExceptionHandlerController handlerController;
+    private final GlobalExceptionHandlerController handlerController;
 
     @Autowired
     public SocialNetUserDetailsService(SocialNetUserRepository socialNetUserRepository, GlobalExceptionHandlerController handlerController) {
@@ -36,22 +36,42 @@ public class SocialNetUserDetailsService implements UserDetailsService {
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
         return UserDataResponseDto.builder()
-            .id(user.getId())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .regDate(user.getRegDate())
-            .birthDate(user.getBirthDate())
-            .eMail(user.getEmail())
-            .phone(user.getPhone())
-            .photo(user.getPhoto())
-            .about(user.getAbout())
-            .city(user.getCity())
-            .country(user.getCountry())
-            .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
-            .lastOnlineTime(user.getLastOnlineTime())
-            .isBlocked(user.isBlocked())
-            .isDeleted(user.isDeleted())
-            .token(token)
-            .build();
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .regDate(user.getRegDate())
+                .birthDate(user.getBirthDate())
+                .eMail(user.getEmail())
+                .phone(user.getPhone())
+                .photo(user.getPhoto())
+                .about(user.getAbout())
+                .city(user.getCity())
+                .country(user.getCountry())
+                .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
+                .lastOnlineTime(user.getLastOnlineTime())
+                .isBlocked(user.isBlocked())
+                .isDeleted(user.isDeleted())
+                .token(token)
+                .build();
+    }
+
+    public UserDataResponseDto setUserDataResponseDto(UserEntity user) {
+        return UserDataResponseDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .regDate(user.getRegDate())
+                .birthDate(user.getBirthDate())
+                .eMail(user.getEmail())
+                .phone(user.getPhone())
+                .photo(user.getPhoto())
+                .about(user.getAbout())
+                .city(user.getCity())
+                .country(user.getCountry())
+                .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
+                .lastOnlineTime(user.getLastOnlineTime())
+                .isBlocked(user.isBlocked())
+                .isDeleted(user.isDeleted())
+                .build();
     }
 }

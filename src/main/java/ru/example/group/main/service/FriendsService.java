@@ -11,10 +11,7 @@ import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 @Service
 public class FriendsService {
@@ -37,14 +34,17 @@ public class FriendsService {
         recommendedFriendsResponseDto.setOffset(offset);
         recommendedFriendsResponseDto.setPerPage(itemsPerPage);
 
-        //recommendedFriendsResponseDto.setUserDataResponseDtoList(getRecommendedList(user));
+
+        recommendedFriendsResponseDto.setUserDataResponseDtoList(getRecommendedList(user));
 
         recommendedFriendsResponseDto.setTimestamp(LocalDateTime.now());
+        recommendedFriendsResponseDto.setTotal(recommendedFriendsResponseDto.getUserDataResponseDtoList().size());
+
         return recommendedFriendsResponseDto;
     }
 
-    private TreeMap<UserDataResponseDto, Double> getRecommendedList(UserEntity user) {
-        TreeMap<UserDataResponseDto, Double> recommendedFriends = new TreeMap<>();
+    private ArrayList<UserDataResponseDto> getRecommendedList(UserEntity user) {
+        ArrayList<UserDataResponseDto> recommendedFriends = new ArrayList<>();
         Set<UserDataResponseDto> potentialFriends = new HashSet<>();
 
         /*for (int i = 0; i < 50; i++){
@@ -58,7 +58,7 @@ public class FriendsService {
                 break;
             }
         }*/
-        recommendedFriends.put(getPotentialFriendsByCity(user.getCity(), 0), 1.0);
+        recommendedFriends.add(getPotentialFriendsByCity(user.getCity(), 0));
         return recommendedFriends;
     }
 

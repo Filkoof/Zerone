@@ -10,6 +10,7 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
@@ -217,14 +218,14 @@ public class UserSettingsService {
 
     public Boolean recoveryUserDelete(String code) throws UserDeleteOrRecoveryException {
         UserEntity userToDelete = userRepository.findByConfirmationCode(code);
-        if (userToDelete != null){
+        if (userToDelete != null) {
             userToDelete.setDeleted(false);
             try {
                 userToDelete.setConfirmationCode(null);
                 userRepository.save(userToDelete);
                 recoveryUserDeletedNotice(userToDelete.getEmail());
                 return true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status, error: " + e.getMessage());
             }
         } else {
@@ -241,22 +242,30 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend(email, title, message);
     }
 
-    public UserDataResponseDto getMeResponse(HttpServletRequest request){
-        String token = request.getHeader("Authorization");
+    public CommonResponseDto<UserDataResponseDto> getUserMeResponse() {
+        CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        return socialNetUserDetailsService.setUserDataResponseDto(user, token);
+        response.setData(socialNetUserDetailsService.setUserDataResponseDto(user));
+        response.setError("OK");
+        response.setTimeStamp(LocalDateTime.now());
+        return response;
     }
 
-    public void updateUserMainSettings(UserDataResponseDto newDateUser) {
-        UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
-        currentUser.setFirstName(newDateUser.getFirstName());
-        currentUser.setLastName(newDateUser.getLastName());
-        currentUser.setPhone(newDateUser.getPhone());
-        currentUser.setCountry(newDateUser.getCountry());
-        currentUser.setCity(newDateUser.getCity());
-        currentUser.setBirthDate(newDateUser.getBirthDate());
-        currentUser.setPhoto(newDateUser.getPhoto());
-        currentUser.setAbout(newDateUser.getAbout());
-        userRepository.save(currentUser);
+    public Boolean updateUserMainSettings(UserDataResponseDto newDateUser) throws UpdateUserMainSettingsException {
+            try {
+                UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
+                currentUser.setFirstName(newDateUser.getFirstName());
+                currentUser.setLastName(newDateUser.getLastName());
+                currentUser.setPhone(newDateUser.getPhone());
+                currentUser.setCountry(newDateUser.getCountry());
+                currentUser.setCity(newDateUser.getCity());
+                currentUser.setBirthDate(newDateUser.getBirthDate());
+                currentUser.setPhoto(newDateUser.getPhoto());
+                currentUser.setAbout(newDateUser.getAbout());
+                userRepository.save(currentUser);
+                return true;
+            } catch (Exception e) {
+                throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
+            }
     }
 }

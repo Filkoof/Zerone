@@ -18,6 +18,7 @@ import ru.example.group.main.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -74,7 +75,13 @@ public class UserRegisterService {
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
             user.setConfirmationCode(code);
-            user.setPhoto("preliminary photo");
+            user.setPhoto("https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg");
+            //for test
+            user.setCountry("");
+            user.setCity("");
+            user.setBirthDate(LocalDate.of(1970,01,01));
+            user.setAbout("");
+            user.setPhone("");
             userRepository.save(user);
         } catch (Exception e) {
             throw new NewUserWasNotSavedToDBException("New user registration failed, User was not added to DB: " + e.getMessage());

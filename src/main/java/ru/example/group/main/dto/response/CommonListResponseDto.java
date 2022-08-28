@@ -1,4 +1,4 @@
-package ru.example.group.main.response;
+package ru.example.group.main.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

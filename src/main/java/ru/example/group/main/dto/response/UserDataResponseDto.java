@@ -34,11 +34,12 @@ public class UserDataResponseDto {
     private final String city;
     private final String token;
     private final String country;
+    @JsonProperty("messages_permission")
     private final MessagesPermission messagePermissions;
     @JsonProperty("last_online_time")
     private final LocalDateTime lastOnlineTime;
     @JsonProperty("is_blocked")
-    private final boolean isBlocked;
+    private final Boolean isBlocked;
     @JsonProperty("deleted")
-    private final boolean isDeleted;
+    private final Boolean isDeleted;
 }
