@@ -167,7 +167,7 @@ public class PostService {
                     .data(new ArrayList<>())
                     .build())
             .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(PostType.POSTED.name())
+            .type(getType(postEntity))
             .build();
     }
 
@@ -199,5 +199,10 @@ public class PostService {
             .isBlocked(userEntity.isBlocked())
             .isDeleted(userEntity.isDeleted())
             .build();
+    }
+    private String getType(PostEntity post){
+        if(post.isDeleted()){return PostType.DELETED.name();}
+        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
+        else return PostType.POSTED.name();
     }
 }
