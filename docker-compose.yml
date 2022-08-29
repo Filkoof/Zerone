@@ -24,6 +24,6 @@ services:
       POSTGRES_USER: zerone
       POSTGRES_PASSWORD: 7tsfft
     ports:
-      - "5432:5432"
+      - "6432:5432"
     volumes:
       - ./postgres/data:/var/lib/postgres/data
