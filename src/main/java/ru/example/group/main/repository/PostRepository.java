@@ -22,7 +22,8 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     @Query("select p from PostEntity p "
         + "left join  UserEntity u on u.id = p.user.id "
-        + "where p.user.id=:id ORDER BY p.updateDate DESC")
+        + "where p.user.id=:id "
+        + "ORDER BY p.updateDate DESC")
     Page<PostEntity> findAllPostsUserId(@Param("id") Long id, Pageable pageable);
 
     @Transactional
