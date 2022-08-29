@@ -2,6 +2,7 @@ package ru.example.group.main.service;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
@@ -34,8 +35,13 @@ public class FriendsService {
         recommendedFriendsResponseDto.setOffset(offset);
         recommendedFriendsResponseDto.setPerPage(itemsPerPage);
 
+        try {
+            //pull recomended friends
+            recommendedFriendsResponseDto.setUserDataResponseDtoList(getRecommendedList(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        recommendedFriendsResponseDto.setUserDataResponseDtoList(getRecommendedList(user));
 
         recommendedFriendsResponseDto.setTimestamp(LocalDateTime.now());
         recommendedFriendsResponseDto.setTotal(recommendedFriendsResponseDto.getUserDataResponseDtoList().size());
@@ -43,37 +49,74 @@ public class FriendsService {
         return recommendedFriendsResponseDto;
     }
 
-    private ArrayList<UserDataResponseDto> getRecommendedList(UserEntity user) {
-        ArrayList<UserDataResponseDto> recommendedFriends = new ArrayList<>();
-        Set<UserDataResponseDto> potentialFriends = new HashSet<>();
+    private Set<UserDataResponseDto> getRecommendedList(UserEntity user) {
+        Set<UserEntity> potentialUserEntities = new HashSet<>();
+        Boolean stopSearchByCity = false;
+        UserEntity prevToCheck = null;
+        UserEntity potentialFriend;
 
-        /*for (int i = 0; i < 50; i++){
-            if (getPotentialFriendsByCity(user.getCity(), i) != null) {
-                potentialFriends.add(getPotentialFriendsByCity(user.getCity(), i));
+        for (int i = 0; i < 50; i++) {
+            if (!stopSearchByCity) {
+                potentialFriend = getNextPotentialFriendByCity(user.getCity(), i);
+                if (potentialFriend != null && !potentialFriend.getEmail().equals(user.getEmail())) {
+                    potentialUserEntities.add(potentialFriend);
+                    if (prevToCheck != null && prevToCheck.equals(potentialFriend)) {
+                        stopSearchByCity = true;
+                    }
+                    prevToCheck = potentialFriend;
+                }
             }
 
-            getFriendsOfFriends(user);
+        }
 
-            if (potentialFriends.size() == 100){
-                break;
-            }
-        }*/
-        recommendedFriends.add(getPotentialFriendsByCity(user.getCity(), 0));
+        potentialUserEntities.addAll(getFriendsOfFriends(user));
+
+        return getUniquePotentialFriends(potentialUserEntities);
+    }
+
+    private Set<UserDataResponseDto> getUniquePotentialFriends(Set<UserEntity> potentialUserEntities) {
+        Set<UserDataResponseDto> recommendedFriends = new HashSet<>();
+        for (UserEntity nextPotentialFriend : potentialUserEntities){
+            recommendedFriends.add(socialNetUserDetailsService.setUserDataResponseDto(nextPotentialFriend, ""));
+        }
         return recommendedFriends;
     }
 
-    private void getFriendsOfFriends(UserEntity user) {
 
+
+    private Set<UserEntity> getFriendsOfFriends(UserEntity user) {
+        Set<UserEntity> friendsOfUserFriends = new HashSet<>();
+        try {
+            for (UserEntity nextFriend : userRepository.getAllFriendsOfFriendsWithCount(user.getId())) {
+                Set<UserEntity> friendsOfFriends = userRepository.getAllFriendsOfFriendsWithCount(nextFriend.getId());
+                if (friendsOfFriends != null) {
+                    for (UserEntity nextFriendOfTheFriend : friendsOfFriends) {
+                        if (!nextFriendOfTheFriend.getEmail().equals(user.getEmail())){
+                            friendsOfUserFriends.add(nextFriendOfTheFriend);
+                        }
+                    }
+                }
+            }
+            return friendsOfUserFriends;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private UserDataResponseDto getPotentialFriendsByCity(String city, Integer offset) {
-        Pageable nextPage = PageRequest.of(offset, 1);
-        UserEntity user = null;
-        if (userRepository.findUserEntitiesByCity(city, nextPage).size() > 0){
+    private UserEntity getNextPotentialFriendByCity(String city, Integer offset) {
+        try {
+            Pageable nextPage = PageRequest.of(offset, 1);
+            UserEntity user = null;
             List<UserEntity> list = userRepository.findUserEntitiesByCity(city, nextPage);
-            user = userRepository.findUserEntitiesByCity(city, nextPage).get(0);
+            if (list != null) {
+                user = list.get(0);
+                return user;
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return socialNetUserDetailsService.setUserDataResponseDto(user, "");
     }
 
 }

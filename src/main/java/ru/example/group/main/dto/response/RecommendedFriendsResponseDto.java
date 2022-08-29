@@ -5,8 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-import java.util.List;
-import java.util.TreeMap;
+import java.util.Set;
 
 @Data
 public class RecommendedFriendsResponseDto {
@@ -14,7 +13,7 @@ public class RecommendedFriendsResponseDto {
     private Integer perPage;
     private Integer offset;
     @JsonProperty("data")
-    private List<UserDataResponseDto> userDataResponseDtoList;
+    private Set<UserDataResponseDto> userDataResponseDtoList;
     private String error;
     private LocalDateTime timestamp;
 }

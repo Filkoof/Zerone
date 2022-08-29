@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-
 public class LoggerAspect {
 
 
@@ -46,7 +45,7 @@ public class LoggerAspect {
   }
 
   @AfterThrowing(value = "methodExecuting()", throwing = "exception")
-  public void recordFailedExecution(JoinPoint joinPoint, Exception exception) {
+  public void recordFailedExecution(JoinPoint joinPoint, Exception exception) throws Exception {
 
     log.error("Метод - {}, класса- {}, был аварийно завершен с исключением - {}\n" +
             "стек: {}",
@@ -55,4 +54,5 @@ public class LoggerAspect {
         exception.getMessage(), exception.getStackTrace());
 
   }
+
 }
