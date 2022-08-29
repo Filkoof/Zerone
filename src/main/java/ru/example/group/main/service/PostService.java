@@ -82,6 +82,19 @@ public class PostService {
             .timestamp(LocalDateTime.now())
             .build();
     }
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset, int itemPerPage){
+        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        var statePage = postRepository.findAllPostsUserId(id, pageable)
+            .stream().map(this::getPostDtoFromEntity).toList();
+        return CommonListResponseDto.<PostResponseDto>builder()
+            .total(statePage.size())
+            .perPage(itemPerPage)
+            .offset(offset)
+            .data(statePage)
+            .error("")
+            .timestamp(LocalDateTime.now())
+            .build();
+    }
 
     @Transactional
     public ResponseEntity<CommonResponseDto<PostResponseDto>> deletePost(Long id)

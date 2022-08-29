@@ -38,8 +38,11 @@ public class PostController {
     }
 
   @GetMapping ("/users/{id}/wall")
-  public ResponseEntity addNewPost(@PathVariable long id){
-    return new ResponseEntity(HttpStatus.OK);
+  public CommonListResponseDto<PostResponseDto> addNewPost(
+      @PathVariable long id,
+      @RequestParam(name = "offset", defaultValue = "0") int offset,
+      @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage){
+    return postService.getNewsUserId(id, offset, itemPerPage);
   }
 
 

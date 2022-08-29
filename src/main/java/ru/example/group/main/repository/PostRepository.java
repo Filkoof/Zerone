@@ -19,6 +19,11 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
         + "WHERE pe.isBlocked = false AND pe.isDeleted = false and u.isDeleted=false")
     Page<PostEntity> findAllPostsWithPagination(String text, Pageable pageable);
 
+    @Query("select p from PostEntity p "
+        + "left join  UserEntity u on u.id = p.user.id "
+        + "where p.user.id=:id")
+    Page<PostEntity> findAllPostsUserId(@Param("id") Long id, Pageable pageable);
+
     @Transactional
     @Modifying
     @Query(value = "delete from PostEntity p where p.isDeleted=true and p.updateDate < :times")
