@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     @Query("SELECT pe FROM PostEntity pe "
         + "left join UserEntity u on u.id = pe.user.id "
-        + "WHERE pe.isBlocked = false AND pe.isDeleted = false and u.isDeleted=false "
+        + "WHERE pe.isBlocked = false AND pe.isDeleted = false and u.isDeleted=false and current_timestamp > pe.time "
         + "ORDER BY pe.time DESC")
     Page<PostEntity> findAllPostsWithPagination(String text, Pageable pageable);
 
@@ -24,6 +24,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
         + "left join  UserEntity u on u.id = p.user.id "
         + "where p.user.id=:id ORDER BY p.time DESC")
     Page<PostEntity> findAllPostsUserId(@Param("id") Long id, Pageable pageable);
+
 
     @Transactional
     @Modifying

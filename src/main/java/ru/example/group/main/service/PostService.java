@@ -70,18 +70,19 @@ public class PostService {
 
     public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsWithPagination(text, pageable)
-            .stream().map(this::getPostDtoFromEntity).toList();
+        var statePage = postRepository.findAllPostsWithPagination(text, pageable);
 
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total(statePage.size())
+            .total((int) statePage.getTotalElements())
             .perPage(itemPerPage)
             .offset(offset)
-            .data(statePage)
+            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
             .error("")
             .timestamp(LocalDateTime.now())
             .build();
     }
+
+
     public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset, int itemPerPage){
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsUserId(id, pageable)
@@ -167,7 +168,7 @@ public class PostService {
                     .data(new ArrayList<>())
                     .build())
             .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(PostType.POSTED.name())
+            .type(getType(postEntity))
             .build();
     }
 
@@ -199,5 +200,10 @@ public class PostService {
             .isBlocked(userEntity.isBlocked())
             .isDeleted(userEntity.isDeleted())
             .build();
+    }
+    private String getType(PostEntity post){
+        if(post.isDeleted()){return PostType.DELETED.name();}
+        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
+        else return PostType.POSTED.name();
     }
 }
