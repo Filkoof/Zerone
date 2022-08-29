@@ -1,6 +1,8 @@
 package ru.example.group.main.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class PostService {
     ) {
         var response = new CommonResponseDto<PostResponseDto>();
         var userEntity = userRepository.findById(id).orElseThrow();
-        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate, 0, ZoneOffset.UTC);
+        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate/1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
