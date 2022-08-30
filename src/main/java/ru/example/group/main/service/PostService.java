@@ -1,6 +1,8 @@
 package ru.example.group.main.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class PostService {
     ) {
         var response = new CommonResponseDto<PostResponseDto>();
         var userEntity = userRepository.findById(id).orElseThrow();
-        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate, 0, ZoneOffset.UTC);
+        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate/1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
@@ -168,7 +170,7 @@ public class PostService {
                     .data(new ArrayList<>())
                     .build())
             .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(PostType.POSTED.name())
+            .type(getType(postEntity))
             .build();
     }
 
@@ -200,5 +202,10 @@ public class PostService {
             .isBlocked(userEntity.isBlocked())
             .isDeleted(userEntity.isDeleted())
             .build();
+    }
+    private String getType(PostEntity post){
+        if(post.isDeleted()){return PostType.DELETED.name();}
+        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
+        else return PostType.POSTED.name();
     }
 }

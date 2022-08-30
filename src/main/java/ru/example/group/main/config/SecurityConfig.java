@@ -54,8 +54,7 @@ public class SecurityConfig {
                                 response.setStatus(HttpStatus.OK.value())
                         )
                 )
-                .exceptionHandling(exh -> exh
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(exh -> exh.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

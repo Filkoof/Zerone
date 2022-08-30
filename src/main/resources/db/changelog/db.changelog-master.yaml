@@ -641,6 +641,18 @@ databaseChangeLog:
             encoding: utf8
             path: db/changelog/sql/posts.sql
 
+  - changeSet:
+      id: 5
+      author: DMitry_Kochuev
+      comment: "справочник статуса дружбы и тестовые данные дружбы"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friendship_statuses_init.sql
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friendships_init.sql
+
       rollback:
         - delete:
             tableName: users

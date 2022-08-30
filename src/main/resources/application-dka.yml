@@ -11,6 +11,11 @@ config:
   frontend: "195.161.114.18:8082"
   backend: "localhost:8086"
 
+logging:
+  file:
+    path: logs
+  level:
+    ru.example.group.main: OFF
 
 
 
