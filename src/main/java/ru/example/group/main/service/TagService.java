@@ -2,7 +2,6 @@ package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.repository.TagRepository;
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 public class TagService {
@@ -31,7 +30,7 @@ public class TagService {
 
   public ResponseEntity<CommonListResponseDto<TagDto>>getTags(String text, int offset,int itemPerPage){
     var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-    var statePage = repository.findByTagStartingWith(text, pageable);
+    var statePage = repository.findByTagStartingWithIgnoreCase(text, pageable);
     return ResponseEntity.ok(CommonListResponseDto.<TagDto>builder()
         .data(statePage.stream().map(this::getTagResponseDto).toList())
         .timestamp(LocalDateTime.now())

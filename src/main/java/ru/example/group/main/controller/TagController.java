@@ -20,7 +20,7 @@ import ru.example.group.main.service.TagService;
 @RequestMapping("/api/v1/tags")
 public class TagController {
 
-  TagService tagService;
+  private final TagService tagService;
 
   @PostMapping
   public ResponseEntity<CommonResponseDto<TagDto>> postTag(@RequestBody TagDto tagRequest){
@@ -38,6 +38,4 @@ public class TagController {
       @RequestParam(name = "id")Long id){
     return tagService.delete(id);
   }
-
-
 }

@@ -1,9 +1,11 @@
 package ru.example.group.main.service;
 
-import java.time.Instant;
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.TimeZone;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.dto.request.PostRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
@@ -29,12 +30,7 @@ import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
