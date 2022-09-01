@@ -18,6 +18,8 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
+import ru.example.group.main.exception.CommentPostNotFoundException;
+import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -38,6 +40,22 @@ public class CommentService {
 
   public ResponseEntity<CommonResponseDto<CommentDto>> postComment(Long id, CommentRequestDto request){
     var comment=commentRepository.save(getCommentEntity(id,request));
+    return ResponseEntity.ok(getCommonResponseDto(comment));
+  }
+
+  public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment (long idPost, long comment_id)
+      throws EntityNotFoundException, IdUserException, CommentPostNotFoundException {
+    var user=socialNetUserRegisterService.getCurrentUser();
+    var post=postRepository.findById(idPost).orElseThrow(EntityNotFoundException::new);
+    var comment=commentRepository.findById(comment_id).orElseThrow(EntityNotFoundException::new);
+    if (!user.getId().equals(comment.getUser().getId())){
+      throw new IdUserException("автор кооментария и пользователь который хочет его удалить не совпадают");
+    }else if(!post.getId().equals(comment.getPost().getId())){
+      throw new CommentPostNotFoundException("комментарий не относиться к данному посту");
+    }else {
+      comment.setDeleted(true);
+      commentRepository.save(comment);
+    }
     return ResponseEntity.ok(getCommonResponseDto(comment));
   }
 

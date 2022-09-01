@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,8 @@ import ru.example.group.main.dto.request.CommentRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.exception.CommentPostNotFoundException;
+import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.service.CommentService;
 
 @RestController
@@ -34,6 +37,12 @@ public class CommentController {
       @PathVariable long id,
       @RequestBody CommentRequestDto request){
     return service.postComment(id,request);
+  }
+  @DeleteMapping("{id}/comments/{comment_id}")
+  public ResponseEntity<CommonResponseDto<CommentDto>> deleteCom(
+      @PathVariable long id,
+      @PathVariable long comment_id) throws CommentPostNotFoundException, IdUserException {
+    return service.deleteComment(id, comment_id);
   }
 
 }
