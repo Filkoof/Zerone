@@ -43,6 +43,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final CommentService commentService;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
         final PostRequestDto request,
@@ -164,14 +165,7 @@ public class PostService {
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
         return getDefaultBuilder(postEntity)
-            .comments(CommonListResponseDto.<CommentDto>builder()
-                    .perPage(0)
-                    .offset(0)
-                    .total(0)
-                    .error("")
-                    .timestamp(LocalDateTime.now())
-                    .data(new ArrayList<>())
-                    .build())
+            .comments(commentService.getCommonList(postEntity.getId(),5,0))
             .author(getUserDtoFromEntity(postEntity.getUser()))
             .type(getType(postEntity))
             .build();
