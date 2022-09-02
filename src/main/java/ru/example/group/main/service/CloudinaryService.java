@@ -20,6 +20,9 @@ import java.util.Map;
 @Slf4j
 public class CloudinaryService {
 
+    @Value("${cloudinary.default_avatar}")
+    private String default_avatar;
+
     private final Cloudinary cloudinary;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
 
@@ -39,9 +42,12 @@ public class CloudinaryService {
     }
 
     public void deleteImageFromUserEntity() {
-        String publicId = parsePublicIdFromUserEntityPhoto(socialNetUserRegisterService.getCurrentUser());
-        if (!publicId.contains("avatar")) {
-            deleteFile(publicId);
+        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+        if(user.getPhoto() != null) {
+            String publicId = parsePublicIdFromUserEntityPhoto(socialNetUserRegisterService.getCurrentUser());
+            if (!publicId.contains("avatar")) {
+                deleteFile(publicId);
+            }
         }
     }
 
