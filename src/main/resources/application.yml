@@ -16,12 +16,13 @@ spring:
       ddl-auto: validate
   liquibase:
     enabled: true
-
-server:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+server:
+  servlet:
     session:
       tracking-modes: cookie
   port: ${PORT:8080}

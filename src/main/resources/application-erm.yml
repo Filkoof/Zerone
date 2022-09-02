@@ -22,9 +22,9 @@ spring:
       max-request-size: 10MB
 
 server:
-#  servlet:
-#    session:
-#      tracking-modes: cookie
+  servlet:
+    session:
+      tracking-modes: cookie
   port: ${PORT:8086}
 
 
