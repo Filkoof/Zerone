@@ -45,8 +45,8 @@ sonar-scan:
   tags:
     - prod
   script:
-    - mvn sonar:sonar -Dsonar.jdbc.url=jdbc:h2:tcp://195.161.114.18:9000//sonar -Dsonar.host.url=http://195.161.114.18:9000/
-    - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYKCbGiS_BNLy3Kxz_em
+#    - mvn sonar:sonar -Dsonar.login=“admin” -Dsonar.login=“zz3wGrrf” -Dsonar.jdbc.url=jdbc:h2:tcp://195.161.114.18:9000//sonar -Dsonar.host.url=http://195.161.114.18:9000/
+    - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYL81qROWnkc7AU5zqMw
   allow_failure: true
 
 package:
