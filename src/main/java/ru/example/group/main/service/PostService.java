@@ -89,15 +89,15 @@ public class PostService {
     }
 
 
-    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset, int itemPerPage){
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset){
+        var itemPerPage=postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsUserId(id, pageable)
-            .stream().map(this::getPostDtoFromEntity).toList();
+        var statePage = postRepository.findAllPostsUserId(id, pageable);
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total(statePage.size())
+            .total((int)statePage.getTotalElements())
             .perPage(itemPerPage)
             .offset(offset)
-            .data(statePage)
+            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
             .error("")
             .timestamp(LocalDateTime.now())
             .build();
