@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.HashSet;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.dto.request.PostRequestDto;
-import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
