@@ -2,8 +2,10 @@ package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
 
   private final CommentRepository commentRepository;
@@ -66,8 +69,7 @@ public class CommentService {
     }else if(!post.getId().equals(comment.getPost().getId())){
       throw new CommentPostNotFoundException("комментарий не относиться к данному посту");
     }else {
-      comment=getCommentFromRequest(comment,requestDto);
-      commentRepository.save(comment);
+      commentRepository.save(getCommentFromRequest(comment,requestDto));
     }
     return ResponseEntity.ok(getCommonResponseDto(comment));
   }
@@ -96,8 +98,7 @@ public class CommentService {
   }
 
   private CommentEntity getCommentEntity(Long postId, CommentRequestDto request){
-    var commentEntity=new CommentEntity();
-    commentEntity=getCommentFromRequest(commentEntity,request);
+    var commentEntity=getCommentFromRequest(new CommentEntity(),request);
     commentEntity.setSubComments(new ArrayList<>());
     commentEntity.setPost(postRepository.getReferenceById(postId));
     commentEntity.setBlocked(false);
@@ -115,7 +116,7 @@ public class CommentService {
 
   public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage,int offset){
     var pageable= PageRequest.of(offset/itemPerPage,itemPerPage);
-    var listCommentEntity=commentRepository.findByCommentToPost(idPost,pageable);
+    var listCommentEntity=commentRepository.findByCommentToPost(idPost, pageable);
     return CommonListResponseDto.<CommentDto>builder()
         .perPage(itemPerPage)
         .total((int)listCommentEntity.getTotalElements())
@@ -128,7 +129,7 @@ public class CommentService {
   private CommentDto getCommentDto(CommentEntity commentEntity){
     var user=commentEntity.getUser();
     return CommentDto.builder()
-        .commentText(commentEntity.getCommentText())
+        .commentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText())
         .id(commentEntity.getId())
         .parentId(commentEntity.getParent() == null ?null:commentEntity.getParent().getId())
         .postId(commentEntity.getPost().getId())
@@ -137,7 +138,9 @@ public class CommentService {
         .isDeleted(commentEntity.isDeleted())
         .isBlocked(commentEntity.isBlocked())
         .author(getUserDto(user))
-        .subComments(commentEntity.getSubComments().stream().map(this::getCommentDto).toList()).build();
+        .subComments(commentEntity.getSubComments().stream()
+            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList())
+        .build();
   }
   private UserDataResponseDto getUserDto(UserEntity user){
     return UserDataResponseDto.builder()

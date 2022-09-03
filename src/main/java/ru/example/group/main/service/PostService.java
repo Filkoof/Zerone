@@ -90,7 +90,7 @@ public class PostService {
 
 
     public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset){
-        var itemPerPage=postRepository.findAllByUserPost(id);
+        var itemPerPage=postRepository.findAllByUserPost(id)==0?5:postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsUserId(id, pageable);
         return CommonListResponseDto.<PostResponseDto>builder()
