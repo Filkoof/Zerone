@@ -9,6 +9,6 @@ import lombok.Data;
 public class TagDto {
   Long id;
   @JsonProperty("tag")
-  String text;
+  String tag;
 
 }
