@@ -6,6 +6,7 @@ import java.util.Comparator;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
+import ru.example.group.main.map.EntityDtoMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -31,6 +33,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
   private final SocialNetUserRegisterService socialNetUserRegisterService;
+  private final EntityDtoMapper mapper = Mappers.getMapper(EntityDtoMapper.class);
 
   public CommonListResponseDto<CommentDto> getComment(Long idPost, int offset, int itemPerPage){
     if(postRepository.existsById(idPost)){
@@ -128,19 +131,23 @@ public class CommentService {
 
   private CommentDto getCommentDto(CommentEntity commentEntity){
     var user=commentEntity.getUser();
-    return CommentDto.builder()
-        .commentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText())
-        .id(commentEntity.getId())
-        .parentId(commentEntity.getParent() == null ?null:commentEntity.getParent().getId())
-        .postId(commentEntity.getPost().getId())
-        .likes(0)
-        .images(new ArrayList<>())
-        .isDeleted(commentEntity.isDeleted())
-        .isBlocked(commentEntity.isBlocked())
-        .author(getUserDto(user))
-        .subComments(commentEntity.getSubComments().stream()
-            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList())
-        .build();
+    var commentDto=mapper.commentEntityToDto(commentEntity);
+    commentDto.setAuthor(getUserDto(user));
+    commentDto.setCommentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText());
+    return commentDto;
+//    return CommentDto.builder()
+//        .commentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText())
+//        .id(commentEntity.getId())
+//        .parentId(commentEntity.getParent() == null ?null:commentEntity.getParent().getId())
+//        .postId(commentEntity.getPost().getId())
+//        .likes(0)
+//        .images(new ArrayList<>())
+//        .isDeleted(commentEntity.isDeleted())
+//        .isBlocked(commentEntity.isBlocked())
+//        .author(getUserDto(user))
+//        .subComments(commentEntity.getSubComments().stream()
+//            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList())
+//        .build();
   }
   private UserDataResponseDto getUserDto(UserEntity user){
     return UserDataResponseDto.builder()
