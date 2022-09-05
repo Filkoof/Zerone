@@ -129,10 +129,8 @@ public class FriendsService {
 
         int splitSize = recommendedFriendsMapInt.size() / cores;
         int count = 0;
-        int userIdUpdateCount = 0;
 
         for (Long userId : recommendedFriendsMapInt.keySet()) {
-            userIdUpdateCount++;
             count++;
             splitForThread.put(userId, recommendedFriendsMapInt.get(userId));
             if (count == splitSize) {
