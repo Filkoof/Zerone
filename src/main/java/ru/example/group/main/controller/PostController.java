@@ -40,9 +40,8 @@ public class PostController {
   @GetMapping ("/users/{id}/wall")
   public CommonListResponseDto<PostResponseDto> addNewPost(
       @PathVariable long id,
-      @RequestParam(name = "offset", defaultValue = "0") int offset,
-      @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage){
-    return postService.getNewsUserId(id, offset, itemPerPage);
+      @RequestParam(name = "offset", defaultValue = "0") int offset){
+    return postService.getNewsUserId(id, offset);
   }
 
 

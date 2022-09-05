@@ -1,5 +1,12 @@
 package ru.example.group.main.service;
 
+import com.vk.api.sdk.client.Lang;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.objects.base.Country;
+import com.vk.api.sdk.objects.database.City;
+import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
+import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -7,11 +14,9 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
+import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.exception.EmailOrPasswordChangeException;
-import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.UpdateUserMainSettingsException;
-import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.exception.*;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetailsService;
@@ -20,6 +25,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -33,15 +39,18 @@ public class UserSettingsService {
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
-
+    private final UserActor userActor;
+    private final VkApiClient vkApiClient;
     private final SocialNetUserDetailsService socialNetUserDetailsService;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService) {
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, UserActor userActor, VkApiClient vkApiClient, SocialNetUserDetailsService socialNetUserDetailsService) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
+        this.userActor = userActor;
+        this.vkApiClient = vkApiClient;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
     }
 
@@ -268,4 +277,46 @@ public class UserSettingsService {
                 throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
             }
     }
+
+    public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
+
+        try {
+                GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
+                        .lang(Lang.RU)
+                        .needAll(true)
+                        .count(235)
+                        .execute();
+                if (!Objects.equals(country, "")) {
+                    countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
+                }
+            LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
+            locationResponseDto.setData(countries.getItems());
+            locationResponseDto.setError("OK");
+            locationResponseDto.setTimestamp(LocalDateTime.now());
+            return locationResponseDto;
+        } catch (Exception e) {
+            throw new VkApiException("Ошибка получения VK API стран(ы) - " + e.getMessage());
+        }
+    }
+
+    public LocationResponseDto<City> getCities(Integer countryId, String city) throws VkApiException {
+        if (countryId != 0) {
+            try {
+                GetCitiesResponse getCitiesResponse = vkApiClient.database().getCities(userActor, countryId)
+                        .lang(Lang.RU)
+                        .q(city)
+                        .execute();
+                LocationResponseDto<City> locationResponseDto = new LocationResponseDto<>();
+                locationResponseDto.setData(getCitiesResponse.getItems());
+                locationResponseDto.setError("OK");
+                locationResponseDto.setTimestamp(LocalDateTime.now());
+                return locationResponseDto;
+            } catch (Exception e) {
+                throw new VkApiException("Ошибка получения VK API города(ов) - " + e.getMessage());
+            }
+        }
+        return new LocationResponseDto<>();
+    }
+
+
 }

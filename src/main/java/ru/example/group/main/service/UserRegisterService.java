@@ -29,6 +29,9 @@ public class UserRegisterService {
     @Value("${config.frontend}")
     private String mailHost;
 
+    @Value("${cloudinary.default_avatar}")
+    private String default_avatar;
+
     private final UserRepository userRepository;
 
     private final ZeroneMailSenderService zeroneMailSenderService;
@@ -75,8 +78,7 @@ public class UserRegisterService {
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
             user.setConfirmationCode(code);
-            user.setPhoto("https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg");
-            //for test
+            user.setPhoto(default_avatar);
             user.setCountry("");
             user.setCity("");
             user.setBirthDate(LocalDate.of(1970,01,01));

@@ -1,6 +1,7 @@
 package ru.example.group.main.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,8 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     @Query("select p from PostEntity p "
         + "left join  UserEntity u on u.id = p.user.id "
-        + "where p.user.id=:id ORDER BY p.time DESC")
+        + "where p.user.id=:id and p.isBlocked = false "
+        + "ORDER BY p.time DESC")
     Page<PostEntity> findAllPostsUserId(@Param("id") Long id, Pageable pageable);
 
 
@@ -30,4 +32,9 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Modifying
     @Query(value = "delete from PostEntity p where p.isDeleted=true and p.updateDate < :times")
     void deletePostEntity(@Param("times") LocalDateTime times );
+
+    @Query("select count(p) from PostEntity p "
+        + "left join UserEntity u on u.id=p.user.id "
+        + "where p.user.id =:id")
+    int findAllByUserPost(@Param("id")Long id);
 }

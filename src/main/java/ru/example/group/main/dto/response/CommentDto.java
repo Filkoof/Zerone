@@ -21,15 +21,15 @@ public class CommentDto {
     @JsonProperty("is_deleted")
     private final Boolean isDeleted;
     @JsonProperty("post_id")
-    private final Integer postId;
+    private final Long postId;
     @JsonProperty("my_like")
     private final Boolean myLike;
     private final UserDataResponseDto author;
     @JsonProperty("parent_id")
-    private final Integer parentId;
-    private final Integer id;
+    private final Long parentId;
+    private final Long id;
     private final LocalDateTime time;
     @JsonProperty("sub_comments")
-    private final CommonListResponseDto<CommentDto> subComments;
-    private final String likes;
+    private final List<CommentDto> subComments;
+    private final int likes;
 }

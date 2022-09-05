@@ -1,6 +1,10 @@
 package ru.example.group.main.service;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.HashSet;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.dto.request.PostRequestDto;
-import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
@@ -24,13 +26,9 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.repository.PostRepository;
+import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +40,8 @@ public class PostService {
     private final SocialNetUserRegisterService registerService;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
+    private final CommentService commentService;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
         final PostRequestDto request,
@@ -50,7 +50,7 @@ public class PostService {
     ) {
         var response = new CommonResponseDto<PostResponseDto>();
         var userEntity = userRepository.findById(id).orElseThrow();
-        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate, 0, ZoneOffset.UTC);
+        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate/1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
@@ -61,7 +61,11 @@ public class PostService {
         postEntity.setPostText(request.getText());
         postEntity.setUpdateDate(dateTimeNow);
         postEntity.setUser(userEntity);
-
+        if(request.getTags().size()!=0) {
+            var listTag=request.getTags();
+            var tagEntities=listTag.stream().map(tagRepository::findByTag).toList();
+            postEntity.setTagEntities(new HashSet<>(tagEntities));
+        }
         var post = postRepository.save(postEntity);
 
         response.setData(getFromAddRequest(isQueued, userDto, post));
@@ -83,15 +87,15 @@ public class PostService {
     }
 
 
-    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset, int itemPerPage){
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset){
+        var itemPerPage=postRepository.findAllByUserPost(id)==0?5:postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsUserId(id, pageable)
-            .stream().map(this::getPostDtoFromEntity).toList();
+        var statePage = postRepository.findAllPostsUserId(id, pageable);
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total(statePage.size())
+            .total((int)statePage.getTotalElements())
             .perPage(itemPerPage)
             .offset(offset)
-            .data(statePage)
+            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
             .error("")
             .timestamp(LocalDateTime.now())
             .build();
@@ -159,14 +163,7 @@ public class PostService {
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
         return getDefaultBuilder(postEntity)
-            .comments(CommonListResponseDto.<CommentDto>builder()
-                    .perPage(0)
-                    .offset(0)
-                    .total(0)
-                    .error("")
-                    .timestamp(LocalDateTime.now())
-                    .data(new ArrayList<>())
-                    .build())
+            .comments(commentService.getCommonList(postEntity.getId(),5,0))
             .author(getUserDtoFromEntity(postEntity.getUser()))
             .type(getType(postEntity))
             .build();
