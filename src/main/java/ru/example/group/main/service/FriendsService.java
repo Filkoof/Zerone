@@ -145,7 +145,7 @@ public class FriendsService {
         return listOfRecsForThreading;
     }
 
-    public void runMultithreadingFriendsRecommendationsUpdate() {
+    private void runMultithreadingFriendsRecommendationsUpdate() {
         Map<Long, Long[]> newTotalRecommendedFriendsMap = getMapOfRecommendedFriendsTotal();
         ArrayList<Map<Long, Long[]>> listForThreading = getArrayForMultithreadingRecsUpdate(newTotalRecommendedFriendsMap);
         for (Map<Long, Long[]> mapForNextThread: listForThreading) {
@@ -201,6 +201,6 @@ public class FriendsService {
 
     @Scheduled(cron = "@daily")
     protected void runDailyFriendsRecommendationsTableUpdate(){
-
+        runMultithreadingFriendsRecommendationsUpdate();
     }
 }
