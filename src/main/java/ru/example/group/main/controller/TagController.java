@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.example.group.main.dto.TagDto;
+import ru.example.group.main.dto.response.TagResponseDto;
 import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
@@ -23,11 +23,11 @@ public class TagController {
   private final TagService tagService;
 
   @PostMapping
-  public ResponseEntity<CommonResponseDto<TagDto>> postTag(@RequestBody TagDto tagRequest){
+  public ResponseEntity<CommonResponseDto<TagResponseDto>> postTag(@RequestBody TagResponseDto tagRequest){
     return tagService.post(tagRequest);
   }
 
-  @GetMapping ResponseEntity<CommonListResponseDto<TagDto>> getTag(
+  @GetMapping ResponseEntity<CommonListResponseDto<TagResponseDto>> getTag(
       @RequestParam(name = "tag",required = false, defaultValue = "")String text,
       @RequestParam(name = "offset", defaultValue = "0") int offset,
       @RequestParam(name = "itemPerPage", defaultValue = "10") int itemPerPage){

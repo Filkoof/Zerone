@@ -2,6 +2,7 @@ package ru.example.group.main.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,15 +17,15 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommentDto {
+public class CommentDto implements Serializable {
 
     @JsonProperty("comment_text")
     private  String commentText;
     @JsonProperty("is_blocked")
-    private  Boolean isBlocked;
+    private  Boolean blocked;
     private  List<ImageDto> images;
     @JsonProperty("is_deleted")
-    private  Boolean isDeleted;
+    private  Boolean deleted;
     @JsonProperty("post_id")
     private  Long postId;
     @JsonProperty("my_like")

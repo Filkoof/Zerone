@@ -7,12 +7,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.example.group.main.dto.TagDto;
+import ru.example.group.main.dto.response.TagResponseDto;
 import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.entity.TagEntity;
-import ru.example.group.main.map.EntityDtoMapper;
+import ru.example.group.main.map.TagEntityDtoMapper;
 import ru.example.group.main.repository.TagRepository;
 
 @Service
@@ -20,19 +20,19 @@ import ru.example.group.main.repository.TagRepository;
 public class TagService {
 
   private final TagRepository repository;
-  private final EntityDtoMapper mapper = Mappers.getMapper(EntityDtoMapper.class);
+  private final TagEntityDtoMapper mapper = Mappers.getMapper(TagEntityDtoMapper.class);
 
-  public ResponseEntity<CommonResponseDto<TagDto>> post(TagDto request){
+  public ResponseEntity<CommonResponseDto<TagResponseDto>> post(TagResponseDto request){
     if (!repository.existsByTag(request.getTag())){
       repository.save(mapper.dtoToEntity(request));
     }
     return ResponseEntity.ok(getCommonResponseDto(repository.findByTag(mapper.dtoToEntity(request).getTag())));
   }
 
-  public ResponseEntity<CommonListResponseDto<TagDto>>getTags(String text, int offset,int itemPerPage){
+  public ResponseEntity<CommonListResponseDto<TagResponseDto>>getTags(String text, int offset,int itemPerPage){
     var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
     var statePage = repository.findByTagStartingWithIgnoreCase(text, pageable);
-    return ResponseEntity.ok(CommonListResponseDto.<TagDto>builder()
+    return ResponseEntity.ok(CommonListResponseDto.<TagResponseDto>builder()
         .data(statePage.stream().map(mapper::entityToDto).toList())
         .timestamp(LocalDateTime.now())
         .error("")
@@ -60,8 +60,8 @@ public class TagService {
     return responseDto;
   }
 
-  private CommonResponseDto<TagDto> getCommonResponseDto(TagEntity tag){
-    CommonResponseDto<TagDto> responseDto=new CommonResponseDto<>();
+  private CommonResponseDto<TagResponseDto> getCommonResponseDto(TagEntity tag){
+    CommonResponseDto<TagResponseDto> responseDto=new CommonResponseDto<>();
     responseDto.setError("");
     responseDto.setTimeStamp(LocalDateTime.now());
     responseDto.setData(mapper.entityToDto(tag));
