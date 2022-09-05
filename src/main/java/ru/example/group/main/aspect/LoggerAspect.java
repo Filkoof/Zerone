@@ -22,7 +22,7 @@ public class LoggerAspect {
   public void methodExecuting() {
   }
 
-  @Before(value = "methodExecuting()")//сюда бы еще параметры метода передать...
+/*  @Before(value = "methodExecuting()")//сюда бы еще параметры метода передать...
   public void beforeLogInfo(JoinPoint joinPoint) {
     log.debug("вызывается метод - {}, класса- {}, с параметрами - {}\n",
         joinPoint.getSignature().getName(),
@@ -42,7 +42,7 @@ public class LoggerAspect {
           joinPoint.getSignature().getName(),
           joinPoint.getSourceLocation().getWithinType().getName());
     }
-  }
+  }*/
 
   @AfterThrowing(value = "methodExecuting()", throwing = "exception")
   public void recordFailedExecution(JoinPoint joinPoint, Exception exception) throws Exception {

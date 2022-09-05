@@ -15,6 +15,7 @@ import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.repository.UserRepository;
+import ru.example.group.main.repository.UserRoleRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
 import ru.example.group.main.security.SocialNetUserDetailsService;
@@ -67,7 +68,6 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private SocialNetUserDetailsService socialNetUserDetailsService;
-
 
     @BeforeEach
      void setUpAuthContext(){

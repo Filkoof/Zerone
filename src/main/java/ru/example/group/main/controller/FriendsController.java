@@ -24,6 +24,7 @@ public class FriendsController {
             @RequestParam(required = false, defaultValue = "0") Integer offset,
             @RequestParam(required = false, defaultValue = "20") Integer itemPerPage){
         log.info("getRecommendedFriendsResponse started");
+        friendsService.runMultithreadingFriendsRecommendationsUpdate();
         return friendsService.getRecommendedFriendsResponse(offset, itemPerPage);
     }
 

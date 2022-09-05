@@ -6,11 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.controller.GlobalExceptionHandlerController;
+
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.repository.SocialNetUserRepository;
-import ru.example.group.main.security.SocialNetUserDetails;
 
 @Service
 public class SocialNetUserDetailsService implements UserDetailsService {
@@ -31,7 +31,6 @@ public class SocialNetUserDetailsService implements UserDetailsService {
             return new SocialNetUserDetails(user);
         }
         handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
-        //throw new UsernameNotFoundException("user not found doh!");
         return null;
     }
 
@@ -55,6 +54,8 @@ public class SocialNetUserDetailsService implements UserDetailsService {
                 .token(token)
                 .build();
     }
+
+
 
     public UserDataResponseDto setUserDataResponseDto(UserEntity user) {
         return UserDataResponseDto.builder()

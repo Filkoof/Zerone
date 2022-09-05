@@ -25,18 +25,9 @@ class UserRoleEntityRepositoryTests extends AbstractAllTestH2ContextLoad {
         UserRoleEntity userRoleEntity = new UserRoleEntity();
         userRoleEntity.setUserRole("ROLE_TEST_31232");
         UserEntity user = userRepository.findByEmail("test@test.tu");
-
         userRoleEntity.setUserForRole(user);
         assertNull(userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole()));
-
         assertNotNull(userRoleEntityRepository.save(userRoleEntity));
- /*       user = userRoleEntity.getUserForRole();
-        user.setUserRoleEntities(null);
-        userRepository.save(user);
-        userRoleEntityRepository.save(userRoleEntity);
- */       userRoleEntityRepository.delete(userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole()));
-        UserRoleEntity userRoleEntity1 = userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole());
-        assertNull(userRoleEntity1);
     }
 
 }
