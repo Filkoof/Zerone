@@ -99,7 +99,10 @@ public class CommentService {
   }
 
   private CommentEntity getCommentEntity(Long postId, CommentRequestDto request){
-   return mapper.requestDtoToEntity(request,postId,socialNetUserRegisterService);
+    var post=postRepository.getReferenceById(postId);
+    var user=socialNetUserRegisterService.getCurrentUser();
+    var parent=request.getParentId()!=null?commentRepository.getReferenceById(request.getParentId()):null;
+   return mapper.requestDtoToEntity(request,post,user,parent);
 //    var commentEntity=getCommentFromRequest(new CommentEntity(),request);
 //    commentEntity.setSubComments(new ArrayList<>());
 //    commentEntity.setPost(postRepository.getReferenceById(postId));
