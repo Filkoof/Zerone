@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
@@ -16,8 +15,7 @@ import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
 import ru.example.group.main.exception.UserWithThatEmailALreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,13 +36,11 @@ public class UserRegisterService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, HandlerExceptionResolver handlerExceptionResolver) {
+    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.passwordEncoder = passwordEncoder;
-        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
@@ -91,7 +87,7 @@ public class UserRegisterService {
         return true;
     }
 
-    public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
+    public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto) throws NewUserConfirmationViaEmailFailedException {
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
@@ -103,14 +99,14 @@ public class UserRegisterService {
             userRepository.save(user);
             registrationCompleteResponseDto.setEMail(user.getEmail());
             registrationCompleteResponseDto.setKey(registerConfirmRequestDto.getToken());
-            sendRegistrationConfirmationEmail(user, request, response);
+            sendRegistrationConfirmationEmail(user);
         } catch (Exception e) {
             throw new NewUserConfirmationViaEmailFailedException("Failed to activate user via email: " + e.getMessage());
         }
         return registrationCompleteResponseDto;
     }
 
-    private void sendRegistrationConfirmationEmail(UserEntity user, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    private void sendRegistrationConfirmationEmail(UserEntity user) throws EmailNotSentException {
         String message =
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Ваш аккаунт успешно активирован. Добро пожаловать в социальную сеть Зерон. " +

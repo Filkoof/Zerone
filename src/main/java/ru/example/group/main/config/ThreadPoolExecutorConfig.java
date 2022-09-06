@@ -25,9 +25,6 @@ public class ThreadPoolExecutorConfig {
         ThreadPoolTaskExecutor t = new ThreadPoolTaskExecutor();
         t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
         t.setMaxPoolSize(CpuCoresValidator.getNumberOfCPUCores() * 2);
-        //t.setQueueCapacity(50);
-        //t.setAllowCoreThreadTimeOut(true);
-        //t.setKeepAliveSeconds(120);
         return t;
     }
 }

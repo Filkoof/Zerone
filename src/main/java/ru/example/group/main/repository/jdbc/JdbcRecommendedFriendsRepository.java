@@ -88,60 +88,11 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
     }
 
     @Override
-    public List<Long> getFriendsOfUser(Long userId) {
-        return jdbcTemplate.queryForList(
-                "SELECT friendships.dst_person_id FROM friendships\n" +
-                        "WHERE friendships.src_person_id=? AND ((friendships.status_id)=2)\n" +
-                        "UNION\n" +
-                        "SELECT friendships.src_person_id FROM friendships\n" +
-                        "WHERE friendships.dst_person_id=? AND ((friendships.status_id)=2)"
-                , Long.class, userId, userId);
-    }
-
-    @Override
-    public List<Long> getFriendsOfNextFriendExceptDirectFriends(Long userId, Long friendId) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-        mapSqlParameterSource.addValue("user_id", userId);
-        mapSqlParameterSource.addValue("friend_id", friendId);
-        return namedParameterJdbcTemplate.queryForList(
-                SQL_GET_FRIENDS_OF_NEXT_FRIEND_EXCEPT_DIRECT_USER_FRIENDS, mapSqlParameterSource, Long.class);
-
-    }
-
-    @Override
     public List<UserEntity> getRecommendedFriendsForAPI(Integer offset, Integer itemsPerPage, Long userId) {
         return jdbcTemplate.query("select users.* from users where users.id IN\n" +
                 "(select unnest(recommended_friends.recommended_friends) as unnested_recs_id from recommended_friends where recommended_friends.user_id = ?)",
                 new BeanPropertyRowMapper<>(UserEntity.class), userId);
     }
-
-
-    private final static String SQL_GET_FRIENDS_OF_NEXT_FRIEND_EXCEPT_DIRECT_USER_FRIENDS =
-            "SELECT friendsOfUser.* FROM (\n" +
-                    "SELECT friendships.dst_person_id\n" +
-                    "FROM friendships\n" +
-                    "WHERE friendships.src_person_id=:friend_id AND friendships.dst_person_id<>:user_id AND ((friendships.status_id)=2)\n" +
-                    "UNION\n" +
-                    "SELECT friendships.src_person_id\n" +
-                    "FROM friendships\n" +
-                    "WHERE friendships.dst_person_id=:friend_id AND friendships.src_person_id<>:user_id AND ((friendships.status_id)=2)\n" +
-                    ") AS friendsOfUser WHERE friendsOfUser.dst_person_id<>:user_id\n" +
-                    "AND EXISTS\n" +
-                    "(\n" +
-                    "SELECT friendsOfUser.dst_person_id\n" +
-                    "EXCEPT\n" +
-                    "(\n" +
-                    "SELECT friendships.dst_person_id\n" +
-                    "FROM friendships\n" +
-                    "WHERE friendships.src_person_id=:user_id\n" +
-                    "UNION\n" +
-                    "SELECT friendships.src_person_id\n" +
-                    "FROM friendships\n" +
-                    "WHERE friendships.dst_person_id=:user_id\n" +
-                    "UNION\n" +
-                    "SELECT users.id FROM users WHERE (users.id = friendsOfUser.dst_person_id) AND ((users.is_approved=false) OR (users.is_deleted=true) or (users.is_blocked=true))\n" +
-                    ")\n" +
-                    ")";
 
     private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
             "SELECT friendsOfFriendsWithCount.src_person_id FROM (\n" +

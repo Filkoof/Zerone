@@ -67,6 +67,6 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
         RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
         registerConfirmRequestDto.setUserId(email);
         registerConfirmRequestDto.setToken(code);
-        assertTrue(userRegisterService.activateUser(registerConfirmRequestDto,null, null).getEMail().equals(email));
+        assertTrue(userRegisterService.activateUser(registerConfirmRequestDto).getEMail().equals(email));
     }
 }

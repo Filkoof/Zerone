@@ -52,7 +52,7 @@ public class RecommendedFriendsMultithreadUpdate {
         Long finish = System.currentTimeMillis();
         log.debug(userIdUpdateCount + " users, batch update: " + Long.toString(finish - start) + " millis, batch amount: " + batchSize);
         return () -> {
-            log.info(String.format("running update task %i. Thread: %n", i, Thread.currentThread().getName()));
+            log.info(String.format("running update task %s. Thread: %s", i, Thread.currentThread().getName()));
         };
     }
 }

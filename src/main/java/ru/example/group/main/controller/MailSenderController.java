@@ -19,8 +19,8 @@ public class MailSenderController {
     }
 
     @PostMapping("/api/v1/account/register/confirm")
-    public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto, HttpServletRequest request, HttpServletResponse response) throws NewUserConfirmationViaEmailFailedException {
-         return userRegisterService.activateUser(registerConfirmRequestDto, request, response);
+    public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto) throws NewUserConfirmationViaEmailFailedException {
+         return userRegisterService.activateUser(registerConfirmRequestDto);
     }
 
 }
