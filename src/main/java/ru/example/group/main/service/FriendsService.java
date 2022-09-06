@@ -29,12 +29,15 @@ public class FriendsService {
 
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
+    private RecommendedFriendsMultithreadUpdate executePool;
 
-    public FriendsService(UserRepository userRepository, SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository) {
+
+    public FriendsService(UserRepository userRepository, SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository, RecommendedFriendsMultithreadUpdate executePool) {
         this.userRepository = userRepository;
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
+        this.executePool = executePool;
     }
 
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(Integer offset, Integer itemsPerPage) {
@@ -145,12 +148,12 @@ public class FriendsService {
         return listOfRecsForThreading;
     }
 
-    private void runMultithreadingFriendsRecommendationsUpdate() {
+    public void runMultithreadingFriendsRecommendationsUpdate() {
         Map<Long, Long[]> newTotalRecommendedFriendsMap = getMapOfRecommendedFriendsTotal();
         ArrayList<Map<Long, Long[]>> listForThreading = getArrayForMultithreadingRecsUpdate(newTotalRecommendedFriendsMap);
-        for (Map<Long, Long[]> mapForNextThread: listForThreading) {
-            new Thread (new RecommendedFriendsMultithreadUpdate(mapForNextThread, jdbcRecommendedFriendsRepository)).start();
-        }
+
+        executePool.runTasks(listForThreading);
+
         runInsertNewToRecommendedFriends(newTotalRecommendedFriendsMap);
 
         runDeleteInactiveFromRecs();
@@ -174,9 +177,8 @@ public class FriendsService {
         List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         Long start;
         Long finish;
-        int batchSize;
 
-        int usersToAddToEstimation = 1;
+        int usersToAddToEstimation = 40000;//TO INCREASE NUMBER OF USERS FOR UPDATE EXAMINE
         Long updateCount = 1L;
 
         start = System.currentTimeMillis();
@@ -189,7 +191,8 @@ public class FriendsService {
                     List<Long> friendsOfNextFriendExceptDirect = jdbcRecommendedFriendsRepository.getFriendsOfNextFriendExceptDirectFriends(userId, friendId);
                     allFriendsOfNextFriendExceptDirect.addAll(friendsOfNextFriendExceptDirect);
                 }
-                recommendedFriendsMapInt.put(userId, allFriendsOfNextFriendExceptDirect.toArray(Long[]::new));
+                //recommendedFriendsMapInt.put(userId, allFriendsOfNextFriendExceptDirect.toArray(Long[]::new));
+                recommendedFriendsMapInt.put(updateCount, allFriendsOfNextFriendExceptDirect.toArray(Long[]::new));
                 updateCount++;
             }
         }

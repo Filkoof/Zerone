@@ -31,12 +31,12 @@ public class VkApiConfig {
         return new VkApiClient(new HttpTransportClient());
     }
 
-    @Bean
+    /*@Bean
     public GetCountriesResponse getVkApiCountries() throws ClientException, ApiException {
         return vkApiClient().database().getCountries(userActor())
                 .lang(Lang.RU)
                 .needAll(true)
                 .count(235)
                 .execute();
-    }
+    }*/
 }

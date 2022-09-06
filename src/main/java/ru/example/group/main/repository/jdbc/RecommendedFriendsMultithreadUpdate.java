@@ -1,24 +1,35 @@
 package ru.example.group.main.repository.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
-public class RecommendedFriendsMultithreadUpdate implements Runnable {
+public class RecommendedFriendsMultithreadUpdate {
 
+    @Autowired
+    private TaskExecutor taskExecutor;
 
-    private Map<Long, Long[]> recommendedFriendsMapInt;
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
-    public RecommendedFriendsMultithreadUpdate(Map<Long, Long[]> recommendedFriendsMapInt, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository) {
-        this.recommendedFriendsMapInt = recommendedFriendsMapInt;
+    public RecommendedFriendsMultithreadUpdate(JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository) {
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
     }
 
-    @Override
-    public void run() {
+    public void runTasks (ArrayList<Map<Long, Long[]>> listForThreading) {
+        int i = 1;
+        for (Map<Long, Long[]> map : listForThreading) {
+            taskExecutor.execute(getTask(map, i));
+            i++;
+        }
+    }
+
+    private Runnable getTask(Map<Long, Long[]> recommendedFriendsMapInt, int i) {
         Long start = System.currentTimeMillis();
         Map<Long, Long[]> recommendedFriendsMapIntSplit = new HashMap<>();
         int count = 0;
@@ -29,7 +40,7 @@ public class RecommendedFriendsMultithreadUpdate implements Runnable {
             userIdUpdateCount++;
             recommendedFriendsMapIntSplit.put(userId, recommendedFriendsMapInt.get(userId));
             if (count == segmentLimit) {
-                batchSize =+ jdbcRecommendedFriendsRepository.updateBatchRecommendationsArray(recommendedFriendsMapIntSplit).length;
+                batchSize = +jdbcRecommendedFriendsRepository.updateBatchRecommendationsArray(recommendedFriendsMapIntSplit).length;
                 recommendedFriendsMapIntSplit = new HashMap<>();
                 count = 0;
             }
@@ -40,5 +51,8 @@ public class RecommendedFriendsMultithreadUpdate implements Runnable {
         }
         Long finish = System.currentTimeMillis();
         log.debug(userIdUpdateCount + " users, batch update: " + Long.toString(finish - start) + " millis, batch amount: " + batchSize);
+        return () -> {
+            log.info(String.format("running update task %i. Thread: %n", i, Thread.currentThread().getName()));
+        };
     }
 }

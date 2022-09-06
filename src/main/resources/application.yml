@@ -43,6 +43,7 @@ cloudinary:
   cloud_name: "permishin"
   api_key: "957437892123721"
   api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
+  default_avatar: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
 
 
 
@@ -51,7 +52,9 @@ post:
     Life:
       Auto-Delete: 31
 
-
+vk:
+  userId: 51412309
+  accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
 
 
 
