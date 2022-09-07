@@ -34,6 +34,15 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         return null;
     }
 
+    public UserEntity loadUserEntityByUsername(String s) throws UsernameNotFoundException {
+        UserEntity user = socialNetUserRepository.findUserEntityByEmail(s);
+        if (user != null) {
+            return user;
+        }
+        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
+        return null;
+    }
+
     public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
         return UserDataResponseDto.builder()
                 .id(user.getId())

@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
@@ -29,10 +30,15 @@ public class FriendsService {
         this.userRepository = userRepository;
     }
 
-    public FriendsResponseDto getUserFriends(Integer offset, Integer itemPerPage) {
+    public FriendsResponseDto getUserFriends(String name, Integer offset, Integer itemPerPage) {
         FriendsResponseDto friendsResponseDto = new FriendsResponseDto();
         try {
-            UserEntity user = socialNetUserRegisterService.getCurrentUser();
+            UserEntity user;
+            if (name.equals("name")) {
+                user = socialNetUserRegisterService.getCurrentUser();
+            } else {
+                user = socialNetUserDetailsService.loadUserEntityByUsername(name);
+            }
 
             //List<UserDataResponseDto> userFriendsList = jdbcFriendsRepository.getFriendsOfUser(user.getId());
             PageRequest nextPage = PageRequest.of(offset/itemPerPage,itemPerPage);

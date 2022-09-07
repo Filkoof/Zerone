@@ -37,10 +37,10 @@ public class FriendsController {
     }
 
     @GetMapping("/api/v1/friends")
-    public FriendsResponseDto getUserFriends(@RequestParam(required = false) String name,
+    public FriendsResponseDto getUserFriends(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
                                              @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
-        return friendsService.getUserFriends(offset, itemPerPage);
+        return friendsService.getUserFriends(name, offset, itemPerPage);
     }
 
 }
