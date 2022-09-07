@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/auth/*","/auth/api/logout","/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm").permitAll()
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
                 .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set").permitAll()
-                .antMatchers("/swagger-resources/*", "*.html", "/api/v1/swagger.json", "/swagger-ui").permitAll()
+                .antMatchers("/swagger-resources/*", "*.html", "/api/v1/swagger.json", "/swagger-ui/", "/swagger-ui/**", "/swagger-ui/index.html/**").permitAll()
                 .antMatchers( "**").authenticated()
                 .and().formLogin();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
