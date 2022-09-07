@@ -2,19 +2,19 @@ version: '3.1'
 
 services:
 
-#  zerone_backend:
-#    restart: always
-#    image: azul/zulu-openjdk-alpine:17-jre
-#    volumes:
-#      - ./:/app
-#    working_dir: /app
-#    command: java -jar app.jar
-#    environment:
-#      DATABASE_URL: postgresql://195.161.114.18:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-#      DATABASE_USERNAME: zerone
-#      DATABASE_PASSWORD: 7tsfft
-#    ports:
-#      - "8086:8080"
+  zerone_backend:
+    restart: always
+    image: azul/zulu-openjdk-alpine:17-jre
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: java -jar app.jar
+    environment:
+      DATABASE_URL: postgresql://195.161.114.18:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+      DATABASE_USERNAME: zerone
+      DATABASE_PASSWORD: 7tsfft
+    ports:
+      - "8086:8080"
 
   db:
     image: postgres
@@ -24,6 +24,13 @@ services:
       POSTGRES_USER: zerone
       POSTGRES_PASSWORD: 7tsfft
     ports:
-      - "6432:5432"
+      - "5432:5432"
     volumes:
       - ./postgres/data:/var/lib/postgres/data
+
+  zerone_frontend:
+    container_name: zerone_frontend
+    restart: always
+    image: permishin/frontend_image_v4_external
+    ports:
+      - "80:80"

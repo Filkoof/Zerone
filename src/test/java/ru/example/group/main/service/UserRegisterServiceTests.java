@@ -5,13 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.TestPropertySource;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
-import ru.example.group.main.dto.ApiResponseDto;
-import ru.example.group.main.dto.RegisterConfirmDto;
-import ru.example.group.main.dto.UserRegisterDto;
+import ru.example.group.main.dto.response.ApiResponseDto;
+import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
+import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 
@@ -30,13 +28,13 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     private String email;
 
 
-    UserRegisterDto createUserRegisterDto(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto();
-        userRegisterDto.setEmail(email);
-        userRegisterDto.setPasswd1(passwordEncoder.encode("11111111"));
-        userRegisterDto.setFirstName("Test");
-        userRegisterDto.setLastName("Testov");
-        return userRegisterDto;
+    UserRegisterRequestDto createUserRegisterDto(){
+        UserRegisterRequestDto userRegisterRequestDto = new UserRegisterRequestDto();
+        userRegisterRequestDto.setEmail(email);
+        userRegisterRequestDto.setPasswd1(passwordEncoder.encode("11111111"));
+        userRegisterRequestDto.setFirstName("Test");
+        userRegisterRequestDto.setLastName("Testov");
+        return userRegisterRequestDto;
     }
 
     @BeforeEach
@@ -57,19 +55,18 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void createUser() throws Exception {
-        ApiResponseDto apiResponseDto = userRegisterService.createUser(null, null, createUserRegisterDto());
+        ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
         assertTrue(apiResponseDto.getMessage().equals("User created"));
     }
 
     @Test
     void activateUser() throws Exception {
-        ApiResponseDto apiResponseDto = userRegisterService.createUser(null, null, createUserRegisterDto());
+        ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
         assertTrue(apiResponseDto.getMessage().equals("User created"));
         String code = userRepository.findByEmail(email).getConfirmationCode();
-        RegisterConfirmDto registerConfirmDto = new RegisterConfirmDto();
-        registerConfirmDto.setUserId(email);
-        registerConfirmDto.setToken(code);
-        assertTrue(userRegisterService.activateUser(registerConfirmDto,null, null).getEMail().equals(email));
-
+        RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
+        registerConfirmRequestDto.setUserId(email);
+        registerConfirmRequestDto.setToken(code);
+        assertTrue(userRegisterService.activateUser(registerConfirmRequestDto,null, null).getEMail().equals(email));
     }
 }

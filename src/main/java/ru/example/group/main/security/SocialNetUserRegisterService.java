@@ -8,7 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import ru.example.group.main.dto.*;
+import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
+import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +34,7 @@ public class SocialNetUserRegisterService {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
-    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadDto payload, HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),

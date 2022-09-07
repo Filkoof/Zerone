@@ -1,12 +1,16 @@
 package ru.example.group.main.controller;
 
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.example.group.main.dto.*;
+import ru.example.group.main.dto.response.*;
 import ru.example.group.main.exception.*;
 
 import javax.servlet.ServletException;
@@ -16,20 +20,22 @@ import java.time.LocalDateTime;
 @Slf4j
 public class GlobalExceptionHandlerController {
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> handleUsernameNotFoundException(UsernameNotFoundException e) {
+    @ExceptionHandler( {UsernameNotFoundException.class, LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class})
+    public ResponseEntity<CommonResponseDto<ResultMessageDto>> handleUsernameNotFoundException(Exception e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
+        CommonResponseDto<ResultMessageDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         commonResponseDto.setError(e.getMessage());
-        commonResponseDto.setMessage(e.getMessage());
-        return new ResponseEntity<>(commonResponseDto, HttpStatus.FORBIDDEN);
+        commonResponseDto.setMessage(e.getLocalizedMessage());
+        commonResponseDto.setData(new ResultMessageDto());
+        commonResponseDto.getData().setMessage(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(commonResponseDto);
     }
 
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<CommonResponseDto<LogoutResponseDataDto>> handleServletExceptions(ServletException e) {
+    public ResponseEntity<CommonResponseDto<LogoutDataResponseDto>> handleServletExceptions(ServletException e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<LogoutResponseDataDto> commonResponseDto = new CommonResponseDto<>();
+        CommonResponseDto<LogoutDataResponseDto> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setError(e.getMessage());
         commonResponseDto.setMessage(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
@@ -59,9 +65,9 @@ public class GlobalExceptionHandlerController {
 
 
     @ExceptionHandler(NewUserConfirmationViaEmailFailedException.class)
-    public ResponseEntity<RegistrationCompleteDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
+    public ResponseEntity<RegistrationCompleteResponseDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
         log.info(e.getMessage());
-        return new ResponseEntity(new RegistrationCompleteDto(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(new RegistrationCompleteResponseDto(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthLogoutException.class)
@@ -75,5 +81,13 @@ public class GlobalExceptionHandlerController {
         log.info(e.getMessage());
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UserDeleteOrRecoveryException.class)
+    public ResponseEntity handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
+        log.info(e.getMessage());
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+
 
 }

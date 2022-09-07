@@ -2,11 +2,9 @@ package ru.example.group.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import springfox.documentation.RequestHandler;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
-import springfox.documentation.spring.web.plugins.Docket;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 public class Main {
 

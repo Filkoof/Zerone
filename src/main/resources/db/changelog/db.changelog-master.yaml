@@ -50,7 +50,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: about
-                  type: text
+                  type: varchar
               - column:
                   name: status
                   type: boolean
@@ -216,7 +216,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: message_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -276,7 +276,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: post_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -407,7 +407,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: comment_text
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -530,7 +530,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: message
-                  type: text
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
@@ -586,6 +586,18 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: 3
+      author: Artem_Filkov
+      comment: "заполнение таблиц пользователей и постов"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/users.sql
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/posts.sql
+
+  - changeSet:
+      id: 4
       author: koch
       comment: "Create test users"
       changes:
@@ -628,6 +640,18 @@ databaseChangeLog:
               - column:
                   name: photo
                   value: "photo path here"
+
+  - changeSet:
+      id: 5
+      author: DMitry_Kochuev
+      comment: "справочник статуса дружбы и тестовые данные дружбы"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friendship_statuses_init.sql
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friendships_init.sql
 
       rollback:
         - delete:
