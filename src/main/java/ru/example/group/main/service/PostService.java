@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +24,14 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
+import ru.example.group.main.repository.VoteRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 @Service
@@ -42,6 +46,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CommentService commentService;
+    private final VoteRepository voteRepository;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
         final PostRequestDto request,
@@ -152,20 +157,28 @@ public class PostService {
     private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
         return PostResponseDto.builder()
             .isBlocked(false)
-            .myLike(false)
             .id(postEntity.getId())
             .time(postEntity.getTime())
             .title(postEntity.getTitle())
             .postText(postEntity.getPostText())
-            .likes(0)
             .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList()));
     }
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
+        var likes = voteRepository.findByEntityIdAndType(postEntity.getId(), LikeType.POST);
+        var user = registerService.getCurrentUser();
+        var isMyLike = new AtomicBoolean(false);
+
+        likes.flatMap(
+            likeEntities -> likeEntities.stream().filter(likeEntity -> likeEntity.getUser().equals(user)).findFirst())
+            .ifPresent(likeEntity -> isMyLike.set(true));
+
         return getDefaultBuilder(postEntity)
             .comments(commentService.getCommonList(postEntity.getId(),5,0))
             .author(getUserDtoFromEntity(postEntity.getUser()))
             .type(getType(postEntity))
+            .myLike(isMyLike.get())
+            .likes(likes.map(List::size).orElse(0))
             .build();
     }
 
@@ -177,6 +190,8 @@ public class PostService {
         return getDefaultBuilder(post)
             .author(userDto)
             .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
+            .myLike(false)
+            .likes(0)
             .build();
     }
     private UserDataResponseDto getUserDtoFromEntity(final UserEntity userEntity) {

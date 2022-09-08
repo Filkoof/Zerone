@@ -1,9 +1,5 @@
 package ru.example.group.main.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -16,12 +12,21 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
+import ru.example.group.main.repository.VoteRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
   private final SocialNetUserRegisterService socialNetUserRegisterService;
+  private final VoteRepository voteRepository;
 
   public CommonListResponseDto<CommentDto> getComment(Long idPost, int offset, int itemPerPage){
     if(postRepository.existsById(idPost)){
@@ -40,7 +46,7 @@ public class CommentService {
 
   public ResponseEntity<CommonResponseDto<CommentDto>> postComment(Long id, CommentRequestDto request){
     var comment=commentRepository.save(getCommentEntity(id,request));
-    return ResponseEntity.ok(getCommonResponseDto(comment));
+    return ResponseEntity.ok(getCommonResponseDto(comment, true));
   }
 
   public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment (long idPost, long comment_id)
@@ -56,7 +62,7 @@ public class CommentService {
       comment.setDeleted(true);
       commentRepository.save(comment);
     }
-    return ResponseEntity.ok(getCommonResponseDto(comment));
+    return ResponseEntity.ok(getCommonResponseDto(comment, false));
   }
 
   public ResponseEntity<CommonResponseDto<CommentDto>> editComment(long idPost, long comment_id, CommentRequestDto requestDto)
@@ -71,7 +77,7 @@ public class CommentService {
     }else {
       commentRepository.save(getCommentFromRequest(comment,requestDto));
     }
-    return ResponseEntity.ok(getCommonResponseDto(comment));
+    return ResponseEntity.ok(getCommonResponseDto(comment, false));
   }
   public ResponseEntity<CommonResponseDto<CommentDto>> recoverComment(long idPost, long comment_id)
       throws EntityNotFoundException, IdUserException, CommentPostNotFoundException {
@@ -86,14 +92,14 @@ public class CommentService {
       comment.setDeleted(false);
       commentRepository.save(comment);
     }
-    return ResponseEntity.ok(getCommonResponseDto(comment));
+    return ResponseEntity.ok(getCommonResponseDto(comment, false));
   }
 
-  private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment){
+  private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment, boolean isNewComment){
     var response = new CommonResponseDto<CommentDto>();
     response.setError("");
     response.setTimeStamp(LocalDateTime.now());
-    response.setData(getCommentDto(comment));
+    response.setData(isNewComment? getNewCommentDto(comment) : getCommentDto(comment));
     return response;
   }
 
@@ -126,21 +132,35 @@ public class CommentService {
         .offset(offset).build();
   }
 
-  private CommentDto getCommentDto(CommentEntity commentEntity){
+  private CommentDto.CommentDtoBuilder getDefaultBuilder(CommentEntity commentEntity) {
     var user=commentEntity.getUser();
     return CommentDto.builder()
         .commentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText())
         .id(commentEntity.getId())
         .parentId(commentEntity.getParent() == null ?null:commentEntity.getParent().getId())
         .postId(commentEntity.getPost().getId())
-        .likes(0)
         .images(new ArrayList<>())
         .isDeleted(commentEntity.isDeleted())
         .isBlocked(commentEntity.isBlocked())
         .author(getUserDto(user))
         .subComments(commentEntity.getSubComments().stream()
-            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList())
+            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList());
+  }
+
+  private CommentDto getCommentDto(CommentEntity commentEntity){
+    var likes = voteRepository.findByEntityIdAndType(commentEntity.getId(), LikeType.COMMENT);
+    var curUser = socialNetUserRegisterService.getCurrentUser();
+    var isMyLike = new AtomicBoolean(false);
+    likes.flatMap(
+        likeEntities -> likeEntities.stream().filter(likeEntity -> likeEntity.getUser().equals(curUser)).findFirst())
+        .ifPresent(likeEntity -> isMyLike.set(true));
+    return getDefaultBuilder(commentEntity)
+        .likes(likes.map(List::size).orElse(0))
+        .myLike(isMyLike.get())
         .build();
+  }
+  private CommentDto getNewCommentDto(CommentEntity commentEntity){
+    return getDefaultBuilder(commentEntity).likes(0).build();
   }
   private UserDataResponseDto getUserDto(UserEntity user){
     return UserDataResponseDto.builder()

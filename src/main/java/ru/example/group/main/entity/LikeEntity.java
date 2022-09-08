@@ -27,7 +27,6 @@ public class LikeEntity{
 
   private long entityId;
 
-
   @Enumerated(EnumType.STRING)
   private LikeType type;
 
