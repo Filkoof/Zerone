@@ -1,7 +1,6 @@
 package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +11,10 @@ import ru.example.group.main.dto.request.CommentRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.CommentEntity;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
-import ru.example.group.main.map.EntityDtoMapper;
+import ru.example.group.main.map.CommentMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -31,7 +27,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
   private final SocialNetUserRegisterService socialNetUserRegisterService;
-  private final EntityDtoMapper mapper;
+  private final CommentMapper mapper;
 
   public CommonListResponseDto<CommentDto> getComment(Long idPost, int offset, int itemPerPage){
     if(postRepository.existsById(idPost)){
@@ -102,15 +98,7 @@ public class CommentService {
     var post=postRepository.getReferenceById(postId);
     var user=socialNetUserRegisterService.getCurrentUser();
     var parent=request.getParentId()!=null?commentRepository.getReferenceById(request.getParentId()):null;
-   return mapper.requestDtoToEntity(request,post,user,parent);
-//    var commentEntity=getCommentFromRequest(new CommentEntity(),request);
-//    commentEntity.setSubComments(new ArrayList<>());
-//    commentEntity.setPost(postRepository.getReferenceById(postId));
-//    commentEntity.setBlocked(false);
-//    commentEntity.setDeleted(false);
-//    commentEntity.setTime(LocalDateTime.now());
-//    commentEntity.setUser(socialNetUserRegisterService.getCurrentUser());
-//    return commentEntity;
+   return mapper.commentRequestDtoToEntity(request,post,user,parent);
   }
   private CommentEntity getCommentFromRequest(CommentEntity commentEntity, CommentRequestDto request){
     commentEntity.setCommentText(request.getCommentText());
@@ -127,7 +115,7 @@ public class CommentService {
         .total((int)listCommentEntity.getTotalElements())
         .error("")
         .timestamp(LocalDateTime.now())
-        .data(listCommentEntity.stream().map(mapper::commentEntityToDto).toList())
+        .data(mapper.commentListDto(listCommentEntity))
         .offset(offset).build();
   }
 }
