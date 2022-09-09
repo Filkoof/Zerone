@@ -143,4 +143,9 @@ public class RecommendedFriendsService {
     protected void runDailyFriendsRecommendationsTableUpdate() {
         runMultithreadingFriendsRecommendationsUpdate();
     }
+
+    public void deleteRecommendations(){
+        jdbcRecommendedFriendsRepository.deleteAll();
+        log.info("recommendations truncated");
+    }
 }

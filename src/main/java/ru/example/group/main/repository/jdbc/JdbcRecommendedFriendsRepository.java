@@ -70,7 +70,7 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
 
     @Override
     public int deleteAll() {
-        return jdbcTemplate.update("DELETE FROM recommended_friends");
+        return jdbcTemplate.update("TRUNCATE TABLE recommended_friends");
     }
 
     @Override

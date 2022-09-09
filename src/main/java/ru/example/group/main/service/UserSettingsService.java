@@ -319,4 +319,17 @@ public class UserSettingsService {
     }
 
 
+    public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
+        CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();
+        friendDto.setError("");
+        friendDto.setTimeStamp(LocalDateTime.now());
+        try {
+            UserEntity friend = userRepository.findById(friendId).orElseThrow();
+            friendDto.setData(socialNetUserDetailsService.setUserDataResponseDto(friend, ""));
+            return friendDto;
+        } catch (Exception e){
+            friendDto.setError("Ошибка");
+            return friendDto;
+        }
+    }
 }

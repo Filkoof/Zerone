@@ -83,14 +83,14 @@ public class AuthUserService {
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public void logoutProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void logoutProcessing(HttpServletRequest request) throws ServletException {
         if (request.getHeader(authHeader) != null) {
             if (configProperties.getJwtBlackListOn()) {
                 try {
                     setJwtBlackList(request);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
+                    handlerExceptionResolver.resolveException(null, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
                 }
             }
         }

@@ -1,4 +1,4 @@
-package ru.example.group.main.controller;
+package ru.example.group.main.dto.response;
 
 import lombok.Data;
 

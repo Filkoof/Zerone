@@ -93,4 +93,9 @@ public class UserSettingsController {
         userSettingsService.recoveryUserDelete(code);
         return new RedirectView("http://" + front + "/login");
     }
+
+    @GetMapping("/api/v1/users/{id}")
+    public CommonResponseDto<UserDataResponseDto> getFriendById(@PathVariable Long id){
+        return userSettingsService.getFriendProfile(id);
+    }
 }
