@@ -12,6 +12,7 @@ import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.PostType;
 
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, CommentMapper.class})
@@ -27,7 +28,7 @@ public interface PostMapper {
   PostResponseDto postEntityToDto (
       PostEntity post,
       List<String> tags,
-      String type,
+      PostType type,
       CommonListResponseDto<CommentDto> comm);
 
   @Mapping(target = "user", expression = "java(user)")
@@ -40,5 +41,5 @@ public interface PostMapper {
   @Mapping(target = "blocked", ignore = true)
   @Mapping(target = "blockHistoryEntities", ignore = true)
   @Mapping(target = "id", ignore = true)
-  PostEntity postRequestToEntity(PostRequestDto request, LocalDateTime time, String type, Set<TagEntity>tags, UserEntity user);
+  PostEntity postRequestToEntity(PostRequestDto request, LocalDateTime time, Set<TagEntity>tags, UserEntity user);
 }

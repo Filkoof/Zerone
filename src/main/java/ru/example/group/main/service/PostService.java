@@ -53,20 +53,9 @@ public class PostService {
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
-       // var userDto = getUserDtoFromEntity(userEntity);
-//        var postEntity = new PostEntity();
-//        postEntity.setTime(publishDateTime);
-//        postEntity.setTitle(request.getTitle());
-//        postEntity.setPostText(request.getText());
-//        postEntity.setUpdateDate(dateTimeNow);
-//        postEntity.setUser(userEntity);
-//        if(request.getTags().size()!=0) {
-//            var tagEntities=request.getTags().stream().map(tagRepository::findByTag).toList();
-//            postEntity.setTagEntities(new HashSet<>(tagEntities));
-//        }
+
         var tags=request.getTags().size()!=0?new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()):null;
-        var type=isQueued ? PostType.QUEUED.name() : PostType.POSTED.name();
-        var postE =mapper.postRequestToEntity(request,publishDateTime,type,tags,userEntity);
+        var postE =mapper.postRequestToEntity(request,publishDateTime,tags,userEntity);
         postRepository.save(postE);
 
         response.setData(getPostDtoFromEntity(postE));
@@ -156,9 +145,9 @@ public class PostService {
         var listComment=commentService.getCommonList(postEntity.getId(),5,0);
         return mapper.postEntityToDto(postEntity,tags,type,listComment);
     }
-    private String getType(PostEntity post){
-        if(post.isDeleted()){return PostType.DELETED.name();}
-        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
-        else return PostType.POSTED.name();
+    private PostType getType(PostEntity post){
+        if(post.isDeleted()){return PostType.DELETED;}
+        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED;}
+        else return PostType.POSTED;
     }
 }
