@@ -17,6 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.example.group.main.security.JWTRequestFilter;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 
 @Configuration
@@ -45,6 +49,8 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
                 .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set", "/user_delete/confirm").permitAll()
                 .antMatchers("/user_delete_recovery/confirm").permitAll()
+                .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set").permitAll()
+                .antMatchers("/swagger-resources/**", "/v2/**", "/swagger-ui", "/swagger-ui/**").permitAll()
                 .antMatchers( "**").authenticated()
                 .and()
                 .logout(logout -> logout
