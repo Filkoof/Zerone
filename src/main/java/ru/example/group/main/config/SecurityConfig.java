@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set", "/user_delete/confirm").permitAll()
                 .antMatchers("/user_delete_recovery/confirm").permitAll()
                 .antMatchers("/api/v1/platform/languages", "/email_change/confirm", "/password_change/confirm", "/api/v1/account/password/set").permitAll()
-                .antMatchers("/swagger-resources/**", "/v3/**", "/swagger-ui", "/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**", "/v2/**", "/swagger-ui", "/swagger-ui/**").permitAll()
                 .antMatchers( "**").authenticated()
                 .and()
                 .logout(logout -> logout
