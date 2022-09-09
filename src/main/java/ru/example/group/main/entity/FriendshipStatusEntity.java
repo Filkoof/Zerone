@@ -25,8 +25,8 @@ public class FriendshipStatusEntity {
 
   private LocalDateTime time;
 
-  private String name;
-
   @Enumerated(EnumType.STRING)
-  private FriendshipStatusType code;
+  private FriendshipStatusType name;
+
+  private Long code;
 }

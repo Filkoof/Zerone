@@ -191,7 +191,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: code
-                  type: varchar(10)
+                  type: bigint
                   constraints:
                     nullable: false
         - createTable:

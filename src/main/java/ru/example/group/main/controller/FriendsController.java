@@ -41,15 +41,15 @@ public class FriendsController {
     @GetMapping("/api/v1/friends")
     public FriendsResponseDto getUserFriends(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
-                                             @RequestParam(required = false, defaultValue = "20") Integer itemPerPage){
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
         return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.FRIEND);
     }
 
     @GetMapping("/api/v1/friends/request")
     public FriendsResponseDto getFriendsRequests(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
-                                             @RequestParam(required = false, defaultValue = "20") Integer itemPerPage){
-        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.REQUEST);
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
+        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.SUBSCRIBED);
     }
 
     @PostMapping("/api/v1/friends/{id}")

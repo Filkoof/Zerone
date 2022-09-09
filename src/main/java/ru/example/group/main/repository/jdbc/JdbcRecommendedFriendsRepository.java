@@ -95,6 +95,36 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
     }
 
     private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
+            "SELECT friendsOfFriendsWithCount.dst_person_id FROM ( " +
+                    "SELECT friendships_1.dst_person_id " +
+                    "FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.src_person_id = friendships_1.src_person_id " +
+                    "WHERE (((friendships.dst_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.dst_person_id)<>:user_id) AND ((friendships_1.status_id)=2)) " +
+                    "UNION " +
+                    "SELECT friendships_1.src_person_id " +
+                    "FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.dst_person_id = friendships_1.dst_person_id " +
+                    "WHERE (((friendships.src_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.src_person_id)<>:user_id) AND ((friendships_1.status_id)=2)) " +
+
+                    "UNION " +
+                    "        SELECT users_1.id " +
+                    "        FROM users AS users_1 INNER JOIN users ON users_1.city = users.city " +
+                    "        GROUP BY users.id, users_1.id " +
+                    "        HAVING (((users.id)<>users_1.id And (users.id)=:user_id)) " +
+                    "         " +
+                    "        ) AS friendsOfFriendsWithCount " +
+                    "        WHERE EXISTS " +
+                    "        ( " +
+                    "        SELECT friendsOfFriendsWithCount.dst_person_id " +
+                    "        EXCEPT" +
+                    "        ( " +
+                    "        SELECT friendships.dst_person_id " +
+                    "FROM friendships " +
+                    "WHERE ((friendships.src_person_id)=:user_id) " +
+                    "        UNION " +
+                    "        SELECT users.id FROM users WHERE (users.id = friendsOfFriendsWithCount.dst_person_id) AND ((users.is_approved=false) OR (users.is_deleted=true) or (users.is_blocked=true)) " +
+                    "        ) " +
+                    "        )";
+
+    private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID_INIT =
             "SELECT friendsOfFriendsWithCount.src_person_id FROM (\n" +
                     "SELECT friendships_1.src_person_id\n" +
                     "FROM (friendships INNER JOIN friendship_statuses ON friendships.status_id = friendship_statuses.id) INNER JOIN friendships AS friendships_1 ON friendships.src_person_id = friendships_1.dst_person_id\n" +

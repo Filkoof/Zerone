@@ -23,7 +23,7 @@ public class FriendshipEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "status_id")
   private FriendshipStatusEntity status;
 

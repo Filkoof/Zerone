@@ -6,6 +6,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.FriendshipEntity;
+import ru.example.group.main.entity.FriendshipStatusEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.repository.FriendshipRepository;
@@ -75,47 +76,65 @@ public class FriendsService {
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
         friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
 
-
         try {
+
             FriendshipEntity userToIdFriendshipStatusCheck = friendshipRepository.findFriendshipEntitiesBySrcPersonAndDstPerson(user.getId(), id);
             FriendshipEntity idToUserFriendshipStatusCheck = friendshipRepository.findFriendshipEntitiesBySrcPersonAndDstPerson(id, user.getId());
+            UserEntity requestedUser = userRepository.findById(id).orElseThrow();
 
             if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
-                userToIdFriendshipStatusCheck = new FriendshipEntity();
-                userToIdFriendshipStatusCheck.setSrcPerson(user);
-                userToIdFriendshipStatusCheck.setDstPerson(userRepository.findById(id).orElseThrow());
-                userToIdFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByName(FriendshipStatusType.REQUEST.toString()));
-                friendshipRepository.save(userToIdFriendshipStatusCheck);
-                return friendRequestResponse;
-            }
-
-            if (userToIdFriendshipStatusCheck != null) {
-                friendRequestResponse.setMessage("Запрос на дружбу был отправлен ранее и находится в статусе - " + userToIdFriendshipStatusCheck.getStatus().getName());
-                return friendRequestResponse;
-            }
-
-            if (idToUserFriendshipStatusCheck != null) {
-                switch (idToUserFriendshipStatusCheck.getStatus().getCode()) {
-                    case REQUEST, DECLINED:
-                        idToUserFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByName(FriendshipStatusType.FRIEND.toString()));
-                        friendRequestResponse.setMessage("Данный пользователь уже отправлял вам запрос и теперь вы друзья.");
-                        break;
-                    case FRIEND:
-                        friendRequestResponse.setMessage("Вы уже друзья.");
-                        break;
-                    case BLOCKED:
-                        friendRequestResponse.setMessage("Данный пользователь заблокировал ваши заявки на добавления в друзья.");
-                        break;
-                    case SUBSCRIBED:
-                        idToUserFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByName(FriendshipStatusType.FRIEND.toString()));
-                        friendRequestResponse.setMessage("Данный пользователь уже отправлял вам запрос и теперь вы друзья.");
-                        break;
+                if (!insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.SUBSCRIBED.toString(), FriendshipStatusType.REQUEST.toString(), new FriendshipEntity(), new FriendshipEntity())) {
+                    friendRequestResponse.setMessage("Ошибка отправки запроса, обратитесь в службу поддержки.");
                 }
+                return friendRequestResponse;
+            }
+
+            Long idToUserStatusCode = idToUserFriendshipStatusCheck.getStatus().getCode();
+
+            if (userToIdFriendshipStatusCheck != null && (idToUserStatusCode == 3 || idToUserStatusCode == 4 || idToUserStatusCode == 7)) {
+                friendRequestResponse.setMessage("Запрос на дружбу был отправлен ранее и находится в статусе - " + idToUserFriendshipStatusCheck.getStatus().getName());
+                return friendRequestResponse;
+            }
+
+            if (idToUserStatusCode == 1) {
+                if (!insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND.toString(), FriendshipStatusType.FRIEND.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck)) {
+                    friendRequestResponse.setMessage("Ошибка отправки запроса, обратитесь в службу поддержки.");
+                    return friendRequestResponse;
+                }
+                friendRequestResponse.setMessage("Данный пользователь уже отправлял вам запрос и теперь вы друзья.");
+                return friendRequestResponse;
             }
         } catch (Exception e) {
             friendRequestResponse.setMessage("Ошибка добавления в друзья.");
+            e.printStackTrace();
+        }
+        return friendRequestResponse;
+    }
+
+
+    private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, String userGetStatus, String requestedGetStatus,
+                                             FriendshipEntity idToFriend, FriendshipEntity friendToId) {
+        try {
+            FriendshipEntity userToIdFriendshipStatusCheck = idToFriend;
+            FriendshipEntity idToUserFriendshipStatusCheck = friendToId;
+
+            userToIdFriendshipStatusCheck.setSrcPerson(user);
+            userToIdFriendshipStatusCheck.setDstPerson(requestedFriendId);
+            userToIdFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByCode(FriendshipStatusType.getFriendshipFromName(userGetStatus)));
+            userToIdFriendshipStatusCheck.setTime(LocalDateTime.now());
+
+            idToUserFriendshipStatusCheck.setSrcPerson(requestedFriendId);
+            idToUserFriendshipStatusCheck.setDstPerson(user);
+            idToUserFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByCode(FriendshipStatusType.getFriendshipFromName(requestedGetStatus)));
+            idToUserFriendshipStatusCheck.setTime(LocalDateTime.now());
+
+            friendshipRepository.save(userToIdFriendshipStatusCheck);
+            friendshipRepository.save(idToUserFriendshipStatusCheck);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return friendRequestResponse;
+        return false;
     }
 }
