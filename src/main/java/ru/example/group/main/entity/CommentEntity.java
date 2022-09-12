@@ -1,5 +1,6 @@
 package ru.example.group.main.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,18 +14,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 @Entity
 @Getter
 @Setter
 @Table(name = "post_comments")
-public class CommentEntity {
+public class CommentEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
+  @UpdateTimestamp
   private LocalDateTime time;
 
   @ManyToOne

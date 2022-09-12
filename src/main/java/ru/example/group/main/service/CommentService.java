@@ -1,8 +1,6 @@
 package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +11,10 @@ import ru.example.group.main.dto.request.CommentRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.CommentEntity;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
+import ru.example.group.main.map.CommentMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -31,6 +27,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
   private final SocialNetUserRegisterService socialNetUserRegisterService;
+  private final CommentMapper mapper;
 
   public CommonListResponseDto<CommentDto> getComment(Long idPost, int offset, int itemPerPage){
     if(postRepository.existsById(idPost)){
@@ -93,19 +90,15 @@ public class CommentService {
     var response = new CommonResponseDto<CommentDto>();
     response.setError("");
     response.setTimeStamp(LocalDateTime.now());
-    response.setData(getCommentDto(comment));
+    response.setData(mapper.commentEntityToDto(comment));
     return response;
   }
 
   private CommentEntity getCommentEntity(Long postId, CommentRequestDto request){
-    var commentEntity=getCommentFromRequest(new CommentEntity(),request);
-    commentEntity.setSubComments(new ArrayList<>());
-    commentEntity.setPost(postRepository.getReferenceById(postId));
-    commentEntity.setBlocked(false);
-    commentEntity.setDeleted(false);
-    commentEntity.setTime(LocalDateTime.now());
-    commentEntity.setUser(socialNetUserRegisterService.getCurrentUser());
-    return commentEntity;
+    var post=postRepository.getReferenceById(postId);
+    var user=socialNetUserRegisterService.getCurrentUser();
+    var parent=request.getParentId()!=null?commentRepository.getReferenceById(request.getParentId()):null;
+   return mapper.commentRequestDtoToEntity(request,post,user,parent);
   }
   private CommentEntity getCommentFromRequest(CommentEntity commentEntity, CommentRequestDto request){
     commentEntity.setCommentText(request.getCommentText());
@@ -122,43 +115,7 @@ public class CommentService {
         .total((int)listCommentEntity.getTotalElements())
         .error("")
         .timestamp(LocalDateTime.now())
-        .data(listCommentEntity.stream().map(this::getCommentDto).toList())
+        .data(mapper.commentListDto(listCommentEntity))
         .offset(offset).build();
-  }
-
-  private CommentDto getCommentDto(CommentEntity commentEntity){
-    var user=commentEntity.getUser();
-    return CommentDto.builder()
-        .commentText(commentEntity.isDeleted()?"комментарий удален":commentEntity.getCommentText())
-        .id(commentEntity.getId())
-        .parentId(commentEntity.getParent() == null ?null:commentEntity.getParent().getId())
-        .postId(commentEntity.getPost().getId())
-        .likes(0)
-        .images(new ArrayList<>())
-        .isDeleted(commentEntity.isDeleted())
-        .isBlocked(commentEntity.isBlocked())
-        .author(getUserDto(user))
-        .subComments(commentEntity.getSubComments().stream()
-            .sorted(Comparator.comparing(CommentEntity::getTime)).map(this::getCommentDto).toList())
-        .build();
-  }
-  private UserDataResponseDto getUserDto(UserEntity user){
-    return UserDataResponseDto.builder()
-        .about(user.getAbout())
-        .birthDate(user.getBirthDate())
-        .city(user.getCity())
-        .country(user.getCountry())
-        .eMail(user.getEmail())
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .id(user.getId())
-        .isBlocked(user.isBlocked())
-        .isDeleted(user.isDeleted())
-        .photo(user.getPhoto())
-        .regDate(user.getRegDate())
-        .messagePermissions(user.isMessagePermissions()? MessagesPermission.ALL:MessagesPermission.FRIENDS)
-        .phone(user.getPhone())
-        .token("")
-        .build();
   }
 }

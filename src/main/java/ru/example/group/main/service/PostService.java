@@ -18,13 +18,11 @@ import ru.example.group.main.dto.request.PostRequestDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
-import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
+import ru.example.group.main.map.PostMapper;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
@@ -42,6 +40,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CommentService commentService;
+    private final PostMapper mapper;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
         final PostRequestDto request,
@@ -54,21 +53,12 @@ public class PostService {
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
-        var userDto = getUserDtoFromEntity(userEntity);
-        var postEntity = new PostEntity();
-        postEntity.setTime(publishDateTime);
-        postEntity.setTitle(request.getTitle());
-        postEntity.setPostText(request.getText());
-        postEntity.setUpdateDate(dateTimeNow);
-        postEntity.setUser(userEntity);
-        if(request.getTags().size()!=0) {
-            var listTag=request.getTags();
-            var tagEntities=listTag.stream().map(tagRepository::findByTag).toList();
-            postEntity.setTagEntities(new HashSet<>(tagEntities));
-        }
-        var post = postRepository.save(postEntity);
 
-        response.setData(getFromAddRequest(isQueued, userDto, post));
+        var tags=request.getTags().size()!=0?new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()):null;
+        var postE =mapper.postRequestToEntity(request,publishDateTime,tags,userEntity);
+        postRepository.save(postE);
+
+        response.setData(getPostDtoFromEntity(postE));
         return ResponseEntity.ok(response);
     }
 
@@ -149,58 +139,15 @@ public class PostService {
         postRepository.deletePostEntity(LocalDateTime.now().minusDays(postLife));
     }
 
-    private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
-        return PostResponseDto.builder()
-            .isBlocked(false)
-            .myLike(false)
-            .id(postEntity.getId())
-            .time(postEntity.getTime())
-            .title(postEntity.getTitle())
-            .postText(postEntity.getPostText())
-            .likes(0)
-            .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList()));
-    }
-
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
-        return getDefaultBuilder(postEntity)
-            .comments(commentService.getCommonList(postEntity.getId(),5,0))
-            .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(getType(postEntity))
-            .build();
+        var tags=postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
+        var type=getType(postEntity);
+        var listComment=commentService.getCommonList(postEntity.getId(),5,0);
+        return mapper.postEntityToDto(postEntity,tags,type,listComment);
     }
-
-    private PostResponseDto getFromAddRequest(
-        final boolean isQueued,
-        final UserDataResponseDto userDto,
-        final PostEntity post
-    ) {
-        return getDefaultBuilder(post)
-            .author(userDto)
-            .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
-            .build();
-    }
-    private UserDataResponseDto getUserDtoFromEntity(final UserEntity userEntity) {
-        return UserDataResponseDto.builder()
-            .id(userEntity.getId())
-            .firstName(userEntity.getFirstName())
-            .lastName(userEntity.getLastName())
-            .regDate(userEntity.getRegDate())
-            .birthDate(userEntity.getBirthDate())
-            .eMail(userEntity.getEmail())
-            .phone(userEntity.getPhone())
-            .photo(userEntity.getPhoto())
-            .about(userEntity.getAbout())
-            .city(userEntity.getCity())
-            .country(userEntity.getCountry())
-            .messagePermissions(MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))
-            .lastOnlineTime(userEntity.getLastOnlineTime())
-            .isBlocked(userEntity.isBlocked())
-            .isDeleted(userEntity.isDeleted())
-            .build();
-    }
-    private String getType(PostEntity post){
-        if(post.isDeleted()){return PostType.DELETED.name();}
-        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
-        else return PostType.POSTED.name();
+    private PostType getType(PostEntity post){
+        if(post.isDeleted()){return PostType.DELETED;}
+        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED;}
+        else return PostType.POSTED;
     }
 }
