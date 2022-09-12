@@ -601,7 +601,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: recommended_friends
-                  type: bigint[]
+                  type: text
 
   - changeSet:
       id: 3

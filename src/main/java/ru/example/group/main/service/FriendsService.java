@@ -48,7 +48,7 @@ public class FriendsService {
 
             //List<UserDataResponseDto> userFriendsList = jdbcFriendsRepository.getFriendsOfUser(user.getId());
             PageRequest nextPage = PageRequest.of(offset / itemPerPage, itemPerPage);
-            List<UserEntity> userFriendsList = userRepository.getAllFriendsOfUser(user.getId(), FriendshipStatusType.getIntFromEnum(friendshipStatusType), nextPage);
+            List<UserEntity> userFriendsList = userRepository.getAllRelationsOfUser(user.getId(), FriendshipStatusType.getLongFromEnum(friendshipStatusType), nextPage);
             List<UserDataResponseDto> userFriendsDtoList = new ArrayList<>();
             for (UserEntity nextFriendToDto : userFriendsList) {
                 userFriendsDtoList.add(socialNetUserDetailsService.setUserDataResponseDto(nextFriendToDto, ""));
@@ -96,7 +96,7 @@ public class FriendsService {
                 return friendRequestResponse;
             }
 
-            if (idToUserStatusCode == 1) {
+            if (idToUserStatusCode == 5) {
                 if (!insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND.toString(), FriendshipStatusType.FRIEND.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck)) {
                     friendRequestResponse.setMessage("Ошибка отправки запроса, обратитесь в службу поддержки.");
                     return friendRequestResponse;
@@ -110,7 +110,6 @@ public class FriendsService {
         }
         return friendRequestResponse;
     }
-
 
     private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, String userGetStatus, String requestedGetStatus,
                                              FriendshipEntity idToFriend, FriendshipEntity friendToId) {
@@ -136,5 +135,56 @@ public class FriendsService {
         }
 
         return false;
+    }
+
+    public CommonResponseDto<?> deleteOrBlockFriend(Long id, int code) {
+        CommonResponseDto<?> deleteOrBlockFriendResponse = new CommonResponseDto<>();
+        try {
+            UserEntity user = socialNetUserRegisterService.getCurrentUser();
+            FriendshipEntity userToIdFriendshipStatusCheck = friendshipRepository.findFriendshipEntitiesBySrcPersonAndDstPerson(user.getId(), id);
+            FriendshipEntity idToUserFriendshipStatusCheck = friendshipRepository.findFriendshipEntitiesBySrcPersonAndDstPerson(id, user.getId());
+            UserEntity requestedUser = userRepository.findById(id).orElseThrow();
+            deleteOrBlockFriendResponse.setError("");
+            deleteOrBlockFriendResponse.setTimeStamp(LocalDateTime.now());
+            deleteOrBlockFriendResponse.setMessage(code == 3 ? "Пользователь удален." : "Пользователь заблокирован.");
+            Boolean statusUpdate = false;
+
+            if (code == 4) {
+                statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DECLINED.toString(),
+                        FriendshipStatusType.SUBSCRIBED.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+            }
+
+            if (code == 3) {
+                if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
+                    statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED.toString(), FriendshipStatusType.WASBLOCKEDBY.toString(), new FriendshipEntity(), new FriendshipEntity());
+                } else {
+                    Integer idToUserStatusCode = idToUserFriendshipStatusCheck.getStatus().getCode().intValue();
+                    switch (idToUserStatusCode) {
+                        case 1, 2, 5:
+                            statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED.toString(),
+                                    FriendshipStatusType.WASBLOCKEDBY.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+                            break;
+                        case 3:
+                            statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DEADLOCK.toString(),
+                                    FriendshipStatusType.DEADLOCK.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+                            break;
+                        case 4:
+                            statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED.toString(),
+                                    FriendshipStatusType.DECLINED.toString(), userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+                            break;
+                    }
+                }
+            }
+
+            if (!statusUpdate) {
+                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки.");
+                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки.");
+            }
+
+        } catch (Exception e) {
+            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья.");
+            e.printStackTrace();
+        }
+        return deleteOrBlockFriendResponse;
     }
 }

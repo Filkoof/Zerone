@@ -21,17 +21,18 @@ public class RecommendedFriendsMultithreadUpdate {
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
     }
 
-    public void runTasks (ArrayList<Map<Long, Long[]>> listForThreading) {
+    public void runTasks (ArrayList<Map<Long, String>> listForThreading) {
         int i = 1;
-        for (Map<Long, Long[]> map : listForThreading) {
+        for (Map<Long, String> map : listForThreading) {
             taskExecutor.execute(getTask(map, i));
             i++;
         }
     }
 
-    private Runnable getTask(Map<Long, Long[]> recommendedFriendsMapInt, int i) {
+    private Runnable getTask(Map<Long, String> recommendedFriendsMapInt, int i) {
         Long start = System.currentTimeMillis();
-        Map<Long, Long[]> recommendedFriendsMapIntSplit = new HashMap<>();
+        //Map<Long, Long[]> recommendedFriendsMapIntSplit = new HashMap<>();
+        Map<Long, String> recommendedFriendsMapIntSplit = new HashMap<>();
         int count = 0;
         int segmentLimit = recommendedFriendsMapInt.size() / 100 > 0 ? recommendedFriendsMapInt.size() / 100 : 10;
         Long userIdUpdateCount = 0L;

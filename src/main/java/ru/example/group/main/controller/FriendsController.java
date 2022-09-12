@@ -34,7 +34,7 @@ public class FriendsController {
     @GetMapping("/api/v1/friends/recommendations_run")
     public void getRecommendedFriendsResponse(){
         log.info("recommended friends update run");
-        recommendedFriendsService.deleteRecommendations();
+        //recommendedFriendsService.deleteRecommendations();
         recommendedFriendsService.runMultithreadingFriendsRecommendationsUpdate();
     }
 
@@ -49,7 +49,7 @@ public class FriendsController {
     public FriendsResponseDto getFriendsRequests(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
                                              @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
-        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.SUBSCRIBED);
+        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.REQUEST);
     }
 
     @PostMapping("/api/v1/friends/{id}")
@@ -57,7 +57,14 @@ public class FriendsController {
         return friendsService.sendFriendRequest(id);
     }
 
+    @DeleteMapping("/api/v1/friends/{id}")
+    public CommonResponseDto<?> deleteFriend(@PathVariable Long id){
+        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.DECLINED).intValue());
+    }
 
-
+    @PutMapping("/api/v1/users/block/{id}")
+    public CommonResponseDto<?> blockUser(@PathVariable Long id){
+        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
+    }
 
 }

@@ -12,9 +12,10 @@ public interface RecommendedFriendsPureRepository {
     int deleteInactive();
     List<Long> getAllActiveUsersIds();
     List<Long> getRecommendedFriendsForUser(Long userId);
-    int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt);
-    int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt);
-    List<UserEntity> getRecommendedFriendsForAPI(Integer offset, Integer itemsPerPage, Long userId);
+    int[] updateBatchRecommendationsArray(Map<Long, String> recommendedFriendsMapInt);
+    int[] insertBatchRecommendationsArray(Map<Long, String> recommendedFriendsMapInt);
+    //List<UserEntity> getRecommendedFriendsForAPI(Long userId);
+    String getRecommendedFriendsStringForAPI(Long userId);
 
 
 }
