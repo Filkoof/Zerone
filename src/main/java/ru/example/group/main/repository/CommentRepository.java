@@ -19,6 +19,4 @@ public interface CommentRepository extends JpaRepository<CommentEntity,Long> {
       + "where c.post.id=:id and c.isBlocked=false and c.parent.id is null "
       + "order by c.time")
     Page<CommentEntity> findByCommentToPost(@Param("id")Long id, Pageable pageable);
-
-
 }

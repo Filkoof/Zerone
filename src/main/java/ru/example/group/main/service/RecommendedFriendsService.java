@@ -9,7 +9,6 @@ import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.repository.FriendshipRepository;
-import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.repository.jdbc.CpuCoresValidator;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 import ru.example.group.main.repository.jdbc.RecommendedFriendsMultithreadUpdate;
