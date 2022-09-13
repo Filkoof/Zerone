@@ -21,7 +21,7 @@ class AuthUserControllerTests  extends AbstractAllTestH2ContextLoad {
     private MockMvc mockMvc;
 
     @Test
-    void handleLoginApi() throws Exception {
+    void handleLoginApiWithTestUserCredntials() throws Exception {
         mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""     

@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Boolean existsByEmail(String eMail);
 
+
+
     UserEntity findByConfirmationCode(String code);
 
     @Query(value = "select users.* from users where (users.is_approved=true and users.is_blocked=false and users.is_deleted=false) and users.id \n" +

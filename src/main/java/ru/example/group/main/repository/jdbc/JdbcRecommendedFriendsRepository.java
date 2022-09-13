@@ -34,13 +34,15 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
 
     @Transactional
     @Override
-    public int[] updateBatchRecommendationsArray(Map<Long, String> recommendedFriendsMapInt) {
+    public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
             batchValues.add(
                     new MapSqlParameterSource("user_id", user_id)
-                            //.addValue("recommended_friends", jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(), recommendedFriendsMapInt.get(user_id)))).getValues()
-                            .addValue("recommended_friends",recommendedFriendsMapInt.get(user_id)).getValues()
+                            .addValue("recommended_friends",
+                                    jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(),
+                                            recommendedFriendsMapInt.get(user_id)))).getValues()
+                            //.addValue("recommended_friends",recommendedFriendsMapInt.get(user_id)).getValues()
             );
         }
         int[] updateCount = namedParameterJdbcTemplate.batchUpdate("UPDATE recommended_friends SET recommended_friends = :recommended_friends WHERE user_id=:user_id"
@@ -51,12 +53,12 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
 
     @Transactional
     @Override
-    public int[] insertBatchRecommendationsArray(Map<Long, String> recommendedFriendsMapInt) {
+    public int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
             batchValues.add(new MapSqlParameterSource("user_id", user_id)
-                    //.addValue("recommended_friends", jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(), recommendedFriendsMapInt.get(user_id)))).getValues()
-                    .addValue("recommended_friends", recommendedFriendsMapInt.get(user_id)).getValues()
+                    .addValue("recommended_friends", jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(), recommendedFriendsMapInt.get(user_id)))).getValues()
+                    //.addValue("recommended_friends", recommendedFriendsMapInt.get(user_id)).getValues()
             );
         }
         jdbcTemplate.execute("CREATE UNIQUE INDEX unique_user_id ON recommended_friends (user_id)");
@@ -86,20 +88,11 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
                         "WHERE (users.is_approved=True AND users.is_deleted=False AND users.is_blocked=False)", Long.class);
     }
 
-    /*@Override
-    public List<UserEntity> getRecommendedFriendsForAPI(Integer offset, Integer itemsPerPage, Long userId) {
+    @Override
+    public List<UserEntity> getRecommendedFriendsForAPI(Long userId) {
         return jdbcTemplate.query("select users.* from users where users.id IN\n" +
                 "(select unnest(recommended_friends.recommended_friends) as unnested_recs_id from recommended_friends where recommended_friends.user_id = ?)",
                 new BeanPropertyRowMapper<>(UserEntity.class), userId);
-    }*/
-
-    public String getRecommendedFriendsStringForAPI(Long userId) {
-        try {
-            return jdbcTemplate.queryForObject("select recommended_friends.recommended_friends from recommended_friends where recommended_friends.user_id = ?",
-                    new Object[]{userId}, String.class);
-        } catch (Exception e){
-            return "";
-        }
     }
 
     private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =

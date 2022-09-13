@@ -22,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "users")
-public class UserEntity implements Serializable {
+public class UserEntity implements Serializable{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
