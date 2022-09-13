@@ -31,7 +31,7 @@ public class VkApiConfig {
         return new VkApiClient(new HttpTransportClient());
     }
 
-    /*@Bean
+    @Bean
     public GetCountriesResponse getVkApiCountries() throws ClientException, ApiException {
         try {
             return vkApiClient().database().getCountries(userActor())
@@ -43,5 +43,5 @@ public class VkApiConfig {
             return new GetCountriesResponse();
         }
 
-    }*/
+    }
 }
