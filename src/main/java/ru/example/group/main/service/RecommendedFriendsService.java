@@ -32,7 +32,9 @@ public class RecommendedFriendsService {
     private FriendshipRepository friendshipRepository;
 
 
-    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository, RecommendedFriendsMultithreadUpdate executePool, FriendshipRepository friendshipRepository) {
+    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService
+            , JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
+                                     RecommendedFriendsMultithreadUpdate executePool, FriendshipRepository friendshipRepository) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
