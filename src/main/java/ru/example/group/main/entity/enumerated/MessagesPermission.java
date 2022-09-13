@@ -7,4 +7,5 @@ public enum MessagesPermission {
   public static MessagesPermission getFromBoolean(boolean isMessagePermissions) {
     return isMessagePermissions ? MessagesPermission.ALL : MessagesPermission.FRIENDS;
   }
+
 }

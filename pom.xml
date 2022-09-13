@@ -140,6 +140,7 @@
       <scope>runtime</scope>
     </dependency>
 
+
     <!-- liquibase -->
     <dependency>
       <groupId>org.liquibase</groupId>
@@ -180,6 +181,11 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
 
   </dependencies>

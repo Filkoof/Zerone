@@ -2,11 +2,73 @@ package ru.example.group.main.entity.enumerated;
 
 
 public enum FriendshipStatusType {
-  REQUEST,
-  FRIEND,
-  BLOCKED,
-  DECLINED,
-  SUBSCRIBED,
-  WASBLOCKEDBY,
-  DEADLOCK
+    REQUEST,
+    FRIEND,
+    BLOCKED,
+    DECLINED,
+    SUBSCRIBED,
+    WASBLOCKEDBY,
+    DEADLOCK;
+
+    public static Long getLongFromEnum(FriendshipStatusType friendshipStatusType) {
+        Long result;
+        switch (friendshipStatusType) {
+            case REQUEST:
+                result = 1L;
+            break;
+            case FRIEND:
+                result = 2L;
+                break;
+            case BLOCKED:
+                result = 3L;
+                break;
+            case DECLINED:
+                result = 4L;
+                break;
+            case SUBSCRIBED:
+                result = 5L;
+                break;
+            case WASBLOCKEDBY:
+                result = 6L;
+                break;
+            case DEADLOCK:
+                result = 7L;
+                break;
+            default:
+                result = 0L;
+                break;
+        };
+        return result;
+    }
+
+    public static FriendshipStatusType getFriendshipFromString(String code) {
+        FriendshipStatusType result;
+        switch (code) {
+            case "REQUEST":
+                result = REQUEST;
+                break;
+            case "FRIEND":
+                result = FRIEND;
+                break;
+            case "BLOCKED":
+                result = BLOCKED;
+                break;
+            case "DECLINED":
+                result = DECLINED;
+                break;
+            case "SUBSCRIBED":
+                result = SUBSCRIBED;
+                break;
+            case "WASBLOCKEDBY":
+                result = WASBLOCKEDBY;
+                break;
+            case "DEADLOCK":
+                result = DEADLOCK;
+                break;
+            default:
+                result = null;
+                break;
+        };
+        return result;
+    }
 }

@@ -1,5 +1,6 @@
 package ru.example.group.main.security;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,15 +10,16 @@ import ru.example.group.main.entity.UserRoleEntity;
 
 import java.util.*;
 
-
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
 
     private final UserEntity user;
 
-    public SocialNetUserDetails(UserEntity user) {
+
+    public SocialNetUserDetails(UserEntity user){
         this.user = user;
     }
+
 
     public UserEntity getUser() {
         return user;
@@ -31,8 +33,9 @@ public class SocialNetUserDetails implements UserDetails {
         try {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
-            userRoleEntityList = new ArrayList<>();
+            userRoleEntityList = null;
             log.info("ОШИБКА " + e.getMessage());
+            e.printStackTrace();
         }
         try {
             if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
@@ -41,7 +44,7 @@ public class SocialNetUserDetails implements UserDetails {
                 }
             }
         }catch (Exception e){
-
+            e.printStackTrace();
         }
 
         return Collections.unmodifiableList(simpleGrantedAuthorityList);

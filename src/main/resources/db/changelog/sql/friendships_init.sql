@@ -1,13 +1,101 @@
-INSERT INTO public.friendships (status_id,src_person_id,dst_person_id, time) VALUES
-	 (1,1,2,'2022-08-25 19:54:00.971206'),
-	 (2,4,1,'2022-08-25 19:54:00.971206'),
-	 (1,4,2,'2022-08-25 19:54:00.971206'),
-	 (1,5,4,'2022-08-25 19:54:00.971206'),
-	 (2,4,3,'2022-08-25 19:54:00.971206'),
-	 (2,3,2,'2022-08-25 19:54:00.971206'),
-	 (2,1,3,'2022-08-25 19:54:00.971206'),
-	 (2,4,5,'2022-08-25 19:54:00.971206'),
-	 (2,4,8,'2022-08-25 19:54:00.971206'),
-	 (2,2,7,'2022-08-25 19:54:00.971206');
-INSERT INTO public.friendships (status_id,src_person_id,dst_person_id, time) VALUES
-	 (2,3,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,3,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,3,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,3,2,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,2,3,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,5,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,8,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,8,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,5,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,8,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,5,8,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,2,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,2,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,2,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,2,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,7,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,7,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,2,8,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,8,2,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,7,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,5,7,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,7,4,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,4,7,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,5,6,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,6,5,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,7,8,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,8,7,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,51,6,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,6,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,10,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (4,10,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (6,51,12,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (3,12,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (7,51,17,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (7,17,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (3,51,18,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (6,18,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (4,51,19,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,19,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,20,21,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,21,20,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,22,23,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,23,22,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,24,25,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,25,24,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,26,27,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,27,26,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,28,29,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,29,28,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,30,31,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,31,30,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,32,33,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,33,32,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,34,35,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,35,34,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,36,37,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,37,36,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,38,39,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,39,38,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,40,41,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,41,40,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,42,43,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,43,42,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,44,45,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,45,44,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,46,47,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,47,46,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,48,49,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,49,48,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,50,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,50,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,52,53,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,53,52,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,54,55,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,55,54,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,56,57,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,57,56,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,58,59,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,59,58,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,1,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,1,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,2,53,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,53,2,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,54,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,54,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,57,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,57,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,58,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,58,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,61,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,61,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,52,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,52,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,53,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,53,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,54,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,54,51,'2022-08-25 19:54:00.971206');
+

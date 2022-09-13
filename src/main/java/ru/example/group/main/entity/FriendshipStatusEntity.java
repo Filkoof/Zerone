@@ -1,13 +1,11 @@
 package ru.example.group.main.entity;
 
 import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
@@ -29,4 +27,7 @@ public class FriendshipStatusEntity {
 
   @Enumerated(EnumType.STRING)
   private FriendshipStatusType code;
+
+  @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+  private List<FriendshipEntity> relationsExistsTotal = new ArrayList<>();
 }

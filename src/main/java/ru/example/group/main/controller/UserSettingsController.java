@@ -32,9 +32,9 @@ public class UserSettingsController {
     }
 
     @PutMapping("/api/v1/account/email")
-    public ResponseEntity changeEmail(@RequestBody EmailChangeRequestDto newEmail, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public ResponseEntity<?> changeEmail(@RequestBody EmailChangeRequestDto newEmail) throws EmailNotSentException {
         log.info("changeEmail started");
-        userSettingsService.changeEmailConfirmationSend(request, response, newEmail.getEmail());
+        userSettingsService.changeEmailConfirmationSend(newEmail.getEmail());
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -47,9 +47,9 @@ public class UserSettingsController {
 
 
     @PutMapping("/api/v1/account/password/set")
-    public ResponseEntity passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
         log.info("passwordChange started");
-        userSettingsService.changePasswordConfirmationSend(request, response, passwordChangeRequestDto);
+        userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -75,9 +75,9 @@ public class UserSettingsController {
     }
 
     @DeleteMapping("/api/v1/users/me")
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete() throws EmailNotSentException {
         log.info("handleUserDelete started");
-        return userSettingsService.handleUserDelete(request, response);
+        return userSettingsService.handleUserDelete();
     }
 
     @GetMapping("/user_delete/confirm")
@@ -92,5 +92,10 @@ public class UserSettingsController {
         log.info("user delete recovery started via user email link");
         userSettingsService.recoveryUserDelete(code);
         return new RedirectView("http://" + front + "/login");
+    }
+
+    @GetMapping("/api/v1/users/{id}")
+    public CommonResponseDto<UserDataResponseDto> getFriendById(@PathVariable Long id){
+        return userSettingsService.getFriendProfile(id);
     }
 }

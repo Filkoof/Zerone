@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Service
@@ -81,17 +83,16 @@ public class AuthUserService {
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public void logoutProcessing(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void logoutProcessing(HttpServletRequest request) throws ServletException {
         if (request.getHeader(authHeader) != null) {
             if (configProperties.getJwtBlackListOn()) {
                 try {
                     setJwtBlackList(request);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    handlerExceptionResolver.resolveException(request, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
+                    handlerExceptionResolver.resolveException(null, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
                 }
             }
         }
-
     }
 }

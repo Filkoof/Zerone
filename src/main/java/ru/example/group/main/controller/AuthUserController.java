@@ -29,9 +29,9 @@ public class AuthUserController {
     }
 
     @GetMapping("/api/v1/auth/logout")
-    public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request) throws ServletException {
         log.info("handleLogoutApi");
-        authUserService.logoutProcessing(request, response);
+        authUserService.logoutProcessing(request);
         return authUserService.getAuthLogoutResponse();
     }
 

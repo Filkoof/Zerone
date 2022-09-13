@@ -191,7 +191,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: code
-                  type: varchar(10)
+                  type: varchar(50)
                   constraints:
                     nullable: false
         - createTable:
@@ -584,6 +584,25 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: false
+        - createTable:
+            tableName: recommended_friends
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recommended_friends
+                  type: BIGINT ARRAY
+
   - changeSet:
       id: 3
       author: Artem_Filkov
@@ -652,7 +671,7 @@ databaseChangeLog:
 
   - changeSet:
       id: 5
-      author: DMitry_Kochuev
+      author: Dmitry_Kochuev
       comment: "справочник статуса дружбы и тестовые данные дружбы"
       changes:
         - sqlFile:
@@ -661,6 +680,24 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/friendships_init.sql
+
+  - changeSet:
+      id: 6
+      author: Dmitry_Kochuev
+      comment: "индексы"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/indexing.sql
+
+  - changeSet:
+      id: 7
+      author: Dmitry_Kochuev
+      comment: "friends_recommendations_init"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friends_recommendations_init.sql
 
       rollback:
         - delete:

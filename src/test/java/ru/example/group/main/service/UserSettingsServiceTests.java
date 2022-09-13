@@ -85,7 +85,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
     @Test
     void changeEmailConfirmationSendTest() throws EmailNotSentException {
-        assertTrue(userSettingsService.changeEmailConfirmationSend(null,null,EMAIL));
+        assertTrue(userSettingsService.changeEmailConfirmationSend(EMAIL));
     }
 
     @Test
@@ -108,7 +108,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
         passwordChangeRequestDto.setPassword("11111111");
         passwordChangeRequestDto.setToken(token);
 
-        assertTrue(userSettingsService.changePasswordConfirmationSend(null,null, passwordChangeRequestDto));
+        assertTrue(userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto));
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void handleUserDelete() throws EmailNotSentException {
-        assertTrue(userSettingsService.handleUserDelete(null, null).getMessage().equals("User deleted."));
+        assertTrue(userSettingsService.handleUserDelete().getMessage().equals("User deleted."));
     }
 
     @Test

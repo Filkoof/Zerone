@@ -54,16 +54,16 @@ public class UserSettingsService {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
     }
 
-    public Boolean changeEmailConfirmationSend(HttpServletRequest request, HttpServletResponse response, String newEmail) throws EmailNotSentException {
+    public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         if (!newEmail.isEmpty()){
-            sendEmailChangeConfirmation(request, response, newEmail, user);
+            sendEmailChangeConfirmation( newEmail, user);
             return true;
         }
         return false;
     }
 
-    private void sendEmailChangeConfirmation(HttpServletRequest request, HttpServletResponse response, String newEmail, UserEntity user) throws EmailNotSentException {
+    private void sendEmailChangeConfirmation(String newEmail, UserEntity user) throws EmailNotSentException {
         String code = UUID.randomUUID().toString().substring(0, 24);
         user.setConfirmationCode(code);
         userRepository.save(user);
@@ -103,16 +103,16 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend( email, title, message);
     }
 
-    public Boolean changePasswordConfirmationSend(HttpServletRequest request, HttpServletResponse response, PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
+    public Boolean changePasswordConfirmationSend(PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
         UserEntity user = userRepository.findByEmail(jwtUtilService.extractUsername(passwordChangeRequestDto.getToken()));
         if (user != null){
-            sendPasswordChangeConfirmation(request, response, passwordChangeRequestDto.getPassword(), user);
+            sendPasswordChangeConfirmation(passwordChangeRequestDto.getPassword(), user);
             return true;
         }
         return false;
     }
 
-    private void sendPasswordChangeConfirmation(HttpServletRequest request, HttpServletResponse response, String password, UserEntity user) throws EmailNotSentException {
+    private void sendPasswordChangeConfirmation(String password, UserEntity user) throws EmailNotSentException {
         String code = UUID.randomUUID().toString().substring(0, 24);
         user.setConfirmationCode(code);
         userRepository.save(user);
@@ -152,11 +152,11 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend( email, title, message);
     }
 
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete(HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
+    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete() throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<LogoutDataResponseDto> deleteResponse = new CommonResponseDto<>();
         if (user != null){
-            sendUserDeleteConfirmation(request, response, user);
+            sendUserDeleteConfirmation(user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
             deleteResponse.setTimeStamp(LocalDateTime.now());
@@ -172,7 +172,7 @@ public class UserSettingsService {
         return deleteResponse;
     }
 
-    private void sendUserDeleteConfirmation(HttpServletRequest request, HttpServletResponse response, UserEntity user) throws EmailNotSentException {
+    private void sendUserDeleteConfirmation(UserEntity user) throws EmailNotSentException {
         String code = UUID.randomUUID().toString().substring(0, 24);
         user.setConfirmationCode(code);
         userRepository.save(user);
@@ -319,4 +319,17 @@ public class UserSettingsService {
     }
 
 
+    public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
+        CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();
+        friendDto.setError("");
+        friendDto.setTimeStamp(LocalDateTime.now());
+        try {
+            UserEntity friend = userRepository.findById(friendId).orElseThrow();
+            friendDto.setData(socialNetUserDetailsService.setUserDataResponseDto(friend, ""));
+            return friendDto;
+        } catch (Exception e){
+            friendDto.setError("Ошибка");
+            return friendDto;
+        }
+    }
 }

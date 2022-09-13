@@ -1,5 +1,6 @@
 package ru.example.group.main.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity implements Serializable{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -78,10 +79,10 @@ public class UserEntity {
   @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
   private List<DialogEntity> recipientDialogEntities = new LinkedList<>();
 
-  @OneToMany(mappedBy = "srcPerson", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "srcPerson")
   private List<FriendshipEntity> srcFriendships = new LinkedList<>();
 
-  @OneToMany(mappedBy = "dstPerson",  cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "dstPerson")
   private List<FriendshipEntity> dstFriendships = new LinkedList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -93,6 +94,6 @@ public class UserEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) 
   private List<MessageEntity> message = new LinkedList<>();
 
-  @OneToMany(mappedBy = "userForRole", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
   private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 }

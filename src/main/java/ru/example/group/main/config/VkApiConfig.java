@@ -33,10 +33,15 @@ public class VkApiConfig {
 
     @Bean
     public GetCountriesResponse getVkApiCountries() throws ClientException, ApiException {
-        return vkApiClient().database().getCountries(userActor())
-                .lang(Lang.RU)
-                .needAll(true)
-                .count(235)
-                .execute();
+        try {
+            return vkApiClient().database().getCountries(userActor())
+                    .lang(Lang.RU)
+                    .needAll(true)
+                    .count(235)
+                    .execute();
+        } catch (Exception e){
+            return new GetCountriesResponse();
+        }
+
     }
 }

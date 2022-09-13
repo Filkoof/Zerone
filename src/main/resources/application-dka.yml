@@ -15,8 +15,7 @@ logging:
   file:
     path: logs
   level:
-    ru.example.group.main: OFF
-
+    ru.example.group.main: debug
 
 
 

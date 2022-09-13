@@ -30,11 +30,11 @@ class UserRoleEntityRepositoryTests extends AbstractAllTestH2ContextLoad {
         assertNull(userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole()));
 
         assertNotNull(userRoleEntityRepository.save(userRoleEntity));
- /*       user = userRoleEntity.getUserForRole();
+        user = userRoleEntity.getUserForRole();
         user.setUserRoleEntities(null);
         userRepository.save(user);
         userRoleEntityRepository.save(userRoleEntity);
- */       userRoleEntityRepository.delete(userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole()));
+        userRoleEntityRepository.delete(userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole()));
         UserRoleEntity userRoleEntity1 = userRoleEntityRepository.findUserRoleEntitiesByUserRole(userRoleEntity.getUserRole());
         assertNull(userRoleEntity1);
     }
