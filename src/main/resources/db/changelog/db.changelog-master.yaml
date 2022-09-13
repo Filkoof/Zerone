@@ -191,7 +191,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: code
-                  type: bigint
+                  type: varchar(50)
                   constraints:
                     nullable: false
         - createTable:
@@ -680,6 +680,15 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/indexing.sql
+
+  - changeSet:
+      id: 7
+      author: Dmitry_Kochuev
+      comment: "friends_recommendations_init"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/friends_recommendations_init.sql
 
       rollback:
         - delete:

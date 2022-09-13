@@ -9,5 +9,5 @@ public interface FriendshipStatusRepository extends JpaRepository<FriendshipStat
 
     FriendshipStatusEntity findByName(String name);
 
-    FriendshipStatusEntity findByCode(Long code);
+    FriendshipStatusEntity findByCode(FriendshipStatusType code);
 }

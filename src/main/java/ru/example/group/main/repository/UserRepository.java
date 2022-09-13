@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByConfirmationCode(String code);
 
     @Query(value = "select users.* from users where (users.is_approved=true and users.is_blocked=false and users.is_deleted=false) and users.id \n" +
-            "IN (SELECT friendships.dst_person_id FROM friendships WHERE friendships.src_person_id=:id AND ((friendships.status_id)=:status))"
+            "IN (SELECT friendships.src_person_id FROM friendships WHERE friendships.dst_person_id=:id AND ((friendships.status_id)=:status))"
             , nativeQuery = true)
     List<UserEntity> getAllRelationsOfUser(@Param("id") Long id, @Param("status") Long status, Pageable pageable);
 

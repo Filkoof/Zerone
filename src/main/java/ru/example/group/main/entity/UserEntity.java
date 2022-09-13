@@ -79,10 +79,10 @@ public class UserEntity implements Serializable{
   @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
   private List<DialogEntity> recipientDialogEntities = new LinkedList<>();
 
-  @OneToMany(mappedBy = "srcPerson", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "srcPerson")
   private List<FriendshipEntity> srcFriendships = new LinkedList<>();
 
-  @OneToMany(mappedBy = "dstPerson",  cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "dstPerson")
   private List<FriendshipEntity> dstFriendships = new LinkedList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

@@ -72,28 +72,28 @@ public enum FriendshipStatusType {
         return result;
     }
 
-    public static FriendshipStatusType getFriendshipFromCode(Integer code) {
+    public static FriendshipStatusType getFriendshipFromString(String code) {
         FriendshipStatusType result;
         switch (code) {
-            case 1:
+            case "REQUEST":
                 result = REQUEST;
                 break;
-            case 2:
+            case "FRIEND":
                 result = FRIEND;
                 break;
-            case 3:
+            case "BLOCKED":
                 result = BLOCKED;
                 break;
-            case 4:
+            case "DECLINED":
                 result = DECLINED;
                 break;
-            case 5:
+            case "SUBSCRIBED":
                 result = SUBSCRIBED;
                 break;
-            case 6:
+            case "WASBLOCKEDBY":
                 result = WASBLOCKEDBY;
                 break;
-            case 7:
+            case "DEADLOCK":
                 result = DEADLOCK;
                 break;
             default:

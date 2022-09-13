@@ -34,7 +34,6 @@ public class FriendsController {
     @GetMapping("/api/v1/friends/recommendations_run")
     public void getRecommendedFriendsResponse(){
         log.info("recommended friends update run");
-        //recommendedFriendsService.deleteRecommendations();
         recommendedFriendsService.runMultithreadingFriendsRecommendationsUpdate();
     }
 
@@ -49,7 +48,7 @@ public class FriendsController {
     public FriendsResponseDto getFriendsRequests(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
                                              @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
-        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.REQUEST);
+        return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.SUBSCRIBED);
     }
 
     @PostMapping("/api/v1/friends/{id}")
