@@ -587,7 +587,7 @@ databaseChangeLog:
   - changeSet:
       id: 3
       author: Artem_Filkov
-      comment: "заполнение таблиц пользователей и постов"
+      comment: "заполнение таблиц пользователей,постов, комментаривев и лайков"
       changes:
         - sqlFile:
             encoding: utf8
@@ -595,6 +595,15 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/posts.sql
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/post_comments.sql
+#        - sqlFile:
+#            encoding: utf8
+#            path: db/changelog/sql/like_type.sql
+#        - sqlFile:
+#            encoding: utf8
+#            path: db/changelog/sql/likes.sql
 
   - changeSet:
       id: 4
