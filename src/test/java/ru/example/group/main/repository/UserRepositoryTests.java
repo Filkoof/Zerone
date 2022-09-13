@@ -2,6 +2,7 @@ package ru.example.group.main.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
@@ -13,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryTests extends AbstractAllTestH2ContextLoad {
 
     private final static String EMAIL = "test@test.tu";
+
+    @Value("${config.zeroneEmail}")
+    private String email;
     @Autowired
     private UserRepository userRepository;
 
@@ -25,7 +29,6 @@ class UserRepositoryTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void existsByEmail() {
-        String email = "test@test.tu";
         Boolean userExist = userRepository.existsByEmail(EMAIL);
         assertTrue(userExist);
     }

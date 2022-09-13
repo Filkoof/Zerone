@@ -35,6 +35,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
     @Test
     void createUserCorrect() throws Exception {
         UserEntity user = userRepository.findByEmail(email);
+        List<UserEntity> users = userRepository.findAllByEmail(email);
         if (user != null) {
             userRepository.delete(user);
         }
@@ -57,6 +58,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                 .andDo(print())
                 .andExpect(status().isOk());
         assertTrue(userRepository.findByEmail(email) != null);
+
     }
 
     @Test

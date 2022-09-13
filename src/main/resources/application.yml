@@ -36,6 +36,7 @@ config:
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
 
+
 logging:
   charset:
     console: UTF-8

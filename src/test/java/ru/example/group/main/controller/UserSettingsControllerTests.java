@@ -1,5 +1,6 @@
 package ru.example.group.main.controller;
 
+import liquibase.license.LicenseService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import ru.example.group.main.repository.UserRoleRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
 import ru.example.group.main.security.SocialNetUserDetailsService;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,8 +76,10 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     @Test
     void emailChangeConfirmedAndRedirectToLogin() throws Exception {
         UserEntity user = userRepository.findByEmail(EMAIL);
+        List<UserEntity> users = userRepository.findAllByEmail(EMAIL);
         user.setConfirmationCode("test");
         userRepository.save(user);
+        users = userRepository.findAllByEmail(EMAIL);
         mockMvc.perform(get("/email_change/confirm")
                         .param("code", "test")
                         .param("newEmail", EMAIL)
@@ -86,8 +91,10 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     @Test
     void passwordChangeConfirmedAndRedirectToLogin() throws Exception {
         UserEntity user = userRepository.findByEmail(EMAIL);
+        List<UserEntity> users = userRepository.findAllByEmail(EMAIL);
         user.setConfirmationCode("test");
         userRepository.save(user);
+        users = userRepository.findAllByEmail(EMAIL);
         mockMvc.perform(get("/password_change/confirm")
                         .param("code", "test")
                         .param("code1", passwordEncoder.encode("11111111"))

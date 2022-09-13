@@ -9,7 +9,7 @@ spring:
     database:
       replace: none
   datasource:
-    url: jdbc:h2:mem:soc_net;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS soc_net
+    url: jdbc:h2:mem:soc_net;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS soc_net
     username: sa
     password:
 
