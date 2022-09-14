@@ -7,6 +7,9 @@ import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 import ru.example.group.main.dto.response.ResponseDto;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
+import ru.example.group.main.exception.FriendsRequestException;
+import ru.example.group.main.exception.GetUserFriendsException;
+import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
 import ru.example.group.main.service.FriendsService;
 import ru.example.group.main.service.RecommendedFriendsService;
 
@@ -25,9 +28,8 @@ public class FriendsController {
     @GetMapping("/api/v1/friends/recommendations")
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(
             @RequestParam(required = false, defaultValue = "0") Integer offset,
-            @RequestParam(required = false, defaultValue = "20") Integer itemPerPage){
+            @RequestParam(required = false, defaultValue = "20") Integer itemPerPage) throws RecommendedFriendsLoadingFromDbToApiException {
         log.info("getRecommendedFriendsResponse started");
-
         return recommendedFriendsService.getRecommendedFriendsResponse(offset, itemPerPage);
     }
 
@@ -40,29 +42,29 @@ public class FriendsController {
     @GetMapping("/api/v1/friends")
     public FriendsResponseDto getUserFriends(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
-                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage) throws GetUserFriendsException {
         return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.FRIEND);
     }
 
     @GetMapping("/api/v1/friends/request")
     public FriendsResponseDto getFriendsRequests(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
-                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage){
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemPerPage) throws GetUserFriendsException {
         return friendsService.getUserFriends(name, offset, itemPerPage, FriendshipStatusType.SUBSCRIBED);
     }
 
     @PostMapping("/api/v1/friends/{id}")
-    public CommonResponseDto<?> sendFriendRequest(@PathVariable Long id){
+    public CommonResponseDto<?> sendFriendRequest(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.sendFriendRequest(id);
     }
 
     @DeleteMapping("/api/v1/friends/{id}")
-    public CommonResponseDto<?> deleteFriend(@PathVariable Long id){
+    public CommonResponseDto<?> deleteFriend(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.DECLINED).intValue());
     }
 
     @PutMapping("/api/v1/users/block/{id}")
-    public CommonResponseDto<?> blockUser(@PathVariable Long id){
+    public CommonResponseDto<?> blockUser(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
     }
 

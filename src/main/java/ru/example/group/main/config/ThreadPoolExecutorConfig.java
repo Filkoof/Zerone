@@ -22,10 +22,13 @@ public class ThreadPoolExecutorConfig {
     @Bean
     TaskExecutor taskExecutor () {
         ThreadPoolTaskExecutor t = new ThreadPoolTaskExecutor();
-        //t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
-        //t.setMaxPoolSize(CpuCoresValidator.getNumberOfCPUCores() * 2);
-        t.setCorePoolSize(4);
-        t.setMaxPoolSize(4 * 2);
+        try {
+            t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
+            t.setMaxPoolSize(CpuCoresValidator.getNumberOfCPUCores() * 2);
+        } catch (Exception e){
+            t.setCorePoolSize(10);
+            t.setMaxPoolSize(10 * 2);
+        }
         return t;
     }
 }

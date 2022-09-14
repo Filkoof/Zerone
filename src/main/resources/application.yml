@@ -36,7 +36,6 @@ config:
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
 
-
 logging:
   charset:
     console: UTF-8
@@ -61,6 +60,7 @@ post:
 vk:
   userId: 51412309
   accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
+  deactivated: true
 
 
 

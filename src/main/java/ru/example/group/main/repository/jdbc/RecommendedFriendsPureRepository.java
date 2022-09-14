@@ -15,7 +15,7 @@ public interface RecommendedFriendsPureRepository {
     int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt);
     int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt);
 
-    List<UserEntity> getRecommendedFriendsForAPI(Long userId);
+    List<UserEntity> getRecommendedFriendsForAPI(Long userId, Integer limit, Integer offset);
 
 
 }

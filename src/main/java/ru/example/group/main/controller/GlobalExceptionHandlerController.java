@@ -43,7 +43,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(EmailNotSentException.class)
-    public ResponseEntity handleMailNotSentException(Exception e) {
+    public ResponseEntity<?> handleMailNotSentException(Exception e) {
         log.info(e.getLocalizedMessage());
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -77,17 +77,37 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
-    public ResponseEntity handleEmailChangeException(EmailOrPasswordChangeException e){
+    public ResponseEntity<?> handleEmailChangeException(EmailOrPasswordChangeException e){
         log.info(e.getMessage());
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserDeleteOrRecoveryException.class)
-    public ResponseEntity handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
+    public ResponseEntity<?> handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
         log.info(e.getMessage());
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RecommendedFriendsLoadingFromDbToApiException.class)
+    public ResponseEntity<RecommendedFriendsResponseDto> handleRecommendedFriendsLoadingFromDbToApiException(RecommendedFriendsLoadingFromDbToApiException e,
+                                                                                                             RecommendedFriendsResponseDto recommendedFriendsResponseDto){
+        log.info(e.getMessage());
+        return new ResponseEntity(recommendedFriendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(GetUserFriendsException.class)
+    public ResponseEntity<FriendsResponseDto> handleGetUserFriendsException(GetUserFriendsException e,
+                                                                            FriendsResponseDto friendsResponseDto){
+        log.info(e.getMessage());
+        return new ResponseEntity(friendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(FriendsRequestException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleGetUserFriendsException(FriendsRequestException e,
+                                                                              CommonResponseDto<?> commonResponseDto){
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+    }
 
 
 }
