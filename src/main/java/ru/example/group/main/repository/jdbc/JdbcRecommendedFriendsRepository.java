@@ -32,6 +32,15 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
                 SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
     }
 
+    public List<Long> getRecommendedFriendsForUserStoredProcedure(Long userId) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("user_id", userId);
+        return namedParameterJdbcTemplate.queryForList(
+                        """
+                        CALL GET_RECOMMENDED_FRIENDS_FOR_USER_ID (?)
+                        """, mapSqlParameterSource, Long.class);
+    }
+
     @Transactional
     @Override
     public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {

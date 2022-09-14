@@ -81,7 +81,6 @@ public class FriendsService {
             FriendshipEntity idToUserFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(id, user.getId());
             UserEntity requestedUser = userRepository.findById(id).orElseThrow();
             friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
-
         } catch (Exception e) {
             friendRequestResponse.setMessage("Ошибка добавления в друзья.");
             throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
