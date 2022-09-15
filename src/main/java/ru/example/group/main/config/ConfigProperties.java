@@ -23,5 +23,6 @@ public class ConfigProperties{
     private String zeroneEmail;
     @Value("${config.jwt-black-list-on}")
     private Boolean jwtBlackListOn;
-
+    @Value("${config.initRecommendations}")
+    private Boolean initRecommendations;
 }

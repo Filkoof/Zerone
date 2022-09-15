@@ -16,19 +16,14 @@ public class ThreadPoolExecutorConfig {
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
     @Bean
-    RecommendedFriendsMultithreadUpdate recommendedFriendsMultithreadUpdate(){
+    RecommendedFriendsMultithreadUpdate recommendedFriendsMultithreadUpdate() {
         return new RecommendedFriendsMultithreadUpdate(jdbcRecommendedFriendsRepository);
     }
+
     @Bean
-    TaskExecutor taskExecutor () {
+    TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor t = new ThreadPoolTaskExecutor();
-        try {
-            t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
-            t.setMaxPoolSize(CpuCoresValidator.getNumberOfCPUCores() * 2);
-        } catch (Exception e){
-            t.setCorePoolSize(10);
-            t.setMaxPoolSize(10 * 2);
-        }
+        t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
         return t;
     }
 }

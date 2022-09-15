@@ -35,6 +35,7 @@ config:
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
+  initRecommendations: true
 
 logging:
   charset:

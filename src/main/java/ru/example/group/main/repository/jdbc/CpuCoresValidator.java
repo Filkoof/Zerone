@@ -25,6 +25,11 @@ public class CpuCoresValidator {
     }
 
     public static int getNumberOfCPUCores() {
+        Runtime runtime = Runtime.getRuntime();
+        return runtime.availableProcessors();
+    }
+
+    public static int getNumberOfCPUCores_() {
         String command = "";
         if (isMac()) {
             command = "sysctl -n machdep.cpu.core_count";

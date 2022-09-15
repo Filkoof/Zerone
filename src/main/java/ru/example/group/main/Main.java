@@ -1,5 +1,6 @@
 package ru.example.group.main;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,7 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 
-    @Bean(initMethod="runFriendsRecommendationsUpdateAfterStartUp")
+    @Bean(initMethod = "runFriendsRecommendationsUpdateAfterStartUp")
     public BeanInitMethodImpl getFriendsRecommendationsUpdateAfterStartUpBean() {
         return new BeanInitMethodImpl();
     }

@@ -129,7 +129,8 @@ public class RecommendedFriendsService {
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
         List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         for (Long userId : activeUsersIds) {
-            List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(userId);
+            //List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(userId);
+            List<Long> friendsOfUserIds = jdbcRecommendedFriendsRepository.getRecommendedFriendsForUser(userId);
             recommendedFriendsMapArray.put(userId, friendsOfUserIds.toArray(Long[]::new));
             updateCount++;
         }
