@@ -28,8 +28,8 @@ server:
   port: ${PORT:8080}
 
 config:
-  frontend: "195.161.114.18:80"
-  backend: "195.161.114.18:8086"
+  frontend: "195.161.62.32:80"
+  backend: "195.161.62.32:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
