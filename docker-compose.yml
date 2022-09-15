@@ -10,7 +10,7 @@ services:
     working_dir: /app
     command: java -jar app.jar
     environment:
-      DATABASE_URL: postgresql://195.161.114.18:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+      DATABASE_URL: postgresql://db:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
       DATABASE_USERNAME: zerone
       DATABASE_PASSWORD: 7tsfft
     ports:
