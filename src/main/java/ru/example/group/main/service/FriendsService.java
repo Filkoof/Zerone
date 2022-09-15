@@ -75,15 +75,19 @@ public class FriendsService {
         CommonResponseDto<?> friendRequestResponse = new CommonResponseDto<>();
         friendRequestResponse.setError("");
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
-        friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
-        try {
-            FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
-            FriendshipEntity idToUserFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(id, user.getId());
-            UserEntity requestedUser = userRepository.findById(id).orElseThrow();
-            friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
-        } catch (Exception e) {
-            friendRequestResponse.setMessage("Ошибка добавления в друзья.");
-            throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
+        if (id != user.getId()) {
+            friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
+            try {
+                FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
+                FriendshipEntity idToUserFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(id, user.getId());
+                UserEntity requestedUser = userRepository.findById(id).orElseThrow();
+                friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
+            } catch (Exception e) {
+                friendRequestResponse.setMessage("Ошибка добавления в друзья.");
+                throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
+            }
+        } else {
+            return new CommonResponseDto<>();
         }
         return friendRequestResponse;
     }
