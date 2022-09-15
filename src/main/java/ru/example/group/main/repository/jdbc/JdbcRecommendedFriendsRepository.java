@@ -28,8 +28,6 @@ public class JdbcRecommendedFriendsRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private SimpleJdbcCall procReader;
-
     @Transactional
     public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
