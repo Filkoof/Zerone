@@ -27,6 +27,12 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
         + "ORDER BY p.time DESC")
     Page<PostEntity> findAllPostsUserId(@Param("id") Long id, Pageable pageable);
 
+    @Query("select p from PostEntity p "
+            + "where p.id=:id and p.isBlocked = false and p.isDeleted = false "
+            + "ORDER BY p.time DESC")
+    Page<PostEntity> findPostEntityById(@Param("id") Long id, Pageable pageable);
+
+    PostEntity findPostEntityById(Long id);
 
     @Transactional
     @Modifying

@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/soc_net?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/soc_net?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
 
@@ -13,9 +13,9 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   liquibase:
-    enabled: false
+    enabled: true
   servlet:
     multipart:
       max-file-size: 10MB

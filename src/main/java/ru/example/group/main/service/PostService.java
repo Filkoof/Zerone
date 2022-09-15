@@ -4,7 +4,9 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +91,26 @@ public class PostService {
             .error("")
             .timestamp(LocalDateTime.now())
             .build();
+    }
+
+    public CommonListResponseDto<Object> getNewsByListUserId(List<Long> listPostId, int offset){
+        var itemPerPage = 0;
+        List<Object> postList = new ArrayList();
+        for(Long postId : listPostId) {
+            itemPerPage += postRepository.findAllByUserPost(postId) == 0 ? 5 : postRepository.findAllByUserPost(postId);
+            var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+//            postList.add(getPostDtoFromEntity(postRepository.findPostEntityById(postId)));
+//            //  postRepository.findPostEntityById(postId, pageable).stream().map(this::getPostDtoFromEntity);
+             postList.add(postRepository.findPostEntityById(postId, pageable).stream().map(this::getPostDtoFromEntity).toList().get(0));
+        }
+        return CommonListResponseDto.builder()
+                .total(postList.size())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(postList)
+                .error("OK")
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @Transactional
