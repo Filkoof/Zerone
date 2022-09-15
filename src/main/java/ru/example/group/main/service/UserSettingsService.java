@@ -39,18 +39,15 @@ public class UserSettingsService {
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
-    private final UserActor userActor;
-    private final VkApiClient vkApiClient;
+
     private final SocialNetUserDetailsService socialNetUserDetailsService;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, UserActor userActor, VkApiClient vkApiClient, SocialNetUserDetailsService socialNetUserDetailsService) {
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
-        this.userActor = userActor;
-        this.vkApiClient = vkApiClient;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
     }
 
@@ -71,7 +68,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
                         "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
+                        "http://"+ backend + "/api/v1/account/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -120,7 +117,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение пароля в сеть Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
+                        "http://"+ backend + "/api/v1/account/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -180,7 +177,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
                         "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
-                        "http://"+ backend + "/user_delete/confirm?code=" + code + "\n" +
+                        "http://"+ backend + "/api/v1/account/user_delete/confirm?code=" + code + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -209,7 +206,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш аккаунт в сеть Зерон успешно удален. \n\n" +
                         "Для восстановления аккаунта активируйте его по ссылке: \n\n" +
-                        "http://" + backend + "/user_delete_recovery/confirm?code=" + code + "\n" +
+                        "http://" + backend + "/api/v1/account/user_delete_recovery/confirm?code=" + code + "\n" +
                         "\n\nСпасибо!";
         String title = "Успешное удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(email, title, message);
@@ -277,47 +274,6 @@ public class UserSettingsService {
                 throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
             }
     }
-
-    public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
-
-        try {
-                GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
-                        .lang(Lang.RU)
-                        .needAll(true)
-                        .count(235)
-                        .execute();
-                if (!Objects.equals(country, "")) {
-                    countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
-                }
-            LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
-            locationResponseDto.setData(countries.getItems());
-            locationResponseDto.setError("OK");
-            locationResponseDto.setTimestamp(LocalDateTime.now());
-            return locationResponseDto;
-        } catch (Exception e) {
-            throw new VkApiException("Ошибка получения VK API стран(ы) - " + e.getMessage());
-        }
-    }
-
-    public LocationResponseDto<City> getCities(Integer countryId, String city) throws VkApiException {
-        if (countryId != 0) {
-            try {
-                GetCitiesResponse getCitiesResponse = vkApiClient.database().getCities(userActor, countryId)
-                        .lang(Lang.RU)
-                        .q(city)
-                        .execute();
-                LocationResponseDto<City> locationResponseDto = new LocationResponseDto<>();
-                locationResponseDto.setData(getCitiesResponse.getItems());
-                locationResponseDto.setError("OK");
-                locationResponseDto.setTimestamp(LocalDateTime.now());
-                return locationResponseDto;
-            } catch (Exception e) {
-                throw new VkApiException("Ошибка получения VK API города(ов) - " + e.getMessage());
-            }
-        }
-        return new LocationResponseDto<>();
-    }
-
 
     public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
         CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();

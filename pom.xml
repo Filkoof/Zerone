@@ -112,7 +112,6 @@
       <version>1.0.14</version>
     </dependency>
 
-     <!-- mail -->
     <!-- mail -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

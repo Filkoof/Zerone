@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @Slf4j
+@RequestMapping("/api/v1/auth")
 public class AuthUserController {
     private final AuthUserService authUserService;
 
@@ -23,12 +24,12 @@ public class AuthUserController {
         this.authUserService = authUserService;
     }
 
-    @PostMapping("/api/v1/auth/login")
+    @PostMapping("/login")
     public CommonResponseDto<UserDataResponseDto> handleLoginApi(@RequestBody ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
         return authUserService.getAuthLoginResponse(payload, request, response);
     }
 
-    @GetMapping("/api/v1/auth/logout")
+    @GetMapping("/logout")
     public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request) throws ServletException {
         log.info("handleLogoutApi");
         authUserService.logoutProcessing(request);
