@@ -6,10 +6,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.FriendshipEntity;
 
+import java.util.List;
+
 @Repository
 public interface FriendshipRepository extends JpaRepository<FriendshipEntity, Long> {
     @Query(value = "select friendships.id FROM friendships where friendships.src_person_id = :src and friendships.dst_person_id = :dst", nativeQuery = true)
     Long findBySrcAndDst(@Param("src")Long src, @Param("dst")Long dst);
     @Query(value = "select friendships.* FROM friendships where friendships.src_person_id = :src and friendships.dst_person_id = :dst", nativeQuery = true)
-    FriendshipEntity findFriendshipEntitiesBySrcPersonAndDstPerson(@Param("src")Long src, @Param("dst")Long dst);
+    List<FriendshipEntity> findFriendshipEntitiesBySrcPersonAndDstPerson(@Param("src")Long src, @Param("dst")Long dst);
+
+    @Query(value = "select get_recommended_friends_for_user_id(:user_id);", nativeQuery = true)
+    List<Long> findRecommendedFriendsForUserId(@Param("user_id") Long userId);
 }

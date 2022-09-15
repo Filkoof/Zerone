@@ -20,6 +20,9 @@ public class VkApiConfig {
     @Value("${vk.accessToken}")
     private String accessToken;
 
+    @Value("${vk.deactivated}")
+    private Boolean deactivated;
+
     @Bean
     public UserActor userActor() {
         return new UserActor(userId,
@@ -33,15 +36,13 @@ public class VkApiConfig {
 
     @Bean
     public GetCountriesResponse getVkApiCountries() throws ClientException, ApiException {
-        try {
+        if (!deactivated) {
             return vkApiClient().database().getCountries(userActor())
                     .lang(Lang.RU)
                     .needAll(true)
                     .count(235)
                     .execute();
-        } catch (Exception e){
-            return new GetCountriesResponse();
         }
-
+        return new GetCountriesResponse();
     }
 }

@@ -1,8 +1,9 @@
-package ru.example.group.main.repository.jdbc;
+package ru.example.group.main.helper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
+import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

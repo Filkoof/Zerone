@@ -27,6 +27,8 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     @Value("${config.zeroneEmail}")
     private String email;
 
+    @Value("${config.initRecommendations}")
+    private Boolean initRecommendations;
 
     UserRegisterRequestDto createUserRegisterDto(){
         UserRegisterRequestDto userRegisterRequestDto = new UserRegisterRequestDto();
@@ -63,10 +65,12 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     void activateUser() throws Exception {
         ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
         assertTrue(apiResponseDto.getMessage().equals("User created"));
-        String code = userRepository.findByEmail(email).getConfirmationCode();
-        RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
-        registerConfirmRequestDto.setUserId(email);
-        registerConfirmRequestDto.setToken(code);
-        assertTrue(userRegisterService.activateUser(registerConfirmRequestDto).getEMail().equals(email));
+        if (initRecommendations) {
+            String code = userRepository.findByEmail(email).getConfirmationCode();
+            RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
+            registerConfirmRequestDto.setUserId(email);
+            registerConfirmRequestDto.setToken(code);
+            assertTrue(userRegisterService.activateUser(registerConfirmRequestDto).getEMail().equals(email));
+        }
     }
 }

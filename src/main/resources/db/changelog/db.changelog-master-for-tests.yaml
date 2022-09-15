@@ -698,14 +698,14 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/friends_recommendations_init.sql
-  - changeSet:
-      id: 8
-      author: Dmitry_Kochuev
-      comment: "create_get_recommendations_stored_function"
-      changes:
-        - sqlFile:
-            encoding: utf8
-            path: db/changelog/sql/create_get_recommendations_stored_function.sql
+#  - changeSet:
+#      id: 8
+#      author: Dmitry_Kochuev
+#      comment: "create_get_recommendations_stored_function"
+#      changes:
+#        - sqlFile:
+#            encoding: utf8
+#            path: db/changelog/sql/create_get_recommendations_stored_function.sql
 
       rollback:
         - delete:

@@ -54,7 +54,7 @@ public class PostService {
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
 
-        var tags=request.getTags().size()!=0?new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()):null;
+        var tags=request.getTags()!=null?new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()):null;
         var postE =mapper.postRequestToEntity(request,publishDateTime,tags,userEntity);
         postRepository.save(postE);
 

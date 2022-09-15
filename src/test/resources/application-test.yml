@@ -3,7 +3,7 @@ spring:
     show-sql: true
   liquibase:
     enabled: true
-    change-log: db/changelog/db.changelog-master.yaml
+    change-log: db/changelog/db.changelog-master-for-tests.yaml
     drop-first: true
   test:
     database:
@@ -13,4 +13,5 @@ spring:
     username: sa
     password:
 
-
+config:
+  initRecommendations: false

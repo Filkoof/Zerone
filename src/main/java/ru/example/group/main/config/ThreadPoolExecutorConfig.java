@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import ru.example.group.main.repository.jdbc.CpuCoresValidator;
+import ru.example.group.main.helper.CpuCoresValidator;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
-import ru.example.group.main.repository.jdbc.RecommendedFriendsMultithreadUpdate;
+import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
 
 @Configuration
 public class ThreadPoolExecutorConfig {
@@ -16,15 +16,14 @@ public class ThreadPoolExecutorConfig {
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
     @Bean
-    RecommendedFriendsMultithreadUpdate recommendedFriendsMultithreadUpdate(){
+    RecommendedFriendsMultithreadUpdate recommendedFriendsMultithreadUpdate() {
         return new RecommendedFriendsMultithreadUpdate(jdbcRecommendedFriendsRepository);
     }
 
     @Bean
-    TaskExecutor taskExecutor () {
+    TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor t = new ThreadPoolTaskExecutor();
         t.setCorePoolSize(CpuCoresValidator.getNumberOfCPUCores());
-        t.setMaxPoolSize(CpuCoresValidator.getNumberOfCPUCores() * 2);
         return t;
     }
 }

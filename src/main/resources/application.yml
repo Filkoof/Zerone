@@ -28,14 +28,14 @@ server:
   port: ${PORT:8080}
 
 config:
-  frontend: "195.161.114.18:80"
-  backend: "195.161.114.18:8086"
+  frontend: "195.161.62.32:80"
+  backend: "195.161.62.32:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
-
+  initRecommendations: true
 
 logging:
   charset:
@@ -61,6 +61,7 @@ post:
 vk:
   userId: 51412309
   accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
+  deactivated: true
 
 
 
