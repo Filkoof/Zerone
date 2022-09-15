@@ -3,46 +3,34 @@ package ru.example.group.main.repository.jdbc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.entity.UserEntity;
 
 import java.sql.Connection;
 import java.sql.JDBCType;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 @Repository
-public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureRepository {
+public class JdbcRecommendedFriendsRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Long> getRecommendedFriendsForUser(Long userId) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-        mapSqlParameterSource.addValue("user_id", userId);
-        return namedParameterJdbcTemplate.queryForList(
-                SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
-    }
-
-    public List<Long> getRecommendedFriendsForUserStoredProcedure(Long userId) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-        mapSqlParameterSource.addValue("user_id", userId);
-        return namedParameterJdbcTemplate.queryForList(
-                        """
-                        CALL GET_RECOMMENDED_FRIENDS_FOR_USER_ID (?)
-                        """, mapSqlParameterSource, Long.class);
-    }
+    private SimpleJdbcCall procReader;
 
     @Transactional
-    @Override
     public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
@@ -61,7 +49,6 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
     }
 
     @Transactional
-    @Override
     public int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
@@ -77,18 +64,15 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
         return insertCounts;
     }
 
-    @Override
     public int deleteAll() {
         return jdbcTemplate.update("TRUNCATE TABLE recommended_friends");
     }
 
-    @Override
     public int deleteInactive() {
         return jdbcTemplate.update("DELETE FROM recommended_friends USING users\n" +
                 "WHERE recommended_friends.user_id = users.id and ((((users.is_approved)=False)) OR (((users.is_deleted)=True)) OR (((users.is_blocked)=True)))");
     }
 
-    @Override
     public List<Long> getAllActiveUsersIds() {
         return jdbcTemplate.queryForList(
                 "SELECT users.id\n" +
@@ -96,15 +80,21 @@ public class JdbcRecommendedFriendsRepository implements RecommendedFriendsPureR
                         "WHERE (users.is_approved=True AND users.is_deleted=False AND users.is_blocked=False)", Long.class);
     }
 
-    @Override
     public List<UserEntity> getRecommendedFriendsForAPI(Long userId, Integer limit, Integer offset) {
         return jdbcTemplate.query(
                 """
-                    select users.* from users where users.id IN
-                    (select unnest(recommended_friends.recommended_friends) as unnested_recs_id from recommended_friends where recommended_friends.user_id = ?)
-                    LIMIT ? OFFSET ?
-                    """,
+                        select users.* from users where users.id IN
+                        (select unnest(recommended_friends.recommended_friends) as unnested_recs_id from recommended_friends where recommended_friends.user_id = ?)
+                        LIMIT ? OFFSET ?
+                        """,
                 new BeanPropertyRowMapper<>(UserEntity.class), userId, limit, offset);
+    }
+
+    public List<Long> getRecommendedFriendsForUser(Long userId) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("user_id", userId);
+        return namedParameterJdbcTemplate.queryForList(
+                SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
     }
 
     private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =

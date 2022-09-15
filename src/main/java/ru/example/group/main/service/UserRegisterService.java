@@ -36,11 +36,14 @@ public class UserRegisterService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RecommendedFriendsService recommendedFriendsService;
 
-    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder) {
+
+    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, RecommendedFriendsService recommendedFriendsService) {
         this.userRepository = userRepository;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.passwordEncoder = passwordEncoder;
+        this.recommendedFriendsService = recommendedFriendsService;
     }
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
@@ -97,6 +100,7 @@ public class UserRegisterService {
             user.setConfirmationCode(null);
             user.setApproved(true);
             userRepository.save(user);
+            recommendedFriendsService.runNewUserActivatedFriendsRecommendationsUpdate(user.getId());
             registrationCompleteResponseDto.setEMail(user.getEmail());
             registrationCompleteResponseDto.setKey(registerConfirmRequestDto.getToken());
             sendRegistrationConfirmationEmail(user);

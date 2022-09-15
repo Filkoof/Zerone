@@ -195,4 +195,8 @@ public class FriendsService {
         }
         return null;
     }
+
+    public List<Long> getReccomendedFriends(Long userId) {
+        return friendshipRepository.findRecommendedFriendsForUserId(userId);
+    }
 }

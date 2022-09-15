@@ -61,12 +61,12 @@ public class RecommendedFriendsService {
 
     private Set<UserDataResponseDto> getRecommendedList(Integer offset, Integer itemsPerPage, Long userId) {
         Set<UserDataResponseDto> potentialUserEntities = new HashSet<>();
-        List<UserEntity> friendsRecs = jdbcRecommendedFriendsRepository.getRecommendedFriendsForAPI(userId, itemsPerPage, offset/itemsPerPage);
+        List<UserEntity> friendsRecs = jdbcRecommendedFriendsRepository.getRecommendedFriendsForAPI(userId, itemsPerPage, offset / itemsPerPage);
         for (UserEntity nextPotentialFriend : friendsRecs) {
             FriendshipEntity userToIdFriendship = friendsService.getFriendshipAndCleanRelationsIfMistakenExist(userId, nextPotentialFriend.getId());
             FriendshipEntity idToUserFriendship = friendsService.getFriendshipAndCleanRelationsIfMistakenExist(nextPotentialFriend.getId(), userId);
-            Integer userToId = userToIdFriendship != null ?  FriendshipStatusType.getLongFromEnum(userToIdFriendship.getStatus().getCode()).intValue() : 1;
-            Integer idToUser = idToUserFriendship != null ?  FriendshipStatusType.getLongFromEnum(idToUserFriendship.getStatus().getCode()).intValue() : 1;
+            Integer userToId = userToIdFriendship != null ? FriendshipStatusType.getLongFromEnum(userToIdFriendship.getStatus().getCode()).intValue() : 1;
+            Integer idToUser = idToUserFriendship != null ? FriendshipStatusType.getLongFromEnum(idToUserFriendship.getStatus().getCode()).intValue() : 1;
             if (!(userToId == 5 || userToId == 2 || userToId == 6 || userToId == 7 || userToId == 3 || idToUser == 3 || idToUser == 4 || idToUser == 7)) {
                 potentialUserEntities.add(socialNetUserDetailsService.setUserDataResponseDto(nextPotentialFriend, ""));
             }
@@ -122,23 +122,20 @@ public class RecommendedFriendsService {
     }
 
     private Map<Long, Long[]> getMapOfRecommendedFriendsTotal() {
-        List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         Long start;
         Long finish;
         Long updateCount = 1L;
         start = System.currentTimeMillis();
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
-
+        List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         for (Long userId : activeUsersIds) {
-            //List<Long> friendsOfUserIds = jdbcRecommendedFriendsRepository.getRecommendedFriendsForUser(userId);
-            List<Long> friendsOfUserIds = jdbcRecommendedFriendsRepository.getRecommendedFriendsForUserStoredProcedure(userId);
+            List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(userId);
             recommendedFriendsMapArray.put(userId, friendsOfUserIds.toArray(Long[]::new));
             updateCount++;
         }
 
         finish = System.currentTimeMillis();
-        log.debug(updateCount + " users, JdbcTemplate вытаскиваем рекомендации и билдим Map with Array (по циклу пробегаем по каждому другу юзера): " + Long.toString(finish - start) + " millis");
-
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + Long.toString(finish - start) + " millis");
         return recommendedFriendsMapArray;
     }
 
@@ -150,5 +147,26 @@ public class RecommendedFriendsService {
     public void deleteRecommendations() {
         jdbcRecommendedFriendsRepository.deleteAll();
         log.info("recommendations truncated");
+    }
+
+    public void runNewUserActivatedFriendsRecommendationsUpdate(Long newUserId) {
+        Map<Long, Long[]> newTotalRecommendedFriendsMap = getMapOfRecommendedFriendsForNewUser(newUserId);
+        ArrayList<Map<Long, Long[]>> listForThreading = getArrayForMultithreadingRecsUpdate(newTotalRecommendedFriendsMap);
+        executePool.runTasks(listForThreading);
+        runInsertNewToRecommendedFriends(newTotalRecommendedFriendsMap);
+        runDeleteInactiveFromRecs();
+    }
+
+    private Map<Long, Long[]> getMapOfRecommendedFriendsForNewUser(Long newUserId) {
+        Long start;
+        Long finish;
+        Long updateCount = 1L;
+        start = System.currentTimeMillis();
+        Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
+        List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(newUserId);
+        recommendedFriendsMapArray.put(newUserId, friendsOfUserIds.toArray(Long[]::new));
+        finish = System.currentTimeMillis();
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + Long.toString(finish - start) + " millis");
+        return recommendedFriendsMapArray;
     }
 }
