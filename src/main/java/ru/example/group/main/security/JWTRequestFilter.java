@@ -58,8 +58,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     private void checkAuthenticationToken(String username, String token,
                                           HttpServletRequest httpServletRequest) {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails;
-            userDetails = socialNetUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

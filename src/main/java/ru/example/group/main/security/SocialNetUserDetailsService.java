@@ -30,7 +30,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         if (user != null) {
             return new SocialNetUserDetails(user);
         }
-        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
+        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("loadUserByUsername user not found!"));
         return null;
     }
 
@@ -39,7 +39,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         if (user != null) {
             return user;
         }
-        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
+        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("loadUserEntityByUsername user not found!"));
         return null;
     }
 

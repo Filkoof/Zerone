@@ -1,5 +1,6 @@
 package ru.example.group.main.config;
 
+import io.swagger.annotations.Api;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -17,7 +18,7 @@ public class SwaggerConfig {
         public Docket api() {
             return new Docket(DocumentationType.SWAGGER_2)
                     .select()
-                    .apis(RequestHandlerSelectors.any())
+                    .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                     .paths(PathSelectors.any())
                     .build()
                     .apiInfo(apiInfo());
@@ -26,7 +27,13 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
         return new ApiInfo(
                 "Zerone API",
-                "API for Zerone social network project",
+                """
+                        API for Zerone social network project.
+                        
+                        Please, for secured APIs!
+                        RECEIVE TOKEN FIRST USING correct login and password with login API and put it into header name Authorization to get access to secured APIs.
+                                                
+                        """,
                 "1.0",
                 "http://195.161.62.32/terms_of_service",
                 new Contact("API owner", "http://195.161.62.32/owner ", "owner@rmailer.org"),

@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -109,5 +110,12 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleGetUserFriendsException(ConstraintViolationException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setMessage("Ошибка, переданы неверные данные.");
+        commonResponseDto.setError("Ошибка, переданы неверные данные: " + e.getLocalizedMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
 }

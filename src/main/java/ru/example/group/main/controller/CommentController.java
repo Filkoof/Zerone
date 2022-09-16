@@ -1,7 +1,13 @@
 package ru.example.group.main.controller;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
+import com.vk.api.sdk.objects.annotations.Required;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,21 +30,24 @@ import ru.example.group.main.service.CommentService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
+@Api("comments data api")
 public class CommentController {
 
     private final CommentService service;
 
     @GetMapping("/{id}/comments")
+    @ApiOperation("Operation to get comments by user id as path variable and segmenting by offset and items per page as body params")
     public CommonListResponseDto<CommentDto> getCom(
-            @PathVariable Long id,
+            @NotEmpty @Valid @PathVariable Long id,
             @RequestParam(name = "offset", defaultValue = "0") int offset,
             @RequestParam(name = "itemPerPage", defaultValue = "5") int itemPerPage) {
         return service.getComment(id, offset, itemPerPage);
     }
 
     @PostMapping("/{id}/comments")
+    @ApiOperation("operation to post a comment by user id providing comment_text, list of imagesDto and parent_id")
     public ResponseEntity<CommonResponseDto<CommentDto>> postCom(
-            @PathVariable long id,
+            @PathVariable Long id,
             @RequestBody CommentRequestDto request) {
         return service.postComment(id, request);
     }
