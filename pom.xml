@@ -40,9 +40,9 @@
         <configuration>
           <jdbc>  <!-- указываем настройки базы -->
             <driver>org.postgresql.Driver</driver>
-            <url>jdbc:postgresql://localhost:5432/soc_net</url>
-            <user>postgres</user>
-            <password>postgres</password>
+            <url>jdbc:postgresql://localhost:5432/postgres</url>
+            <user>root</user>
+            <password>root</password>
           </jdbc>
           <generator>
             <database>

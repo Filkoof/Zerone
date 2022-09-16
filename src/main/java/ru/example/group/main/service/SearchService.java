@@ -54,7 +54,7 @@ public class SearchService {
                                                     String tag) {
 
         LocalDateTime endDate =
-                Instant.ofEpochMilli(date_to).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                Instant.ofEpochMilli(date_to).atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(1);
         LocalDateTime startDate =
                 Instant.ofEpochMilli(date_from).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -63,7 +63,7 @@ public class SearchService {
         String start = startDate.format(formatter);
 
         Condition condition = trueCondition();
-        condition = conditionPost(condition, author,text, start, end, tag);
+        condition = conditionPost(condition, author, text, start, end, tag);
 
         List<Long> listPostId = dsl.select(field("p.id"))
                 .from(table("posts").as("p"))
@@ -75,18 +75,20 @@ public class SearchService {
 
         return postService.getNewsByListUserId(listPostId, offset);
     }
-
+    //TODO доработать условия
     private Condition conditionPost(Condition condition, String author, String text, String start, String end, String tag) {
         if (!text.equals("")) {
             condition = condition.and(field("p.post_text").likeIgnoreCase('%' + text + '%'));
         }
         if (!author.equals("")) {
+          //  condition = condition.and(field(concat("u.first_name" + " " + "u.last_name")).likeIgnoreCase(author));
             condition = condition.and(field("u.first_name").likeIgnoreCase(author).or(field("u.last_name").likeIgnoreCase(author)));
         }
         if (!tag.equals("")) {
-            condition = condition.and(field("t.tag").likeIgnoreCase(author));
+            condition = condition.and(field("t.tag").likeIgnoreCase(tag));
         }
-     //   condition = condition.and(field("p.time").between(start).and(end));
+        condition = condition.and(field("p.time").between(start).and(end));
+        condition = condition.and(field("p.is_deleted").eq(false));
         return condition;
     }
 

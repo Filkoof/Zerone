@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.example.group.main.dto.response.CommonListResponseDto;
-import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.service.SearchService;
 
 @RestController
@@ -36,7 +35,7 @@ public class SearchController {
     }
 
     @GetMapping("/api/v1/post")
-    public ResponseEntity<CommonListResponseDto<PostResponseDto>> postSearch(
+    public ResponseEntity<CommonListResponseDto<Object>> postSearch(
             @RequestParam(defaultValue = "") String text,
             @RequestParam(defaultValue = "-1") Long date_from,
             @RequestParam(defaultValue = "-1") Long date_to,
@@ -45,7 +44,7 @@ public class SearchController {
             @RequestParam(defaultValue = "") String author,
             @RequestParam(defaultValue = "") String tag
     ) {
-        return new ResponseEntity(searchService.postSearch(text, date_from, date_to,
+        return new ResponseEntity<>(searchService.postSearch(text, date_from, date_to,
                 offset, itemPerPage, author, tag), HttpStatus.OK);
     }
 

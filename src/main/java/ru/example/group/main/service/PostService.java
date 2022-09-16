@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,19 +46,19 @@ public class PostService {
     private final PostMapper mapper;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
-        final PostRequestDto request,
-        final long id,
-        final long publishDate
+            final PostRequestDto request,
+            final long id,
+            final long publishDate
     ) {
         var response = new CommonResponseDto<PostResponseDto>();
         var userEntity = userRepository.findById(id).orElseThrow();
-        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate/1000, 0, ZoneOffset.UTC);
+        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate / 1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
         var isQueued = publishDateTime.isAfter(dateTimeNow);
 
-        var tags=request.getTags()!=null?new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()):null;
-        var postE =mapper.postRequestToEntity(request,publishDateTime,tags,userEntity);
+        var tags = request.getTags() != null ? new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()) : null;
+        var postE = mapper.postRequestToEntity(request, publishDateTime, tags, userEntity);
         postRepository.save(postE);
 
         response.setData(getPostDtoFromEntity(postE));
@@ -69,39 +70,37 @@ public class PostService {
         var statePage = postRepository.findAllPostsWithPagination(text, pageable);
 
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total((int) statePage.getTotalElements())
-            .perPage(itemPerPage)
-            .offset(offset)
-            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
-            .error("")
-            .timestamp(LocalDateTime.now())
-            .build();
+                .total((int) statePage.getTotalElements())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
+                .error("")
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
 
-    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset){
-        var itemPerPage=postRepository.findAllByUserPost(id)==0?5:postRepository.findAllByUserPost(id);
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
+        var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsUserId(id, pageable);
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total((int)statePage.getTotalElements())
-            .perPage(itemPerPage)
-            .offset(offset)
-            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
-            .error("")
-            .timestamp(LocalDateTime.now())
-            .build();
+                .total((int) statePage.getTotalElements())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
+                .error("")
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
-    public CommonListResponseDto<Object> getNewsByListUserId(List<Long> listPostId, int offset){
+    public CommonListResponseDto<Object> getNewsByListUserId(List<Long> listPostId, int offset) {
         var itemPerPage = 0;
         List<Object> postList = new ArrayList();
-        for(Long postId : listPostId) {
+        for (Long postId : listPostId) {
             itemPerPage += postRepository.findAllByUserPost(postId) == 0 ? 5 : postRepository.findAllByUserPost(postId);
             var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-//            postList.add(getPostDtoFromEntity(postRepository.findPostEntityById(postId)));
-//            //  postRepository.findPostEntityById(postId, pageable).stream().map(this::getPostDtoFromEntity);
-             postList.add(postRepository.findPostEntityById(postId, pageable).stream().map(this::getPostDtoFromEntity).toList().get(0));
+            postList.add(getPostDtoFromEntity(postRepository.findPostEntityById(postId)));
         }
         return CommonListResponseDto.builder()
                 .total(postList.size())
@@ -131,15 +130,15 @@ public class PostService {
             response.setTimeStamp(LocalDateTime.now());
             response.setData(getPostDtoFromEntity(post));
             return ResponseEntity.ok(response);
-        }catch (EntityNotFoundException|IdUserException e){
+        } catch (EntityNotFoundException | IdUserException e) {
             log.debug(e.getMessage());
-            var dto=new CommonResponseDto<PostResponseDto>();
+            var dto = new CommonResponseDto<PostResponseDto>();
             dto.setError(e.getMessage());
             return ResponseEntity.ok(dto);
         }
     }
 
-    public ResponseEntity<PostResponseDto> recoverPost(Long id){
+    public ResponseEntity<PostResponseDto> recoverPost(Long id) {
         try {
             var post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
             var user = registerService.getCurrentUser();
@@ -150,7 +149,7 @@ public class PostService {
             postRepository.saveAndFlush(post);
 
             return ResponseEntity.ok(PostResponseDto.builder().build());
-        }catch (EntityNotFoundException|IdUserException e){
+        } catch (EntityNotFoundException | IdUserException e) {
             log.debug("такого поста нет {}", e.getMessage());
             return ResponseEntity.ok(PostResponseDto.builder().build());
         }
@@ -162,14 +161,22 @@ public class PostService {
     }
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
-        var tags=postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
-        var type=getType(postEntity);
-        var listComment=commentService.getCommonList(postEntity.getId(),5,0);
-        return mapper.postEntityToDto(postEntity,tags,type,listComment);
+        try {
+            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
+            var type = getType(postEntity);
+            var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
+            return mapper.postEntityToDto(postEntity, tags, type, listComment);
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+        return PostResponseDto.builder().build();
     }
-    private PostType getType(PostEntity post){
-        if(post.isDeleted()){return PostType.DELETED;}
-        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED;}
-        else return PostType.POSTED;
+
+    private PostType getType(PostEntity post) {
+        if (post.isDeleted()) {
+            return PostType.DELETED;
+        } else if (post.getTime().isAfter(LocalDateTime.now())) {
+            return PostType.QUEUED;
+        } else return PostType.POSTED;
     }
 }
