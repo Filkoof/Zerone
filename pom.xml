@@ -24,6 +24,7 @@
 
   <build>
     <plugins>
+
       <!-- JOOQ Generator Plugin -->
       <plugin>
         <groupId>org.jooq</groupId>
@@ -38,16 +39,9 @@
           </execution>
         </executions>
         <configuration>
-          <jdbc>  <!-- указываем настройки базы -->
-            <driver>org.postgresql.Driver</driver>
-            <url>jdbc:postgresql://localhost:5432/postgres</url>
-            <user>root</user>
-            <password>root</password>
-          </jdbc>
           <generator>
             <database>
               <includes>.*</includes>  <!-- включаемые подпакеты и файлы -->
-              <excludes></excludes>
               <inputSchema>public</inputSchema>  <!-- схема -->
             </database>
             <generate>
@@ -87,6 +81,11 @@
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
               <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>2.0.4.RELEASE</version>
             </path>
             <dependency>
               <groupId>org.projectlombok</groupId>
