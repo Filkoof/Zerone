@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/soc_net?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/soc_net?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:postgres}
 

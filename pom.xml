@@ -24,39 +24,6 @@
 
   <build>
     <plugins>
-
-      <!-- JOOQ Generator Plugin -->
-      <plugin>
-        <groupId>org.jooq</groupId>
-        <artifactId>jooq-codegen-maven</artifactId>
-        <version>${jooq.version}</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <generator>
-            <database>
-              <includes>.*</includes>  <!-- включаемые подпакеты и файлы -->
-              <inputSchema>public</inputSchema>  <!-- схема -->
-            </database>
-            <generate>
-              <records>true</records>
-            </generate>
-            <target>
-              <!-- структура пакетов относительно основной директории -->
-              <packageName>ru.example.group.main</packageName>
-              <!-- основная директория. Лучше хранить в target. -->
-              <directory>target/generated-sources/jooq</directory>
-            </target>
-          </generator>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -105,6 +72,49 @@
         <artifactId>liquibase-maven-plugin</artifactId>
         <version>4.2.0</version>
       </plugin>
+
+
+      <plugin>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq-codegen-maven</artifactId>
+        <version>${jooq.version}</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <jdbc>  <!-- указываем настройки базы -->
+            <driver>org.postgresql.Driver</driver>
+            <url>jdbc:postgresql://localhost:5432/soc_net</url>
+            <user>postgres</user>
+            <password>postgres</password>
+          </jdbc>
+          <generator>
+            <database>
+              <includes>.*</includes>  <!-- включаемые подпакеты и файлы -->
+              <excludes></excludes>
+              <inputSchema>public</inputSchema>  <!-- схема -->
+            </database>
+            <generate>
+              <records>true</records>
+            </generate>
+            <target>
+              <!-- структура пакетов относительно основной директории -->
+              <packageName>ru.example.group.main</packageName>
+              <!-- основная директория. Лучше хранить в target. -->
+              <directory>target/generated-sources/jooq</directory>
+            </target>
+          </generator>
+        </configuration>
+      </plugin>
+
+
+
+
     </plugins>
   </build>
 
