@@ -89,9 +89,9 @@
         <configuration>
           <jdbc>  <!-- указываем настройки базы -->
             <driver>org.postgresql.Driver</driver>
-            <url>jdbc:postgresql://localhost:5432/soc_net</url>
-            <user>postgres</user>
-            <password>postgres</password>
+            <url>jdbc:postgresql://195.161.62.32:5432/postgres</url>
+            <user>zerone</user>
+            <password>7tsfft</password>
           </jdbc>
           <generator>
             <database>

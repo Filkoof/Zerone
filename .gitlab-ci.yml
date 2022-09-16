@@ -26,6 +26,7 @@ build:
   tags:
     - prod
   script:
+    - mvn jooq-codegen:generate
     - mvn compile
   cache:
     paths:
