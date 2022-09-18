@@ -1,5 +1,8 @@
 package ru.example.group.main.service;
 
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.CityResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,9 @@ import ru.example.group.main.exception.UserWithThatEmailALreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -66,7 +72,7 @@ public class UserRegisterService {
         return false;
     }
 
-    private boolean newUserAddToDB( UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
+    private boolean newUserAddToDB(UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
         UserEntity user = new UserEntity();
         try {
             user.setStatus(true);
@@ -80,7 +86,7 @@ public class UserRegisterService {
             user.setPhoto(default_avatar);
             user.setCountry("");
             user.setCity("");
-            user.setBirthDate(LocalDate.of(1970,01,01));
+            user.setBirthDate(LocalDate.of(1970, 01, 01));
             user.setAbout("");
             user.setPhone("");
             userRepository.save(user);
@@ -121,7 +127,7 @@ public class UserRegisterService {
 
     public ApiResponseDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         ApiResponseDto apiResponseDto = new ApiResponseDto();
-        if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
+        if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null) {
             throw new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto);
         }
 

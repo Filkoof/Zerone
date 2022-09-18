@@ -1,10 +1,13 @@
 package ru.example.group.main.controller;
 
+import com.maxmind.geoip2.exception.GeoIp2Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.example.group.main.dto.request.EmailChangeRequestDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
@@ -15,10 +18,12 @@ import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.service.RequestService;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -26,9 +31,11 @@ public class UserSettingsController {
     @Value("${config.frontend}")
     private String front;
     private final UserSettingsService userSettingsService;
+    private final RequestService requestService;
 
-    public UserSettingsController(UserSettingsService userSettingsService) {
+    public UserSettingsController(UserSettingsService userSettingsService, RequestService requestService) {
         this.userSettingsService = userSettingsService;
+        this.requestService = requestService;
     }
 
     @PutMapping("/api/v1/account/email")
@@ -61,7 +68,10 @@ public class UserSettingsController {
     }
 
     @GetMapping("/api/v1/users/me")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser(HttpServletRequest request) throws IOException, GeoIp2Exception {
+
+        userSettingsService.getLocationFromUserIp();
+
         log.info("getUser started");
         return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }

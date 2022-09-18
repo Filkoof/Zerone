@@ -72,8 +72,6 @@
         <artifactId>liquibase-maven-plugin</artifactId>
         <version>4.2.0</version>
       </plugin>
-
-
       <plugin>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen-maven</artifactId>
@@ -111,15 +109,17 @@
           </generator>
         </configuration>
       </plugin>
-
-
-
-
     </plugins>
   </build>
 
 
   <dependencies>
+    <!-- geoip2 -->
+    <dependency>
+      <groupId>com.maxmind.geoip2</groupId>
+      <artifactId>geoip2</artifactId>
+      <version>3.0.1</version>
+    </dependency>
     <!-- JOOQ -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

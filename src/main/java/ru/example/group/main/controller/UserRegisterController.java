@@ -9,18 +9,20 @@ import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
+import ru.example.group.main.service.RequestService;
 import ru.example.group.main.service.UserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserRegisterController {
 
     private final UserRegisterService userRegisterService;
+    private final RequestService requestService;
 
-    public UserRegisterController(UserRegisterService userRegisterService) {
+    public UserRegisterController(UserRegisterService userRegisterService, RequestService requestService) {
         this.userRegisterService = userRegisterService;
+        this.requestService = requestService;
     }
 
     @PostMapping("/api/v1/account/register")

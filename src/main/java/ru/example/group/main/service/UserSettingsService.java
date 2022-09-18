@@ -1,5 +1,8 @@
 package ru.example.group.main.service;
 
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.CityResponse;
 import com.vk.api.sdk.client.Lang;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -24,7 +27,12 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -331,5 +339,18 @@ public class UserSettingsService {
             friendDto.setError("Ошибка");
             return friendDto;
         }
+    }
+
+    public com.maxmind.geoip2.record.City getLocationFromUserIp() throws IOException, GeoIp2Exception {
+     //   URL url = new URL("https://git.io/GeoLite2-City.mmdb");
+        //URL url = new URL("src/main/resources/static/GeoLite2-City.mmdb");
+        File database = new File("/Users/permishin/IdeaProjects/backend1/src/main/resources/static/GeoLite2-City.mmdb");
+        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
+        InetAddress addr = InetAddress.getByName("89.163.145.2");
+        CityResponse response = dbReader.city(addr);
+        com.maxmind.geoip2.record.City city = response.getCity();
+        String country = response.getCountry().getNames().get("ru");
+
+        return  city;
     }
 }
