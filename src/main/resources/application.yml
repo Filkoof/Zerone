@@ -63,20 +63,3 @@ vk:
   accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
   deactivated: true
 
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,prometheus
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-    distribution:
-      percentiles-histogram:
-        "[http.server.requests]": true
-
-
-
-
