@@ -62,9 +62,9 @@ public class PostService {
         return ResponseEntity.ok(response);
     }
 
-    public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
+    public CommonListResponseDto<PostResponseDto> getNewsfeed(int offset, int itemPerPage) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsWithPagination(text, pageable);
+        var statePage = postRepository.findAllPostsWithPagination(pageable);
 
         return CommonListResponseDto.<PostResponseDto>builder()
             .total((int) statePage.getTotalElements())

@@ -9,6 +9,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.example.group.main.dto.response.*;
@@ -104,17 +106,46 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(FriendsRequestException.class)
-    public ResponseEntity<CommonResponseDto<?>> handleGetUserFriendsException(FriendsRequestException e,
+    public ResponseEntity<CommonResponseDto<?>> handleFriendsRequestException(FriendsRequestException e,
                                                                               CommonResponseDto<?> commonResponseDto){
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<CommonResponseDto<?>> handleGetUserFriendsException(ConstraintViolationException e){
+    public ResponseEntity<CommonResponseDto<?>> handleConstraintViolationException(ConstraintViolationException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setMessage("Ошибка, переданы неверные данные.");
         commonResponseDto.setError("Ошибка, переданы неверные данные: " + e.getLocalizedMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setMessage("Ошибка, переданы неверные данные.");
+        commonResponseDto.setError("Ошибка, переданы неверные данные: " + e.getLocalizedMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setMessage("Ошибка в запросе.");
+        commonResponseDto.setError("Ошибка в запросе: " + e.getLocalizedMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(VkApiException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleVkApiException(VkApiException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setMessage("Ошибка, неудалось загрузить АПИ данные с VK.");
+        commonResponseDto.setError("Ошибка, неудалось загрузить АПИ данные с VK: " + e.getLocalizedMessage());
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }

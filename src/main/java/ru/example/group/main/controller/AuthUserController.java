@@ -23,7 +23,6 @@ import javax.validation.Valid;
 @Slf4j
 @RequestMapping("/api/v1/auth")
 @Api("authorization controller api")
-@Validated
 public class AuthUserController {
     private final AuthUserService authUserService;
 
@@ -34,7 +33,7 @@ public class AuthUserController {
     @PostMapping("/login")
     @ApiOperation(value = "Handle login authorization by checking provided login and password.")
     public CommonResponseDto<UserDataResponseDto> handleLoginApi(@ApiParam(value = "Email and password data payload.")
-                                                                 @Valid  @RequestBody ContactConfirmationPayloadRequestDto payload,
+                                                                 @Valid @RequestBody ContactConfirmationPayloadRequestDto payload,
                                                                  HttpServletRequest request, HttpServletResponse response) {
         return authUserService.getAuthLoginResponse(payload, request, response);
     }

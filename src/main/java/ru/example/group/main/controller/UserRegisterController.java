@@ -1,6 +1,8 @@
 package ru.example.group.main.controller;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,14 @@ import ru.example.group.main.service.UserSettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/account")
+@Api("User registration operations api")
 public class UserRegisterController {
     @Value("${config.frontend}")
     private String front;
@@ -38,54 +44,59 @@ public class UserRegisterController {
     }
 
     @PostMapping("/register")
+    @ApiOperation("Operation to register new user with provided data.")
     public ResponseEntity<ApiResponseDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         return new ResponseEntity<>(userRegisterService.createUser(userRegisterRequestDto), HttpStatus.OK);
     }
 
     @PostMapping("/register/confirm")
+    @ApiOperation("Operation to confirm registration of the user via email confirmation link.")
     public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto) throws NewUserConfirmationViaEmailFailedException {
         return userRegisterService.activateUser(registerConfirmRequestDto);
     }
 
     @PutMapping("/email")
+    @ApiOperation("Operation to change user email.")
     public ResponseEntity<?> changeEmail(@RequestBody EmailChangeRequestDto newEmail) throws EmailNotSentException {
-        log.info("changeEmail started");
         userSettingsService.changeEmailConfirmationSend(newEmail.getEmail());
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/email_change/confirm")
-    public RedirectView emailChangeConfirmedAndRedirectToLogin(@RequestParam String code, @RequestParam String newEmail) throws EmailOrPasswordChangeException {
-        log.info("emailChangeConfirmedAndRedirectToLogin started");
+    @ApiOperation("Operation to confirm email change via email confirmation link.")
+    public RedirectView emailChangeConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code,
+                                                               @RequestParam @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.+[a-zA-Z]{2,6}$")
+                                                               @NotEmpty(message = "Please provide correct email.")
+                                                               String newEmail) throws EmailOrPasswordChangeException {
         userSettingsService.confirmEmailChange(code, newEmail);
         return new RedirectView("http://" + front + "/login");
     }
 
 
     @PutMapping("/password/set")
-    public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto, HttpServletRequest request, HttpServletResponse response) throws EmailNotSentException {
-        log.info("passwordChange started");
+    @ApiOperation("Operation to change user password.")
+    public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
         userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/password_change/confirm")
-    public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam String code, @RequestParam String code1) throws EmailOrPasswordChangeException {
-        log.info("passwordChangeConfirmedAndRedirectToLogin started");
+    @ApiOperation("Operation to confirm password change via email confirmation link.")
+    public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code, @RequestParam @Min(139) String code1) throws EmailOrPasswordChangeException {
         userSettingsService.confirmPasswordChange(code, code1);
         return new RedirectView("http://" + front + "/login");
     }
 
     @GetMapping("/user_delete/confirm")
-    public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam String code)throws UserDeleteOrRecoveryException {
-        log.info("user delete started via email link");
+    @ApiOperation("Operation to confirm user delete via email confirmation link.")
+    public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code)throws UserDeleteOrRecoveryException {
         userSettingsService.confirmUserDelete(code);
         return new RedirectView("http://" + front + "/login");
     }
 
     @GetMapping("/user_delete_recovery/confirm")
-    public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam String code) throws UserDeleteOrRecoveryException {
-        log.info("user delete recovery started via user email link");
+    @ApiOperation("Operation to recover deleted user via email recovery link.")
+    public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.recoveryUserDelete(code);
         return new RedirectView("http://" + front + "/login");
     }

@@ -33,7 +33,6 @@ public class JdbcFriendsRepository {
                                 rs.getDate("birth_date") != null ? rs.getDate("birth_date").toLocalDate() : null,
                                 rs.getString("e_mail"),
                                 rs.getString("phone"),
-                                rs.getString("password"),
                                 rs.getString("photo"),
                                 rs.getString("about"),
                                 rs.getBoolean("is_approved"),

@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -30,47 +31,51 @@ import ru.example.group.main.service.CommentService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
-@Api("comments data api")
+@Api("Posts comments data api")
 public class CommentController {
 
     private final CommentService service;
 
+
     @GetMapping("/{id}/comments")
-    @ApiOperation("Operation to get comments by user id as path variable and segmenting by offset and items per page as body params")
-    public CommonListResponseDto<CommentDto> getCom(
-            @NotEmpty @Valid @PathVariable Long id,
+    @ApiOperation("Operation to get comments for post id(as @PathVariable) and segmenting by offset(@RequestParam) and itemsPerPage(@RequestParam) as body params")
+    public CommonListResponseDto<CommentDto> getCommentsForPostId(
+            @PathVariable @Min(1) Long id,
             @RequestParam(name = "offset", defaultValue = "0") int offset,
             @RequestParam(name = "itemPerPage", defaultValue = "5") int itemPerPage) {
-        return service.getComment(id, offset, itemPerPage);
+        return service.getCommentsForPostId(id, offset, itemPerPage);
     }
 
     @PostMapping("/{id}/comments")
-    @ApiOperation("operation to post a comment by user id providing comment_text, list of imagesDto and parent_id")
-    public ResponseEntity<CommonResponseDto<CommentDto>> postCom(
-            @PathVariable Long id,
-            @RequestBody CommentRequestDto request) {
-        return service.postComment(id, request);
+    @ApiOperation("operation to add a comment for post id (@PathVariable) providing CommentRequestDto (@RequestBody)")
+    public ResponseEntity<CommonResponseDto<CommentDto>> postCommentForPostId(
+            @Valid @PathVariable @Min(1) Long id,
+            @Valid @RequestBody CommentRequestDto request) {
+        return service.postCommentForPostId(id, request);
     }
 
     @DeleteMapping("/{id}/comments/{comment_id}")
-    public ResponseEntity<CommonResponseDto<CommentDto>> deleteCom(
-            @PathVariable long id,
-            @PathVariable long comment_id) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
+    @ApiOperation("operation to delete a comment for post id (@PathVariable) with comment_id (@PathVariable)")
+    public ResponseEntity<CommonResponseDto<CommentDto>> deleteCommentForPostIdAndCommentId(
+            @PathVariable @Min(1) long id,
+            @PathVariable @Min(1) long comment_id) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
         return service.deleteComment(id, comment_id);
     }
 
     @PutMapping("/{id}/comments/{comment_id}")
-    public ResponseEntity<CommonResponseDto<CommentDto>> edit(
-            @PathVariable long id,
-            @PathVariable long comment_id,
-            @RequestBody CommentRequestDto request) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
+    @ApiOperation("operation to edit comment for post id (@PathVariable) with comment_id (@PathVariable)")
+    public ResponseEntity<CommonResponseDto<CommentDto>> editCommentForPostIdAndCommentId(
+            @PathVariable @Min(1) long id,
+            @PathVariable @Min(1) long comment_id,
+            @Valid @RequestBody CommentRequestDto request) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
         return service.editComment(id, comment_id, request);
     }
 
     @PutMapping("/{id}/comments/{comment_id}/recover")
-    public ResponseEntity<CommonResponseDto<CommentDto>> recover(
-            @PathVariable long id,
-            @PathVariable long comment_id) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
+    @ApiOperation("operation to recover deleted comment for post id (@PathVariable) with comment_id (@PathVariable)")
+    public ResponseEntity<CommonResponseDto<CommentDto>> recoverDeletedCommentForPostIdAndCommentId(
+            @PathVariable @Min(1) long id,
+            @PathVariable @Min(1) long comment_id) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
         return service.recoverComment(id, comment_id);
     }
 }

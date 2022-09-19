@@ -667,7 +667,7 @@ databaseChangeLog:
                   value: "true"
               - column:
                   name: photo
-                  value: "photo path here"
+                  value: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
 
   - changeSet:
       id: 5

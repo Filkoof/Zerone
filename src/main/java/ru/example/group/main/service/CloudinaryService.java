@@ -35,7 +35,7 @@ public class CloudinaryService {
     public String uploadFile(MultipartFile file) throws CloudinaryException {
         try {
             var uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            return  uploadResult.get("url").toString();
+            return uploadResult.get("url").toString();
         } catch (Exception e) {
             throw new CloudinaryException("Не удалось загрузить файл на сервер Cloudinary! " + e.getMessage());
         }
@@ -43,7 +43,7 @@ public class CloudinaryService {
 
     public void deleteImageFromUserEntity() {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        if(user.getPhoto() != null) {
+        if (user.getPhoto() != null) {
             String publicId = parsePublicIdFromUserEntityPhoto(socialNetUserRegisterService.getCurrentUser());
             if (!publicId.contains("avatar")) {
                 deleteFile(publicId);
@@ -52,20 +52,20 @@ public class CloudinaryService {
     }
 
     public String parsePublicIdFromUserEntityPhoto(UserEntity user) {
-       return user.getPhoto().substring(user.getPhoto().length() - 24,user.getPhoto().length() - 4);
+        String test = user.getPhoto();
+        return user.getPhoto().substring(user.getPhoto().length() - 24, user.getPhoto().length() - 4);
     }
 
     public void deleteFile(String publicId) {
         try {
-            Map<String, String> param = new HashMap<String,String>();
+            Map<String, String> param = new HashMap<String, String>();
             param.put("folder", "pets");
             param.put("invalidate", "true");
             cloudinary.uploader().destroy(publicId, param);
         } catch (Exception ex) {
-            log.error("The userfailed to remove to Cloudinary the image file: " + publicId);
+            log.error("User failed to remove to Cloudinary the image file: " + publicId);
             log.error(ex.getMessage());
         }
-
     }
 
     public CommonResponseDto<UrlImageResponseDto> uploadFileEndGetUrl(MultipartFile file) throws CloudinaryException {

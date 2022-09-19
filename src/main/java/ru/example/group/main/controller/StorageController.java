@@ -1,5 +1,7 @@
 package ru.example.group.main.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +14,14 @@ import ru.example.group.main.dto.response.UrlImageResponseDto;
 import ru.example.group.main.exception.CloudinaryException;
 import ru.example.group.main.service.CloudinaryService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 
 @RestController
 @Slf4j
 @RequestMapping("/api/v1")
+@Api("Image storage api")
 public class StorageController {
 
     private final CloudinaryService cloudinaryService;
@@ -25,7 +31,8 @@ public class StorageController {
     }
 
     @PostMapping("/storage")
-    public ResponseEntity<CommonResponseDto<UrlImageResponseDto>> downloadImage(MultipartFile file) throws CloudinaryException {
+    @ApiOperation("Operation to upload avatar image (as MultipartFile file IMAGE) to cloudinary service and provide back")
+    public ResponseEntity<CommonResponseDto<UrlImageResponseDto>> downloadImage(@Valid @NotNull MultipartFile file) throws CloudinaryException {
         log.info("downloadImage started");
         return new ResponseEntity<>(cloudinaryService.uploadFileEndGetUrl(file), HttpStatus.OK);
     }

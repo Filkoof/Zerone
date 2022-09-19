@@ -1,5 +1,7 @@
 package ru.example.group.main.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.response.CommonResponseDto;
@@ -16,6 +18,7 @@ import ru.example.group.main.service.RecommendedFriendsService;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1")
+@Api("Friendships api")
 public class FriendsController {
 
     private final RecommendedFriendsService recommendedFriendsService;
@@ -27,6 +30,7 @@ public class FriendsController {
     }
 
     @GetMapping("/friends/recommendations")
+    @ApiOperation("Operation to get recommended friends for current authorized user")
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(
             @RequestParam(required = false, defaultValue = "0") Integer offset,
             @RequestParam(required = false, defaultValue = "20") Integer itemPerPage) throws RecommendedFriendsLoadingFromDbToApiException {
@@ -34,12 +38,13 @@ public class FriendsController {
     }
 
     @GetMapping("/friends/recommendations_run")
+    @ApiOperation("Operation to re-run recommendations process and update recommendations in DB for all users")
     public void getRecommendedFriendsResponse() {
-        log.info("recommended friends update run");
         recommendedFriendsService.runMultithreadingFriendsRecommendationsUpdate();
     }
 
     @GetMapping("/friends")
+    @ApiOperation("Operation to get friends for current authorized user or for user provided with parameter name (@RequestParam, required=false)")
     public FriendsResponseDto getUserFriends(@RequestParam(required = false, defaultValue = "name") String name,
                                              @RequestParam(required = false, defaultValue = "0") Integer offset,
                                              @RequestParam(required = false, defaultValue = "10") Integer itemPerPage) throws GetUserFriendsException {
@@ -47,6 +52,7 @@ public class FriendsController {
     }
 
     @GetMapping("/friends/request")
+    @ApiOperation("Operation to get friends requests for current authorized user or for user provided with parameter name (@RequestParam, required=false)")
     public FriendsResponseDto getFriendsRequests(@RequestParam(required = false, defaultValue = "name") String name,
                                                  @RequestParam(required = false, defaultValue = "0") Integer offset,
                                                  @RequestParam(required = false, defaultValue = "10") Integer itemPerPage) throws GetUserFriendsException {
@@ -54,16 +60,19 @@ public class FriendsController {
     }
 
     @PostMapping("/friends/{id}")
+    @ApiOperation("Operation to send friend request from current authorized user to id (@PathVariable) user.")
     public CommonResponseDto<?> sendFriendRequest(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.sendFriendRequest(id);
     }
 
     @DeleteMapping("/friends/{id}")
+    @ApiOperation("Operation to set decline status from current authorized user for friend relation or request with id (@PathVariable) user.")
     public CommonResponseDto<?> deleteFriend(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.DECLINED).intValue());
     }
 
     @PutMapping("/users/block/{id}")
+    @ApiOperation("Operation to set blocked status from current authorized user to user with id (@PathVariable).")
     public CommonResponseDto<?> blockUser(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
     }

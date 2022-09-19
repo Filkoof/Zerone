@@ -29,13 +29,13 @@ public class CommentService {
   private final SocialNetUserRegisterService socialNetUserRegisterService;
   private final CommentMapper mapper;
 
-  public CommonListResponseDto<CommentDto> getComment(Long idPost, int offset, int itemPerPage){
+  public CommonListResponseDto<CommentDto> getCommentsForPostId(Long idPost, int offset, int itemPerPage){
     if(postRepository.existsById(idPost)){
       return getCommonList(idPost,itemPerPage,offset);
     }else throw new EntityNotFoundException();
   }
 
-  public ResponseEntity<CommonResponseDto<CommentDto>> postComment(Long id, CommentRequestDto request){
+  public ResponseEntity<CommonResponseDto<CommentDto>> postCommentForPostId(Long id, CommentRequestDto request){
     var comment=commentRepository.save(getCommentEntity(id,request));
     return ResponseEntity.ok(getCommonResponseDto(comment));
   }
