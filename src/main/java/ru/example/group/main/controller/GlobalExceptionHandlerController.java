@@ -46,9 +46,13 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(EmailNotSentException.class)
-    public ResponseEntity<?> handleMailNotSentException(Exception e) {
+    public ResponseEntity<CommonResponseDto<?>> handleMailNotSentException(Exception e) {
         log.info(e.getLocalizedMessage());
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setError("Письмо не отправлено: " + e.getMessage());
+        commonResponseDto.setMessage("Письмо не отправлено!");
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NewUserWasNotSavedToDBException.class)
@@ -63,7 +67,10 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(UserWithThatEmailALreadyExistException.class)
     public ResponseEntity<ApiResponseDto> handleUserWithThatEmailALreadyExistException(UserWithThatEmailALreadyExistException e){
         log.info(e.getApiResponseDto().getMessage());
-        return new ResponseEntity(e.getApiResponseDto(), HttpStatus.BAD_REQUEST);
+        ApiResponseDto apiResponseDto = new ApiResponseDto();
+        apiResponseDto.setMessage("User with that email already exist.");
+        apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(apiResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
