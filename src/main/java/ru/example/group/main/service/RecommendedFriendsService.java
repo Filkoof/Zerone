@@ -10,6 +10,7 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
 import ru.example.group.main.helper.CpuCoresValidator;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
 import ru.example.group.main.security.SocialNetUserDetailsService;
@@ -28,15 +29,18 @@ public class RecommendedFriendsService {
     private RecommendedFriendsMultithreadUpdate executePool;
     private FriendsService friendsService;
 
+    private UserMapper userMapper;
+
 
     public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService
             , JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
-                                     RecommendedFriendsMultithreadUpdate executePool, FriendsService friendsService) {
+                                     RecommendedFriendsMultithreadUpdate executePool, FriendsService friendsService, UserMapper userMapper) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
         this.executePool = executePool;
         this.friendsService = friendsService;
+        this.userMapper = userMapper;
     }
 
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(Integer offset, Integer itemsPerPage) throws RecommendedFriendsLoadingFromDbToApiException {
@@ -68,7 +72,7 @@ public class RecommendedFriendsService {
             Integer userToId = userToIdFriendship != null ? FriendshipStatusType.getLongFromEnum(userToIdFriendship.getStatus().getCode()).intValue() : 1;
             Integer idToUser = idToUserFriendship != null ? FriendshipStatusType.getLongFromEnum(idToUserFriendship.getStatus().getCode()).intValue() : 1;
             if (!(userToId == 5 || userToId == 2 || userToId == 6 || userToId == 7 || userToId == 3 || idToUser == 3 || idToUser == 4 || idToUser == 7)) {
-                potentialUserEntities.add(socialNetUserDetailsService.setUserDataResponseDto(nextPotentialFriend, ""));
+                potentialUserEntities.add(userMapper.userEntityToDtoWithToken(nextPotentialFriend, ""));
             }
         }
 

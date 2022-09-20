@@ -31,16 +31,13 @@ public class AuthUserService {
     private String authHeader;
     private SocialNetUserRegisterService userRegister;
     private UserRepository userRepository;
-
     private JwtBlacklistRepository jwtBlacklistRepository;
-    private final HandlerExceptionResolver handlerExceptionResolver;
     private ConfigProperties configProperties;
 
-    public AuthUserService(SocialNetUserRegisterService userRegister, UserRepository userRepository, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver, ConfigProperties configProperties) {
+    public AuthUserService(SocialNetUserRegisterService userRegister, UserRepository userRepository, JwtBlacklistRepository jwtBlacklistRepository, ConfigProperties configProperties) {
         this.userRegister = userRegister;
         this.userRepository = userRepository;
         this.jwtBlacklistRepository = jwtBlacklistRepository;
-        this.handlerExceptionResolver = handlerExceptionResolver;
         this.configProperties = configProperties;
     }
 
@@ -56,8 +53,7 @@ public class AuthUserService {
                 authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
             } catch (Exception e) {
                 e.getMessage();
-                handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
-                authLoginResponseDto.setError("Wrong user name or password.");
+                throw new UsernameNotFoundException("Wrong user name or password. " + e.getMessage());
             }
         }
         return authLoginResponseDto;
@@ -83,14 +79,14 @@ public class AuthUserService {
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public void logoutProcessing(HttpServletRequest request) throws ServletException {
+    public void logoutProcessing(HttpServletRequest request) throws AuthLogoutException {
         if (request.getHeader(authHeader) != null) {
             if (configProperties.getJwtBlackListOn()) {
                 try {
                     setJwtBlackList(request);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    handlerExceptionResolver.resolveException(null, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
+                   throw new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
                 }
             }
         }

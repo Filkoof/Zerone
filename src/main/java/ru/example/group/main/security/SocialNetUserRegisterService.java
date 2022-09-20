@@ -13,6 +13,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.map.UserMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,12 +27,15 @@ public class SocialNetUserRegisterService {
     private final JWTUtilService jwtUtilService;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
+    private final UserMapper userMapper;
+
     @Autowired
-    public SocialNetUserRegisterService(SocialNetUserDetailsService socialNetUserDetailsService, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, HandlerExceptionResolver handlerExceptionResolver) {
+    public SocialNetUserRegisterService(SocialNetUserDetailsService socialNetUserDetailsService, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, HandlerExceptionResolver handlerExceptionResolver, UserMapper userMapper) {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.authenticationManager = authenticationManager;
         this.jwtUtilService = jwtUtilService;
         this.handlerExceptionResolver = handlerExceptionResolver;
+        this.userMapper = userMapper;
     }
 
     public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
@@ -63,10 +67,10 @@ public class SocialNetUserRegisterService {
             authLoginResponseDto.setError("Пользователь заблокирован.");
             return authLoginResponseDto;
         }
-        String jwtToken = null;
+        String jwtToken;
         jwtToken = jwtUtilService.generateToken(userDetails);
         response.setResult(jwtToken);
-        response.setUserDataResponseDto(socialNetUserDetailsService.setUserDataResponseDto(userDetails.getUser(), jwtToken));
+        response.setUserDataResponseDto(userMapper.userEntityToDtoWithToken(userDetails.getUser(), jwtToken));
         authLoginResponseDto.setData(response.getUserDataResponseDto());
         authLoginResponseDto.setError("");
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());

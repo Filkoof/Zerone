@@ -12,6 +12,7 @@ import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
+import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.service.AuthUserService;
 
 import javax.servlet.ServletException;
@@ -40,7 +41,7 @@ public class AuthUserController {
 
     @GetMapping("/logout")
     @ApiOperation("Handle logout.")
-    public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request) throws ServletException {
+    public CommonResponseDto<LogoutDataResponseDto> handleLogoutApi(HttpServletRequest request) throws AuthLogoutException {
         log.info("handleLogoutApi");
         authUserService.logoutProcessing(request);
         return authUserService.getAuthLogoutResponse();

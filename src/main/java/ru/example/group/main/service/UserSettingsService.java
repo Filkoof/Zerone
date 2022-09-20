@@ -1,12 +1,5 @@
 package ru.example.group.main.service;
 
-import com.vk.api.sdk.client.Lang;
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.base.Country;
-import com.vk.api.sdk.objects.database.City;
-import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
-import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,18 +7,15 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
-import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.*;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -39,16 +29,18 @@ public class UserSettingsService {
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
-
     private final SocialNetUserDetailsService socialNetUserDetailsService;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService) {
+    private final UserMapper userMapper;
+
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService, UserMapper userMapper) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
         this.socialNetUserDetailsService = socialNetUserDetailsService;
+        this.userMapper = userMapper;
     }
 
     public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
@@ -215,7 +207,7 @@ public class UserSettingsService {
     public CommonResponseDto<UserDataResponseDto> getMeData() {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setData(socialNetUserDetailsService.setUserDataResponseDto(user, ""));
+        commonResponseDto.setData(userMapper.userEntityToDtoWithToken(user, ""));
         commonResponseDto.setError("");
         commonResponseDto.setMessage("ok");
         commonResponseDto.setTimeStamp(LocalDateTime.now());
@@ -251,7 +243,7 @@ public class UserSettingsService {
     public CommonResponseDto<UserDataResponseDto> getUserMeResponse() {
         CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        response.setData(socialNetUserDetailsService.setUserDataResponseDto(user));
+        response.setData(userMapper.userEntityToDto(user));
         response.setError("OK");
         response.setTimeStamp(LocalDateTime.now());
         return response;
@@ -281,7 +273,7 @@ public class UserSettingsService {
         friendDto.setTimeStamp(LocalDateTime.now());
         try {
             UserEntity friend = userRepository.findById(friendId).orElseThrow();
-            friendDto.setData(socialNetUserDetailsService.setUserDataResponseDto(friend, ""));
+            friendDto.setData(userMapper.userEntityToDtoWithToken(friend, ""));
             return friendDto;
         } catch (Exception e){
             friendDto.setError("Ошибка");

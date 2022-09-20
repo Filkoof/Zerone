@@ -10,6 +10,7 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.FriendsRequestException;
 import ru.example.group.main.exception.GetUserFriendsException;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.FriendshipRepository;
 import ru.example.group.main.repository.FriendshipStatusRepository;
 import ru.example.group.main.repository.UserRepository;
@@ -28,12 +29,15 @@ public class FriendsService {
     private FriendshipRepository friendshipRepository;
     private FriendshipStatusRepository friendshipStatusRepository;
 
-    public FriendsService(SocialNetUserDetailsService socialNetUserDetailsService, SocialNetUserRegisterService socialNetUserRegisterService, UserRepository userRepository, FriendshipRepository friendshipRepository, FriendshipStatusRepository friendshipStatusRepository) {
+    private UserMapper userMapper;
+
+    public FriendsService(SocialNetUserDetailsService socialNetUserDetailsService, SocialNetUserRegisterService socialNetUserRegisterService, UserRepository userRepository, FriendshipRepository friendshipRepository, FriendshipStatusRepository friendshipStatusRepository, UserMapper userMapper) {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.userRepository = userRepository;
         this.friendshipRepository = friendshipRepository;
         this.friendshipStatusRepository = friendshipStatusRepository;
+        this.userMapper = userMapper;
     }
 
     public FriendsResponseDto getUserFriends(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType) throws GetUserFriendsException {
@@ -64,7 +68,7 @@ public class FriendsService {
         List<UserEntity> userFriendsList = userRepository.getAllRelationsOfUser(user.getId(), FriendshipStatusType.getLongFromEnum(friendshipStatusType), nextPage);
         List<UserDataResponseDto> userFriendsDtoList = new ArrayList<>();
         for (UserEntity nextFriendToDto : userFriendsList) {
-            userFriendsDtoList.add(socialNetUserDetailsService.setUserDataResponseDto(nextFriendToDto, ""));
+            userFriendsDtoList.add(userMapper.userEntityToDtoWithToken(nextFriendToDto, ""));
         }
         return userFriendsDtoList;
     }

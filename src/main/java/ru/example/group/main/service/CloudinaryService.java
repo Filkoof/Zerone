@@ -10,7 +10,6 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.UrlImageResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.CloudinaryException;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.util.HashMap;
@@ -41,7 +40,7 @@ public class CloudinaryService {
         }
     }
 
-    public void deleteImageFromUserEntity() {
+    public void deleteImageFromUserEntity() throws CloudinaryException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         if (user.getPhoto() != null) {
             String publicId = parsePublicIdFromUserEntityPhoto(socialNetUserRegisterService.getCurrentUser());
@@ -52,19 +51,17 @@ public class CloudinaryService {
     }
 
     public String parsePublicIdFromUserEntityPhoto(UserEntity user) {
-        String test = user.getPhoto();
         return user.getPhoto().substring(user.getPhoto().length() - 24, user.getPhoto().length() - 4);
     }
 
-    public void deleteFile(String publicId) {
+    public void deleteFile(String publicId) throws CloudinaryException {
         try {
             Map<String, String> param = new HashMap<String, String>();
             param.put("folder", "pets");
             param.put("invalidate", "true");
             cloudinary.uploader().destroy(publicId, param);
         } catch (Exception ex) {
-            log.error("User failed to remove to Cloudinary the image file: " + publicId);
-            log.error(ex.getMessage());
+            throw new CloudinaryException("Не удалось удалить файл с сервера Cloudinary! " + ex.getMessage());
         }
     }
 

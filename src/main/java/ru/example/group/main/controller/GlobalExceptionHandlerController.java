@@ -149,4 +149,13 @@ public class GlobalExceptionHandlerController {
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CloudinaryException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleCloudinaryException(CloudinaryException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setMessage("Ошибка, неудалось обработать запрос.");
+        commonResponseDto.setError("Ошибка, неудалось обработать запрос: " + e.getMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
 }
