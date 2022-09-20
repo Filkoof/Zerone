@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
@@ -18,10 +19,13 @@ import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
 import ru.example.group.main.exception.UserWithThatEmailALreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
-
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -96,7 +100,9 @@ public class UserRegisterService {
         return true;
     }
 
-    public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto) throws NewUserConfirmationViaEmailFailedException {
+    public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
+                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception {
+        CityResponse cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
@@ -105,6 +111,8 @@ public class UserRegisterService {
         try {
             user.setConfirmationCode(null);
             user.setApproved(true);
+            user.setCountry(cityResponse.getCountry().getNames().get("ru"));
+            user.setCity(cityResponse.getCity().getNames().get("ru"));
             userRepository.save(user);
             recommendedFriendsService.runNewUserActivatedFriendsRecommendationsUpdate(user.getId());
             registrationCompleteResponseDto.setEMail(user.getEmail());
@@ -145,5 +153,49 @@ public class UserRegisterService {
             }
             return apiResponseDto;
         }
+    }
+
+    public CityResponse getLocationFromUserIp(String  ipAddress) throws IOException, GeoIp2Exception, URISyntaxException {
+        URL resource = getClass().getClassLoader().getResource("static/GeoLite2-City.mmdb");
+        File database;
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found!");
+        } else {
+            database = new File(resource.toURI());
+        }
+        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
+        InetAddress addr = InetAddress.getByName(ipAddress);
+        return dbReader.city(addr);
+    }
+
+    public String getClientIp(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("Proxy-Client-IP");
+        }
+
+        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("WL-Proxy-Client-IP");
+        }
+
+        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getRemoteAddr();
+            String LOCALHOST_IPV4 = "127.0.0.1";
+            String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
+            if(LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
+                try {
+                    InetAddress inetAddress = InetAddress.getLocalHost();
+                    ipAddress = inetAddress.getHostAddress();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(!StringUtils.isEmpty(ipAddress)
+                && ipAddress.length() > 15
+                && ipAddress.indexOf(",") > 0) {
+            ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
+        }
+        return ipAddress;
     }
 }

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -326,7 +327,6 @@ public class UserSettingsService {
         return new LocationResponseDto<>();
     }
 
-
     public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
         CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();
         friendDto.setError("");
@@ -339,18 +339,5 @@ public class UserSettingsService {
             friendDto.setError("Ошибка");
             return friendDto;
         }
-    }
-
-    public com.maxmind.geoip2.record.City getLocationFromUserIp() throws IOException, GeoIp2Exception {
-     //   URL url = new URL("https://git.io/GeoLite2-City.mmdb");
-        //URL url = new URL("src/main/resources/static/GeoLite2-City.mmdb");
-        File database = new File("/Users/permishin/IdeaProjects/backend1/src/main/resources/static/GeoLite2-City.mmdb");
-        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
-        InetAddress addr = InetAddress.getByName("89.163.145.2");
-        CityResponse response = dbReader.city(addr);
-        com.maxmind.geoip2.record.City city = response.getCity();
-        String country = response.getCountry().getNames().get("ru");
-
-        return  city;
     }
 }
