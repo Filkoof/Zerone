@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:root}
   mvc:
@@ -62,7 +62,4 @@ vk:
   userId: 51412309
   accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
   deactivated: true
-
-
-
 
