@@ -42,10 +42,12 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token;
-        String username;
+        String username = null;
         try {
             token = httpServletRequest.getHeader(authHeader);
-            username = checkToken(token);
+            if (!token.equals("") && token != null) {
+                username = checkToken(token);
+            }
             if (username != null) {
                 checkAuthenticationToken(username, token, httpServletRequest);
             }

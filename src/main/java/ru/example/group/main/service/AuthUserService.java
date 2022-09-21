@@ -45,16 +45,16 @@ public class AuthUserService {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         UserEntity user = userRepository.findByEmail(payload.getEmail());
-        if (user == null || !user.isApproved() || user.isBlocked() || user.isDeleted()) {
-            authLoginResponseDto.setError("User is inactivated, blocked or deleted.");
-            authLoginResponseDto.setMessage("User is inactivated, blocked or deleted.");
-        } else {
-            try {
-                authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
-            } catch (Exception e) {
-                e.getMessage();
-                throw new UsernameNotFoundException("Wrong user name or password. " + e.getMessage());
-            }
+        if (user == null) {
+            throw new UsernameNotFoundException("Неправильные данные авторизации");
+        }
+        try {
+            authLoginResponseDto = userRegister.jwtLogin(payload);
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Неправильные данные авторизации");
+        }
+        if (!user.isApproved() || user.isBlocked() || user.isDeleted()) {
+            throw new UsernameNotFoundException("Пользователь неактивен");
         }
         return authLoginResponseDto;
     }
@@ -86,7 +86,7 @@ public class AuthUserService {
                     setJwtBlackList(request);
                 } catch (Exception e) {
                     e.printStackTrace();
-                   throw new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage());
+                    throw new AuthLogoutException("Ошибка: " + e.getMessage());
                 }
             }
         }

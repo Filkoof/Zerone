@@ -24,7 +24,6 @@ import java.util.*;
 public class RecommendedFriendsService {
 
     private SocialNetUserRegisterService socialNetUserRegisterService;
-    private SocialNetUserDetailsService socialNetUserDetailsService;
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
     private RecommendedFriendsMultithreadUpdate executePool;
     private FriendsService friendsService;
@@ -32,11 +31,9 @@ public class RecommendedFriendsService {
     private UserMapper userMapper;
 
 
-    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService
-            , JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
+    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
                                      RecommendedFriendsMultithreadUpdate executePool, FriendsService friendsService, UserMapper userMapper) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
         this.executePool = executePool;
         this.friendsService = friendsService;
@@ -57,7 +54,7 @@ public class RecommendedFriendsService {
             recommendedFriendsResponseDto.setTotal(recommendedFriendsResponseDto.getUserDataResponseDtoList().size());
         } catch (Exception e) {
             e.printStackTrace();
-            recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендованных пользователей. ");
+            recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендованных пользователей");
             throw new RecommendedFriendsLoadingFromDbToApiException(e.getMessage(), recommendedFriendsResponseDto);
         }
         return recommendedFriendsResponseDto;
@@ -133,7 +130,6 @@ public class RecommendedFriendsService {
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
         List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         for (Long userId : activeUsersIds) {
-            //List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(userId);
             List<Long> friendsOfUserIds = jdbcRecommendedFriendsRepository.getRecommendedFriendsForUser(userId);
             recommendedFriendsMapArray.put(userId, friendsOfUserIds.toArray(Long[]::new));
             updateCount++;

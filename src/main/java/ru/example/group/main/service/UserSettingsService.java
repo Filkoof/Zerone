@@ -23,23 +23,19 @@ public class UserSettingsService {
 
     @Value("${config.backend}")
     private String backend;
-
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
-    private final SocialNetUserDetailsService socialNetUserDetailsService;
-
     private final UserMapper userMapper;
 
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, SocialNetUserDetailsService socialNetUserDetailsService, UserMapper userMapper) {
+    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.socialNetUserRegisterService = socialNetUserRegisterService;
         this.zeroneMailSenderService = zeroneMailSenderService;
         this.userRepository = userRepository;
         this.jwtUtilService = jwtUtilService;
         this.passwordEncoder = passwordEncoder;
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.userMapper = userMapper;
     }
 
@@ -76,10 +72,10 @@ public class UserSettingsService {
                 sendEmailChangedNotice(user.getEmail());
                 return true;
             }catch (Exception e){
-                throw new EmailOrPasswordChangeException("Email was not changed via confirmation link. Error: " + e);
+                throw new EmailOrPasswordChangeException("Ошибка изменения почты: " + e.getMessage());
             }
         } else {
-            throw new EmailOrPasswordChangeException("Wrong email change confirmation code.");
+            throw new EmailOrPasswordChangeException("Неправильный код подтверждения, ошибка");
         }
     }
 
@@ -125,10 +121,10 @@ public class UserSettingsService {
                 sendPasswordChangedNotice(user.getEmail());
                 return true;
             }catch (Exception e){
-                throw new EmailOrPasswordChangeException("Password was not changed via confirmation link. Error: " + e);
+                throw new EmailOrPasswordChangeException("Ошибка изменения пароля: " + e);
             }
         } else {
-            throw new EmailOrPasswordChangeException("Wrong password change confirmation code.");
+            throw new EmailOrPasswordChangeException("Неправильный код подтверждения, ошибка");
         }
     }
 
@@ -157,7 +153,7 @@ public class UserSettingsService {
             return deleteResponse;
         }
         deleteResponse.setMessage("Deletion fail.");
-        deleteResponse.setError("User delition error.");
+        deleteResponse.setError("User delete error.");
         return deleteResponse;
     }
 
@@ -186,10 +182,10 @@ public class UserSettingsService {
                 userDeletedNotice(userToDelete.getEmail(), code);
                 return true;
             }catch (Exception e){
-                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка удаления: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status - wrong email code.");
+            throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка удаления, неверный код.");
         }
     }
 
@@ -224,10 +220,10 @@ public class UserSettingsService {
                 recoveryUserDeletedNotice(userToDelete.getEmail());
                 return true;
             } catch (Exception e) {
-                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status, error: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("UПользователь: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status - wrong email recovery code.");
+            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта, неверный код");
         }
     }
 
@@ -263,7 +259,7 @@ public class UserSettingsService {
                 userRepository.save(currentUser);
                 return true;
             } catch (Exception e) {
-                throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
+                throw new UpdateUserMainSettingsException("Невозможно обновиться данные пользователя: " + e.getMessage());
             }
     }
 

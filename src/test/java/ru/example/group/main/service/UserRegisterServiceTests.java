@@ -58,13 +58,13 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     @Test
     void createUser() throws Exception {
         ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
-        assertTrue(apiResponseDto.getMessage().equals("User created"));
+        assertTrue(apiResponseDto.getMessage().equals("Пользователь создан"));
     }
 
     @Test
     void activateUser() throws Exception {
         ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
-        assertTrue(apiResponseDto.getMessage().equals("User created"));
+        assertTrue(apiResponseDto.getMessage().equals("Пользователь создан"));
         if (initRecommendations) {
             String code = userRepository.findByEmail(email).getConfirmationCode();
             RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();

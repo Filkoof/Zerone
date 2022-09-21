@@ -23,25 +23,30 @@ import java.time.LocalDateTime;
 @Slf4j
 public class GlobalExceptionHandlerController {
 
-    @ExceptionHandler( {UsernameNotFoundException.class, LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class})
-    public ResponseEntity<CommonResponseDto<ResultMessageDto>> handleUsernameNotFoundException(Exception e) {
+    @ExceptionHandler({LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class})
+    public ResponseEntity<CommonResponseDto<?>> handleAuthenticationsException(Exception e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<ResultMessageDto> commonResponseDto = new CommonResponseDto<>();
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        commonResponseDto.setError(e.getMessage());
-        commonResponseDto.setMessage(e.getLocalizedMessage());
-        commonResponseDto.setData(new ResultMessageDto());
-        commonResponseDto.getData().setMessage(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(commonResponseDto);
+        commonResponseDto.setErrorDescription(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleUsernameNotFoundException(Exception e) {
+        log.info(e.getMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        commonResponseDto.setErrorDescription(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ServletException.class)
     public ResponseEntity<CommonResponseDto<LogoutDataResponseDto>> handleServletExceptions(ServletException e) {
         log.info(e.getLocalizedMessage());
-        CommonResponseDto<LogoutDataResponseDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setError(e.getMessage());
-        commonResponseDto.setMessage(e.getMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
+        commonResponseDto.setErrorDescription(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }
 
@@ -49,59 +54,72 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity<CommonResponseDto<?>> handleMailNotSentException(Exception e) {
         log.info(e.getLocalizedMessage());
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setError("Письмо не отправлено: " + e.getMessage());
-        commonResponseDto.setMessage("Письмо не отправлено!");
+        commonResponseDto.setMessage("Письмо не отправлено");
+        commonResponseDto.setErrorDescription("Письмо не отправлено");
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NewUserWasNotSavedToDBException.class)
-    public ResponseEntity<ApiResponseDto> handleNewUserWasNotSavedToDBException(NewUserWasNotSavedToDBException e) {
+    public ResponseEntity<CommonResponseDto<?>> handleNewUserWasNotSavedToDBException(NewUserWasNotSavedToDBException e) {
         log.info(e.getLocalizedMessage());
-        ApiResponseDto apiResponseDto = new ApiResponseDto();
-        apiResponseDto.setMessage("User creation mistake. Please contact support.");
-        apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(apiResponseDto, HttpStatus.BAD_REQUEST);
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserWithThatEmailALreadyExistException.class)
-    public ResponseEntity<ApiResponseDto> handleUserWithThatEmailALreadyExistException(UserWithThatEmailALreadyExistException e){
-        log.info(e.getApiResponseDto().getMessage());
-        ApiResponseDto apiResponseDto = new ApiResponseDto();
-        apiResponseDto.setMessage("User with that email already exist.");
-        apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(apiResponseDto, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CommonResponseDto<?>> handleUserWithThatEmailALreadyExistException(UserWithThatEmailALreadyExistException e){
+        log.info(e.getLocalizedMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(NewUserConfirmationViaEmailFailedException.class)
-    public ResponseEntity<RegistrationCompleteResponseDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
-        log.info(e.getMessage());
-        return new ResponseEntity(new RegistrationCompleteResponseDto(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<CommonResponseDto<?>> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
+        log.info(e.getLocalizedMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthLogoutException.class)
-    public ResponseEntity<CommonResponseDto> handleAuthLogoutException(AuthLogoutException e){
-        log.info(e.getMessage());
-        return new ResponseEntity(new CommonResponseDto(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CommonResponseDto<?>> handleAuthLogoutException(AuthLogoutException e){
+        log.info(e.getLocalizedMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription("Ошибка выхода из системы");
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
-    public ResponseEntity<?> handleEmailChangeException(EmailOrPasswordChangeException e){
-        log.info(e.getMessage());
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CommonResponseDto<?>> handleEmailChangeException(EmailOrPasswordChangeException e){
+        log.info(e.getLocalizedMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserDeleteOrRecoveryException.class)
-    public ResponseEntity<?> handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
-        log.info(e.getMessage());
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CommonResponseDto<?>> handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
+        log.info(e.getLocalizedMessage());
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RecommendedFriendsLoadingFromDbToApiException.class)
     public ResponseEntity<RecommendedFriendsResponseDto> handleRecommendedFriendsLoadingFromDbToApiException(RecommendedFriendsLoadingFromDbToApiException e,
                                                                                                              RecommendedFriendsResponseDto recommendedFriendsResponseDto){
         log.info(e.getMessage());
+        recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендуемых друзей");
         return new ResponseEntity(recommendedFriendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
@@ -109,6 +127,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity<FriendsResponseDto> handleGetUserFriendsException(GetUserFriendsException e,
                                                                             FriendsResponseDto friendsResponseDto){
         log.info(e.getMessage());
+        friendsResponseDto.setError("Ошибка загрузки друзей");
         return new ResponseEntity(friendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
@@ -116,14 +135,14 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity<CommonResponseDto<?>> handleFriendsRequestException(FriendsRequestException e,
                                                                               CommonResponseDto<?> commonResponseDto){
         log.info(e.getMessage());
+        commonResponseDto.setErrorDescription(commonResponseDto.getError());
         return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<CommonResponseDto<?>> handleConstraintViolationException(ConstraintViolationException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setMessage("Ошибка, переданы неверные данные.");
-        commonResponseDto.setError("Ошибка, переданы неверные данные: " + e.getLocalizedMessage());
+        commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
@@ -131,8 +150,7 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponseDto<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setMessage("Ошибка, переданы неверные данные.");
-        commonResponseDto.setError("Ошибка, переданы неверные данные: " + e.getLocalizedMessage());
+        commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
@@ -141,8 +159,7 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CommonResponseDto<?>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setMessage("Ошибка в запросе.");
-        commonResponseDto.setError("Ошибка в запросе: " + e.getLocalizedMessage());
+        commonResponseDto.setErrorDescription("Ошибка в запросе");
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
@@ -151,8 +168,7 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(VkApiException.class)
     public ResponseEntity<CommonResponseDto<?>> handleVkApiException(VkApiException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setMessage("Ошибка, неудалось загрузить АПИ данные с VK.");
-        commonResponseDto.setError("Ошибка, неудалось загрузить АПИ данные с VK: " + e.getLocalizedMessage());
+        commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
@@ -160,8 +176,31 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(CloudinaryException.class)
     public ResponseEntity<CommonResponseDto<?>> handleCloudinaryException(CloudinaryException e){
         CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setMessage("Ошибка, неудалось обработать запрос.");
-        commonResponseDto.setError("Ошибка, неудалось обработать запрос: " + e.getMessage());
+        commonResponseDto.setErrorDescription(e.getMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IdUserException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleIdUserException(IdUserException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CommentPostNotFoundException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleCommentPostNotFoundException(CommentPostNotFoundException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PostsException.class)
+    public ResponseEntity<CommonResponseDto<?>> handlePostDeleteException(PostsException e){
+        CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+        commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
         return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
     }

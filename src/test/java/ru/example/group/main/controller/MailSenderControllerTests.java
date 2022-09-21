@@ -63,8 +63,7 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
                                 """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.key").isEmpty())
-                .andExpect(jsonPath("$.eMail").isEmpty())
+                .andExpect(jsonPath("$.error_description").value("Не удалось найти этого пользователя во время активации"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
 

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.example.group.main.dto.response.CommonListResponseDto;
+import ru.example.group.main.exception.PostsException;
 import ru.example.group.main.service.SearchService;
 
 @RestController
@@ -43,7 +44,7 @@ public class SearchController {
             @RequestParam(defaultValue = "20") Integer itemPerPage,
             @RequestParam(defaultValue = "") String author,
             @RequestParam(defaultValue = "") String tag
-    ) {
+    ) throws PostsException {
         return new ResponseEntity<>(searchService.postSearch(text, date_from, date_to,
                 offset, itemPerPage, author, tag), HttpStatus.OK);
     }

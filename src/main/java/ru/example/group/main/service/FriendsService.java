@@ -130,7 +130,6 @@ public class FriendsService {
             friendshipRepository.save(userToIdFriendshipStatusCheck);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
             commonResponseDto.setError("Ошибка запроса.");
             throw new FriendsRequestException(e.getMessage(), commonResponseDto);
@@ -149,11 +148,12 @@ public class FriendsService {
             deleteOrBlockFriendResponse.setMessage(code == 3 ? "Пользователь удален." : "Пользователь заблокирован.");
             Boolean statusUpdate = deleteOrBlockUserDoInRepository(code, user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
             if (!statusUpdate) {
-                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки.");
-                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки.");
+                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки");
+                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки");
+                throw new FriendsRequestException("Ошибка обработки запроса, обратитесь в службу поддержки", deleteOrBlockFriendResponse);
             }
         } catch (Exception e) {
-            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья.");
+            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья");
             throw new FriendsRequestException(e.getMessage(), deleteOrBlockFriendResponse);
         }
         return deleteOrBlockFriendResponse;

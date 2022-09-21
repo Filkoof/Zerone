@@ -25,32 +25,26 @@ public class SocialNetUserRegisterService {
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JWTUtilService jwtUtilService;
-    private final HandlerExceptionResolver handlerExceptionResolver;
 
     private final UserMapper userMapper;
 
     @Autowired
-    public SocialNetUserRegisterService(SocialNetUserDetailsService socialNetUserDetailsService, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, HandlerExceptionResolver handlerExceptionResolver, UserMapper userMapper) {
+    public SocialNetUserRegisterService(SocialNetUserDetailsService socialNetUserDetailsService, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, UserMapper userMapper) {
         this.socialNetUserDetailsService = socialNetUserDetailsService;
         this.authenticationManager = authenticationManager;
         this.jwtUtilService = jwtUtilService;
-        this.handlerExceptionResolver = handlerExceptionResolver;
         this.userMapper = userMapper;
     }
 
-    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
-        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
-                    payload.getPassword()));
-            SocialNetUserDetails userDetails =
-                    (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
-            authLoginResponseDto = setAuthLoginResponse(userDetails);
-        } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException(e.getMessage()));
-            authLoginResponseDto.setError("Неверные данные учетной записи.");
-            authLoginResponseDto.setTimeStamp(LocalDateTime.now());
-        }
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto;
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
+                payload.getPassword()));
+        SocialNetUserDetails userDetails =
+                (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
+        authLoginResponseDto = setAuthLoginResponse(userDetails);
+        authLoginResponseDto.setError("ошибка");
+        authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         return authLoginResponseDto;
     }
 

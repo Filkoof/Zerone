@@ -7,6 +7,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.UserSearchResponseDto;
+import ru.example.group.main.exception.PostsException;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -51,7 +52,7 @@ public class SearchService {
 
     public CommonListResponseDto<Object> postSearch(String text, Long date_from, Long date_to,
                                                     Integer offset, Integer itemPerPage, String author,
-                                                    String tag) {
+                                                    String tag) throws PostsException {
 
         LocalDateTime endDate =
                 Instant.ofEpochMilli(date_to).atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(1);
@@ -75,13 +76,14 @@ public class SearchService {
 
         return postService.getNewsByListUserId(listPostId, offset);
     }
+
     //TODO доработать условия
     private Condition conditionPost(Condition condition, String author, String text, String start, String end, String tag) {
         if (!text.equals("")) {
             condition = condition.and(field("p.post_text").likeIgnoreCase('%' + text + '%'));
         }
         if (!author.equals("")) {
-          //  condition = condition.and(field(concat("u.first_name" + " " + "u.last_name")).likeIgnoreCase(author));
+            //  condition = condition.and(field(concat("u.first_name" + " " + "u.last_name")).likeIgnoreCase(author));
             condition = condition.and(field("u.first_name").likeIgnoreCase(author).or(field("u.last_name").likeIgnoreCase(author)));
         }
         if (!tag.equals("")) {
@@ -106,7 +108,6 @@ public class SearchService {
         if (!propertyCity.equals("")) condition = condition
                 .and(field("City").likeIgnoreCase(propertyCity));
         return condition;
-        //trueCondition();
     }
 
     private Condition conditionAge(Condition condition, Long propertyAgeTo, Long propertyAgeFrom) {

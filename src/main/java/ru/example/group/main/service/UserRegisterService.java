@@ -26,16 +26,11 @@ public class UserRegisterService {
 
     @Value("${config.frontend}")
     private String mailHost;
-
     @Value("${cloudinary.default_avatar}")
     private String default_avatar;
-
     private final UserRepository userRepository;
-
     private final ZeroneMailSenderService zeroneMailSenderService;
-
     private final PasswordEncoder passwordEncoder;
-
     private final RecommendedFriendsService recommendedFriendsService;
 
 
@@ -85,7 +80,7 @@ public class UserRegisterService {
             user.setPhone("");
             userRepository.save(user);
         } catch (Exception e) {
-            throw new NewUserWasNotSavedToDBException("New user registration failed, User was not added to DB: " + e.getMessage());
+            throw new NewUserWasNotSavedToDBException("Ошибка создания нового пользователя: " + e.getMessage());
         }
         return true;
     }
@@ -94,7 +89,7 @@ public class UserRegisterService {
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
-            throw new NewUserConfirmationViaEmailFailedException("No such user found during account activation via email.");
+            throw new NewUserConfirmationViaEmailFailedException("Не удалось найти этого пользователя во время активации");
         }
         try {
             user.setConfirmationCode(null);
@@ -105,7 +100,7 @@ public class UserRegisterService {
             registrationCompleteResponseDto.setKey(registerConfirmRequestDto.getToken());
             sendRegistrationConfirmationEmail(user);
         } catch (Exception e) {
-            throw new NewUserConfirmationViaEmailFailedException("Failed to activate user via email: " + e.getMessage());
+            throw new NewUserConfirmationViaEmailFailedException("Ошибка активации пользователя: " + e.getMessage());
         }
         return registrationCompleteResponseDto;
     }
@@ -122,20 +117,17 @@ public class UserRegisterService {
     public ApiResponseDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         ApiResponseDto apiResponseDto = new ApiResponseDto();
         if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
-            throw new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto);
+            throw new NewUserWasNotSavedToDBException("Не удается создать пользователя");
         }
 
         if (userRepository.existsByEmail(userRegisterRequestDto.getEmail())) {
             apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
-            apiResponseDto.setMessage("User with that email already exists");
-            throw new UserWithThatEmailALreadyExistException("User with that email already exist.", apiResponseDto);
+            apiResponseDto.setMessage("Пользователь с такой почтой уже существует");
+            throw new UserWithThatEmailALreadyExistException("Пользователь с такой почтой уже существует", apiResponseDto);
         } else {
             if (addUser(userRegisterRequestDto)) {
                 apiResponseDto.setStatus(HttpStatus.OK);
-                apiResponseDto.setMessage("User created");
-            } else {
-                apiResponseDto.setStatus(HttpStatus.OK);
-                apiResponseDto.setMessage("User creation mistake. Please contact support.");
+                apiResponseDto.setMessage("Пользователь создан");
             }
             return apiResponseDto;
         }

@@ -27,7 +27,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         assertNotNull(userDetails);
-        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken(), userDetails));
+        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload).getData().getToken(), userDetails));
     }
 
     @Test
@@ -48,8 +48,8 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
-        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken(), userDetails));
-        assertTrue(!jwtUtilService.isTokenExpired(socialNetUserRegisterService.jwtLogin(payload, null, null).getData().getToken()));
+        assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload).getData().getToken(), userDetails));
+        assertTrue(!jwtUtilService.isTokenExpired(socialNetUserRegisterService.jwtLogin(payload).getData().getToken()));
     }
 
     @Test
