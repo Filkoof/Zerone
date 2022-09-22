@@ -19,7 +19,6 @@ import ru.example.group.main.service.PostService;
 @RequestMapping("/api/v1")
 @Api("News(posts) api")
 public class PostController {
-
     private final PostService postService;
 
     @GetMapping("/feeds")

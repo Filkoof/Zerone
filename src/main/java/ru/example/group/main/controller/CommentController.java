@@ -3,10 +3,7 @@ package ru.example.group.main.controller;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
-import com.vk.api.sdk.objects.annotations.Required;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +32,6 @@ import ru.example.group.main.service.CommentService;
 public class CommentController {
 
     private final CommentService service;
-
 
     @GetMapping("/{id}/comments")
     @ApiOperation("Operation to get comments for post id(as @PathVariable) and segmenting by offset(@RequestParam) and itemsPerPage(@RequestParam) as body params")

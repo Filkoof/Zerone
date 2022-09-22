@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+@RequiredArgsConstructor
 @Service
 public class UserRegisterService {
 
@@ -31,14 +32,6 @@ public class UserRegisterService {
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final RecommendedFriendsService recommendedFriendsService;
-
-
-    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, RecommendedFriendsService recommendedFriendsService) {
-        this.userRepository = userRepository;
-        this.zeroneMailSenderService = zeroneMailSenderService;
-        this.passwordEncoder = passwordEncoder;
-        this.recommendedFriendsService = recommendedFriendsService;
-    }
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());

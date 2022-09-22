@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonResponseDto;
@@ -22,24 +23,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class FriendsService {
-    private SocialNetUserDetailsService socialNetUserDetailsService;
-    private SocialNetUserRegisterService socialNetUserRegisterService;
-    private UserRepository userRepository;
-    private FriendshipRepository friendshipRepository;
-    private FriendshipStatusRepository friendshipStatusRepository;
-
-    private UserMapper userMapper;
-
-    public FriendsService(SocialNetUserDetailsService socialNetUserDetailsService, SocialNetUserRegisterService socialNetUserRegisterService, UserRepository userRepository, FriendshipRepository friendshipRepository, FriendshipStatusRepository friendshipStatusRepository, UserMapper userMapper) {
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.userRepository = userRepository;
-        this.friendshipRepository = friendshipRepository;
-        this.friendshipStatusRepository = friendshipStatusRepository;
-        this.userMapper = userMapper;
-    }
+    private final SocialNetUserDetailsService socialNetUserDetailsService;
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
+    private final UserRepository userRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final FriendshipStatusRepository friendshipStatusRepository;
+    private final UserMapper userMapper;
 
     public FriendsResponseDto getUserFriends(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType) throws GetUserFriendsException {
         FriendsResponseDto friendsResponseDto = new FriendsResponseDto();
@@ -73,7 +65,6 @@ public class FriendsService {
         }
         return userFriendsDtoList;
     }
-
 
     public ResultMessageDto sendFriendRequest(Long id) throws FriendsRequestException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();

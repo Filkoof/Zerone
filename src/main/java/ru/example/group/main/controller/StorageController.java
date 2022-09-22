@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 
+@RequiredArgsConstructor
 @RestController
 @Slf4j
 @RequestMapping("/api/v1")
 @Api("Image storage api")
 public class StorageController {
-
     private final CloudinaryService cloudinaryService;
-
-    public StorageController(CloudinaryService cloudinaryService) {
-        this.cloudinaryService = cloudinaryService;
-    }
 
     @PostMapping("/storage")
     @ApiOperation("Operation to upload avatar image (as MultipartFile file IMAGE) to cloudinary service and provide back")

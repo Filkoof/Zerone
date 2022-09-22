@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import liquibase.util.StringUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,16 +13,12 @@ import ru.example.group.main.exception.EmailNotSentException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@RequiredArgsConstructor
 @Service
 @Component
 public class ZeroneMailSenderService {
 
     private final JavaMailSender mailSender;
-
-    public ZeroneMailSenderService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
 
     @Value("${spring.mail.username}")
     private String username;

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommonResponseDto<T> {
-
   private T data;
   private String error;
   @JsonProperty("error_description")

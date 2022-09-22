@@ -2,13 +2,12 @@ package ru.example.group.main.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import ru.example.group.main.dto.ImageDto;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
 
 @Data
 public class CommentRequestDto {

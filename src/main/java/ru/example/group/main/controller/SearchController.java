@@ -1,5 +1,6 @@
 package ru.example.group.main.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,14 +10,10 @@ import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.exception.PostsException;
 import ru.example.group.main.service.SearchService;
 
+@RequiredArgsConstructor
 @RestController
 public class SearchController {
-
     private final SearchService searchService;
-
-    public SearchController(SearchService searchService) {
-        this.searchService = searchService;
-    }
 
     @GetMapping("/api/v1/users/search")
     public ResponseEntity<CommonListResponseDto<Object>> usersSearch(

@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.response.FriendsResponseDto;
@@ -14,19 +15,14 @@ import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiExcep
 import ru.example.group.main.service.FriendsService;
 import ru.example.group.main.service.RecommendedFriendsService;
 
+@RequiredArgsConstructor
 @RestController
 @Slf4j
 @RequestMapping("/api/v1")
 @Api("Friendships api")
 public class FriendsController {
-
     private final RecommendedFriendsService recommendedFriendsService;
     private final FriendsService friendsService;
-
-    public FriendsController(RecommendedFriendsService recommendedFriendsService, FriendsService friendsService) {
-        this.recommendedFriendsService = recommendedFriendsService;
-        this.friendsService = friendsService;
-    }
 
     @GetMapping("/friends/recommendations")
     @ApiOperation("Operation to get recommended friends for current authorized user")

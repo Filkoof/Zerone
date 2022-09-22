@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class UserSettingsService {
 
@@ -28,15 +30,6 @@ public class UserSettingsService {
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, UserMapper userMapper) {
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.zeroneMailSenderService = zeroneMailSenderService;
-        this.userRepository = userRepository;
-        this.jwtUtilService = jwtUtilService;
-        this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
-    }
 
     public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();

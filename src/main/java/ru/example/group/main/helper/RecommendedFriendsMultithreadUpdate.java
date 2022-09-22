@@ -16,7 +16,7 @@ public class RecommendedFriendsMultithreadUpdate {
     @Autowired
     private TaskExecutor taskExecutor;
 
-    private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
+    private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
     public RecommendedFriendsMultithreadUpdate(JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository) {
         this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;

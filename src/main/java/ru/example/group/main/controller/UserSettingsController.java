@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +16,12 @@ import ru.example.group.main.service.UserSettingsService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
 @Api("Operations to get or change user data api")
 public class UserSettingsController {
-
     private final UserSettingsService userSettingsService;
-
-    public UserSettingsController(UserSettingsService userSettingsService) {
-        this.userSettingsService = userSettingsService;
-    }
-
 
     @GetMapping("/me")
     @ApiOperation("Operation to get user data for authorized user.")

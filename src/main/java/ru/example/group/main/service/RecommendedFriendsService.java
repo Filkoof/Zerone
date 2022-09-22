@@ -1,5 +1,7 @@
 package ru.example.group.main.service;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,25 +19,16 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class RecommendedFriendsService {
 
-    private SocialNetUserRegisterService socialNetUserRegisterService;
-    private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
-    private RecommendedFriendsMultithreadUpdate executePool;
-    private FriendsService friendsService;
-    private UserMapper userMapper;
-
-
-    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
-                                     RecommendedFriendsMultithreadUpdate executePool, FriendsService friendsService, UserMapper userMapper) {
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
-        this.executePool = executePool;
-        this.friendsService = friendsService;
-        this.userMapper = userMapper;
-    }
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
+    private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
+    private final RecommendedFriendsMultithreadUpdate executePool;
+    private final FriendsService friendsService;
+    private final UserMapper userMapper;
 
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(Integer offset, Integer itemsPerPage) throws RecommendedFriendsLoadingFromDbToApiException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();

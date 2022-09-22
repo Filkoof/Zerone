@@ -2,6 +2,7 @@ package ru.example.group.main.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class CloudinaryService {
@@ -24,12 +25,6 @@ public class CloudinaryService {
 
     private final Cloudinary cloudinary;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
-
-
-    public CloudinaryService(Cloudinary cloudinary, SocialNetUserRegisterService socialNetUserRegisterService) {
-        this.cloudinary = cloudinary;
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-    }
 
     public String uploadFile(MultipartFile file) throws CloudinaryException {
         try {

@@ -1,12 +1,12 @@
 package ru.example.group.main.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.config.ConfigProperties;
 import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.JwtBlacklistEntity;
@@ -17,21 +17,14 @@ import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
-
+@RequiredArgsConstructor
 @Service
 public class AuthUserService {
 
-    private SocialNetUserRegisterService userRegister;
-    private UserRepository userRepository;
-    private JwtBlacklistRepository jwtBlacklistRepository;
-    private ConfigProperties configProperties;
-
-    public AuthUserService(SocialNetUserRegisterService userRegister, UserRepository userRepository, JwtBlacklistRepository jwtBlacklistRepository, ConfigProperties configProperties) {
-        this.userRegister = userRegister;
-        this.userRepository = userRepository;
-        this.jwtBlacklistRepository = jwtBlacklistRepository;
-        this.configProperties = configProperties;
-    }
+    private final SocialNetUserRegisterService userRegister;
+    private final UserRepository userRepository;
+    private final JwtBlacklistRepository jwtBlacklistRepository;
+    private final ConfigProperties configProperties;
 
     public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
@@ -69,6 +62,9 @@ public class AuthUserService {
                 }
             }
         }
-        return new ResultMessageDto();
+        ResultMessageDto resultMessageDto = new ResultMessageDto();
+        resultMessageDto.setError("");
+        resultMessageDto.setTimeStamp(LocalDateTime.now());
+        return resultMessageDto;
     }
 }

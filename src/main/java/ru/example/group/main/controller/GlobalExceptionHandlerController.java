@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandlerController {
-
     @ExceptionHandler({LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class})
     public ResponseEntity<ResultMessageDto> handleAuthenticationsException(Exception e) {
         log.info(e.getLocalizedMessage());
@@ -42,7 +41,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<CommonResponseDto<LogoutDataResponseDto>> handleServletExceptions(ServletException e) {
+    public ResponseEntity<ResultMessageDto> handleServletExceptions(ServletException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
