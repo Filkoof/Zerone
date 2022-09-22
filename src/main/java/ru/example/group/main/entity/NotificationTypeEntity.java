@@ -1,5 +1,6 @@
 package ru.example.group.main.entity;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -32,6 +33,6 @@ public class NotificationTypeEntity {
   private NotificationType name;
 
   @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
-  private List<NotificationEntity> notificationEntities = new LinkedList<>();
+  private List<NotificationEntity> notificationEntities = new ArrayList<>();
 
 }

@@ -1,5 +1,6 @@
 package ru.example.group.main.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +33,6 @@ public class DialogEntity {
   private UserEntity recipient;
 
   @OneToMany(mappedBy = "dialog")
-  private List<MessageEntity> messageSet;
+  private List<MessageEntity> messageSet=new ArrayList<>();
 
 }

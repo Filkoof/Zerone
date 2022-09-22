@@ -65,34 +65,34 @@ public class UserEntity implements Serializable{
   private boolean isDeleted;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<PostEntity> post;
+  private List<PostEntity> post =new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<CommentEntity> comment = new LinkedList<>();
+  private List<CommentEntity> comment = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<NotificationEntity> notification = new LinkedList<>();
+  private List<NotificationEntity> notification = new ArrayList<>();
 
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-  private List<DialogEntity> senderDialogEntities = new LinkedList<>();
+  private List<DialogEntity> senderDialogEntities = new ArrayList<>();
 
   @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
-  private List<DialogEntity> recipientDialogEntities = new LinkedList<>();
+  private List<DialogEntity> recipientDialogEntities = new ArrayList<>();
 
   @OneToMany(mappedBy = "srcPerson")
-  private List<FriendshipEntity> srcFriendships = new LinkedList<>();
+  private List<FriendshipEntity> srcFriendships = new ArrayList<>();
 
   @OneToMany(mappedBy = "dstPerson")
-  private List<FriendshipEntity> dstFriendships = new LinkedList<>();
+  private List<FriendshipEntity> dstFriendships = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<NotificationSettingEntity> notificationSettings = new LinkedList<>();
+  private List<NotificationSettingEntity> notificationSettings = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<BlockHistoryEntity> blockHistoryEntities = new LinkedList<>();
+  private List<BlockHistoryEntity> blockHistoryEntities = new ArrayList<>();
  
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) 
-  private List<MessageEntity> message = new LinkedList<>();
+  private List<MessageEntity> message = new ArrayList<>();
 
   @OneToMany(mappedBy = "userForRole", fetch = FetchType.EAGER)
   private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
