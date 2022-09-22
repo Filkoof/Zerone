@@ -4,15 +4,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.*;
 import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
@@ -137,19 +136,14 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend( email, title, message);
     }
 
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete() throws EmailNotSentException {
+    public ResultMessageDto handleUserDelete() throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        CommonResponseDto<LogoutDataResponseDto> deleteResponse = new CommonResponseDto<>();
+        ResultMessageDto deleteResponse = new ResultMessageDto();
         if (user != null){
             sendUserDeleteConfirmation(user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
             deleteResponse.setTimeStamp(LocalDateTime.now());
-            LogoutDataResponseDto logoutDataResponseDto = new LogoutDataResponseDto();
-            logoutDataResponseDto.setAdditionalProp1("prop1del");
-            logoutDataResponseDto.setAdditionalProp2("prop2del");
-            logoutDataResponseDto.setAdditionalProp3("prop3del");
-            deleteResponse.setData(logoutDataResponseDto);
             return deleteResponse;
         }
         deleteResponse.setMessage("Deletion fail.");

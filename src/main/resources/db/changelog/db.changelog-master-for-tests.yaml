@@ -707,6 +707,15 @@ databaseChangeLog:
 #            encoding: utf8
 #            path: db/changelog/sql/create_get_recommendations_stored_function.sql
 
+  - changeSet:
+      id: 9
+      author: Dmitry_Kochuev
+      comment: "added admin role migration for test user"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/roles.sql
+
       rollback:
         - delete:
             tableName: users

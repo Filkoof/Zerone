@@ -1,18 +1,17 @@
 package ru.example.group.main.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
 import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
-import ru.example.group.main.exception.UserWithThatEmailALreadyExistException;
+import ru.example.group.main.exception.UserWithThatEmailAlreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
 
@@ -114,19 +113,17 @@ public class UserRegisterService {
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
-    public ApiResponseDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
-        ApiResponseDto apiResponseDto = new ApiResponseDto();
+    public ResultMessageDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+        ResultMessageDto apiResponseDto = new ResultMessageDto();
         if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
             throw new NewUserWasNotSavedToDBException("Не удается создать пользователя");
         }
 
         if (userRepository.existsByEmail(userRegisterRequestDto.getEmail())) {
-            apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
             apiResponseDto.setMessage("Пользователь с такой почтой уже существует");
-            throw new UserWithThatEmailALreadyExistException("Пользователь с такой почтой уже существует", apiResponseDto);
+            throw new UserWithThatEmailAlreadyExistException("Пользователь с такой почтой уже существует", apiResponseDto);
         } else {
             if (addUser(userRegisterRequestDto)) {
-                apiResponseDto.setStatus(HttpStatus.OK);
                 apiResponseDto.setMessage("Пользователь создан");
             }
             return apiResponseDto;

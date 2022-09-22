@@ -12,7 +12,8 @@ public class AdminService {
         this.configProperties = configProperties;
     }
 
-    public void setBlacklistOnOf(Boolean changeTo) {
+    public Boolean setBlacklistOnOf(Boolean changeTo) {
         configProperties.setJwtBlackListOn(changeTo);
+        return changeTo;
     }
 }

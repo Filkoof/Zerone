@@ -51,7 +51,6 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Пользователь создан"))
-                .andExpect(jsonPath("$.status").value("OK"))
                 .andDo(print())
                 .andExpect(status().isOk());
         assertTrue(userRepository.findByEmail(email) != null);

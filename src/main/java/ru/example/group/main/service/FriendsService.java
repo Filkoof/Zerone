@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FriendsResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
@@ -74,9 +75,9 @@ public class FriendsService {
     }
 
 
-    public CommonResponseDto<?> sendFriendRequest(Long id) throws FriendsRequestException {
+    public ResultMessageDto sendFriendRequest(Long id) throws FriendsRequestException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        CommonResponseDto<?> friendRequestResponse = new CommonResponseDto<>();
+        ResultMessageDto friendRequestResponse = new ResultMessageDto();
         friendRequestResponse.setError("");
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
         if (id != user.getId()) {
@@ -91,7 +92,7 @@ public class FriendsService {
                 throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
             }
         } else {
-            return new CommonResponseDto<>();
+            return new ResultMessageDto();
         }
         return friendRequestResponse;
     }
@@ -130,14 +131,14 @@ public class FriendsService {
             friendshipRepository.save(userToIdFriendshipStatusCheck);
             return true;
         } catch (Exception e) {
-            CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
+            ResultMessageDto commonResponseDto = new ResultMessageDto();
             commonResponseDto.setError("Ошибка запроса.");
             throw new FriendsRequestException(e.getMessage(), commonResponseDto);
         }
     }
 
-    public CommonResponseDto<?> deleteOrBlockFriend(Long id, int code) throws FriendsRequestException {
-        CommonResponseDto<?> deleteOrBlockFriendResponse = new CommonResponseDto<>();
+    public ResultMessageDto deleteOrBlockFriend(Long id, int code) throws FriendsRequestException {
+        ResultMessageDto deleteOrBlockFriendResponse = new ResultMessageDto();
         try {
             UserEntity user = socialNetUserRegisterService.getCurrentUser();
             FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);

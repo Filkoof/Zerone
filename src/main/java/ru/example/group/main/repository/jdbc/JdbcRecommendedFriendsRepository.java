@@ -1,32 +1,30 @@
 package ru.example.group.main.repository.jdbc;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlOutParameter;
-import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.entity.UserEntity;
 
 import java.sql.Connection;
 import java.sql.JDBCType;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-
 @Repository
 public class JdbcRecommendedFriendsRepository {
 
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
-    @Autowired
+
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public JdbcRecommendedFriendsRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     @Transactional
     public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {

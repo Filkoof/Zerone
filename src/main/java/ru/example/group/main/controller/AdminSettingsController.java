@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.service.AdminService;
 
 @RestController
@@ -17,8 +18,10 @@ public class AdminSettingsController {
     }
 
     @GetMapping("/admin/set/blacklist_on")
-    public ResponseEntity setblacklistOnOff(@RequestParam Boolean changeTo) {
-        adminService.setBlacklistOnOf(changeTo);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<CommonResponseDto<?>> setBlacklistOnOff(@RequestParam Boolean changeTo) {
+        Boolean setJwtBlacklist = adminService.setBlacklistOnOf(changeTo);
+        CommonResponseDto<?> jwtBlacklistSet = new CommonResponseDto<>();
+        jwtBlacklistSet.setMessage("Jwt blacklist is on: " + setJwtBlacklist.toString());
+        return new ResponseEntity(jwtBlacklistSet, HttpStatus.OK);
     }
 }

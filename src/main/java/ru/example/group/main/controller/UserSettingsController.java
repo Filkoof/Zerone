@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.LogoutDataResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
@@ -43,7 +43,7 @@ public class UserSettingsController {
 
     @DeleteMapping("/me")
     @ApiOperation("Operation to set is_delete status of user = true (delete status).")
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete() throws EmailNotSentException {
+    public ResultMessageDto handleUserDelete() throws EmailNotSentException {
         return userSettingsService.handleUserDelete();
     }
 

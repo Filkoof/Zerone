@@ -9,11 +9,9 @@ import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
-import ru.example.group.main.helper.CpuCoresValidator;
 import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
@@ -27,7 +25,6 @@ public class RecommendedFriendsService {
     private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
     private RecommendedFriendsMultithreadUpdate executePool;
     private FriendsService friendsService;
-
     private UserMapper userMapper;
 
 
@@ -79,7 +76,7 @@ public class RecommendedFriendsService {
     private ArrayList<Map<Long, Long[]>> getArrayForMultithreadingRecsUpdate(Map<Long, Long[]> recommendedFriendsMap) {
         ArrayList<Map<Long, Long[]>> listOfRecsForThreading = new ArrayList<>();
 
-        int cores = CpuCoresValidator.getNumberOfCPUCores();
+        int cores = Runtime.getRuntime().availableProcessors();
         Map<Long, Long[]> splitForThread = new HashMap<>();
 
         int splitSize = recommendedFriendsMap.size() / cores;

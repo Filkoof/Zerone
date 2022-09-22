@@ -20,7 +20,7 @@ class AuthUserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
         ContactConfirmationPayloadRequestDto confirmationPayload = new ContactConfirmationPayloadRequestDto();
         confirmationPayload.setEmail("test@test.tu");
         confirmationPayload.setPassword("11111111");
-        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = authUserService.getAuthLoginResponse(confirmationPayload, null, null);
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = authUserService.getAuthLoginResponse(confirmationPayload);
         assertNotNull(authLoginResponseDto);
         assertTrue(authLoginResponseDto.getData().getEMail().equals("test@test.tu"));
     }

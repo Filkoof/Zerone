@@ -12,9 +12,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.example.group.main.dto.request.EmailChangeRequestDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
-import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
@@ -22,8 +22,6 @@ import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserRegisterService;
 import ru.example.group.main.service.UserSettingsService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -45,7 +43,7 @@ public class UserRegisterController {
 
     @PostMapping("/register")
     @ApiOperation("Operation to register new user with provided data.")
-    public ResponseEntity<ApiResponseDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+    public ResponseEntity<ResultMessageDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         return new ResponseEntity<>(userRegisterService.createUser(userRegisterRequestDto), HttpStatus.OK);
     }
 
@@ -57,9 +55,11 @@ public class UserRegisterController {
 
     @PutMapping("/email")
     @ApiOperation("Operation to change user email.")
-    public ResponseEntity<?> changeEmail(@RequestBody EmailChangeRequestDto newEmail) throws EmailNotSentException {
+    public ResponseEntity<ResultMessageDto> changeEmail(@RequestBody EmailChangeRequestDto newEmail) throws EmailNotSentException {
         userSettingsService.changeEmailConfirmationSend(newEmail.getEmail());
-        return new ResponseEntity(HttpStatus.OK);
+        ResultMessageDto resultMessageDto = new ResultMessageDto();
+        resultMessageDto.setMessage("Email change confirmation needed sent");
+        return new ResponseEntity(resultMessageDto, HttpStatus.OK);
     }
 
     @GetMapping("/email_change/confirm")
@@ -75,9 +75,11 @@ public class UserRegisterController {
 
     @PutMapping("/password/set")
     @ApiOperation("Operation to change user password.")
-    public ResponseEntity<?> passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
+    public ResponseEntity<ResultMessageDto> passwordChange(@RequestBody PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
         userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto);
-        return new ResponseEntity(HttpStatus.OK);
+        ResultMessageDto resultMessageDto = new ResultMessageDto();
+        resultMessageDto.setMessage("Password change confirmation needed sent");
+        return new ResponseEntity(resultMessageDto, HttpStatus.OK);
     }
 
     @GetMapping("/password_change/confirm")

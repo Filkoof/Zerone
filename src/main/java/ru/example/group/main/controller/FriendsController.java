@@ -4,10 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
-import ru.example.group.main.dto.response.ResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.FriendsRequestException;
 import ru.example.group.main.exception.GetUserFriendsException;
@@ -61,19 +60,19 @@ public class FriendsController {
 
     @PostMapping("/friends/{id}")
     @ApiOperation("Operation to send friend request from current authorized user to id (@PathVariable) user.")
-    public CommonResponseDto<?> sendFriendRequest(@PathVariable Long id) throws FriendsRequestException {
+    public ResultMessageDto sendFriendRequest(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.sendFriendRequest(id);
     }
 
     @DeleteMapping("/friends/{id}")
     @ApiOperation("Operation to set decline status from current authorized user for friend relation or request with id (@PathVariable) user.")
-    public CommonResponseDto<?> deleteFriend(@PathVariable Long id) throws FriendsRequestException {
+    public ResultMessageDto deleteFriend(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.DECLINED).intValue());
     }
 
     @PutMapping("/users/block/{id}")
     @ApiOperation("Operation to set blocked status from current authorized user to user with id (@PathVariable).")
-    public CommonResponseDto<?> blockUser(@PathVariable Long id) throws FriendsRequestException {
+    public ResultMessageDto blockUser(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
     }
 
