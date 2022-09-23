@@ -2,6 +2,7 @@ package ru.example.group.main.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -48,6 +49,6 @@ public class CommentEntity implements Serializable {
 
   @OneToMany
   @JoinColumn(name = "parent_id")
-  private List<CommentEntity> subComments = new LinkedList<>();
+  private List<CommentEntity> subComments = new ArrayList<>();
 
 }

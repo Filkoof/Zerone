@@ -1,6 +1,8 @@
 package ru.example.group.main.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,17 +46,17 @@ public class PostEntity {
   private UserEntity user;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-  private List<CommentEntity> comments = new LinkedList<>();
+  private List<CommentEntity> comments = new ArrayList<>();
 
   @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
-  private List<BlockHistoryEntity> blockHistoryEntities = new LinkedList<>();
+  private List<BlockHistoryEntity> blockHistoryEntities = new ArrayList<>();
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-  private List<PostFileEntity> postFileEntities = new LinkedList<>();
+  private List<PostFileEntity> postFileEntities = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "posts_to_tags",
       joinColumns = @JoinColumn(name = "post_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private Set<TagEntity> tagEntities = new LinkedHashSet<>();
+  private Set<TagEntity> tagEntities = new HashSet<>();
 }
