@@ -79,8 +79,7 @@ public class FriendsService {
                 UserEntity requestedUser = userRepository.findById(id).orElseThrow();
                 friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
             } catch (Exception e) {
-                friendRequestResponse.setMessage("Ошибка добавления в друзья.");
-                throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
+                throw new FriendsRequestException("Ошибка добавления в друзья.");
             }
         } else {
             return new ResultMessageDto();
@@ -122,9 +121,7 @@ public class FriendsService {
             friendshipRepository.save(userToIdFriendshipStatusCheck);
             return true;
         } catch (Exception e) {
-            ResultMessageDto commonResponseDto = new ResultMessageDto();
-            commonResponseDto.setError("Ошибка запроса.");
-            throw new FriendsRequestException(e.getMessage(), commonResponseDto);
+            throw new FriendsRequestException("Ошибка запроса.");
         }
     }
 
@@ -142,11 +139,11 @@ public class FriendsService {
             if (!statusUpdate) {
                 deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки");
                 deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки");
-                throw new FriendsRequestException("Ошибка обработки запроса, обратитесь в службу поддержки", deleteOrBlockFriendResponse);
+                throw new FriendsRequestException("Ошибка обработки запроса, обратитесь в службу поддержки");
             }
         } catch (Exception e) {
             deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья");
-            throw new FriendsRequestException(e.getMessage(), deleteOrBlockFriendResponse);
+            throw new FriendsRequestException("Ошибка добавления в друзья");
         }
         return deleteOrBlockFriendResponse;
     }

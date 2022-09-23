@@ -1,5 +1,6 @@
 package ru.example.group.main.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,33 +14,32 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.exception.AuthenticationException;
 import ru.example.group.main.map.UserMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 @Service
 public class SocialNetUserRegisterService {
 
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JWTUtilService jwtUtilService;
-
     private final UserMapper userMapper;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    @Autowired
-    public SocialNetUserRegisterService(SocialNetUserDetailsService socialNetUserDetailsService, AuthenticationManager authenticationManager, JWTUtilService jwtUtilService, UserMapper userMapper) {
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtilService = jwtUtilService;
-        this.userMapper = userMapper;
-    }
 
-    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(HttpServletRequest request,HttpServletResponse response, ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto;
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
-                payload.getPassword()));
+        //try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
+                    payload.getPassword()));
+        /*} catch (Exception e) {
+            handlerExceptionResolver.resolveException(request, response, null, new AuthenticationException("Неверные данные пользователя"));
+        }*/
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         authLoginResponseDto = setAuthLoginResponse(userDetails);

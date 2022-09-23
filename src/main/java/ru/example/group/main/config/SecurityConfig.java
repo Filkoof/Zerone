@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.security.CustomAccessDeniedHandler;
 import ru.example.group.main.security.JWTRequestFilter;
 import ru.example.group.main.security.CustomAuthenticationEntryPoint;
@@ -69,7 +70,7 @@ public class SecurityConfig {
                                 response.setStatus(HttpStatus.OK.value())
                         )
                 )
-                .exceptionHandling(exh -> exh.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(exh -> exh.accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
                 .authenticationEntryPoint(authenticationEntryPoint())

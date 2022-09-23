@@ -19,7 +19,6 @@ import lombok.Setter;
   @Table(name = "tags")
 public class TagEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

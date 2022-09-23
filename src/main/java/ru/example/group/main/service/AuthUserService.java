@@ -16,6 +16,8 @@ import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Service
@@ -26,7 +28,7 @@ public class AuthUserService {
     private final JwtBlacklistRepository jwtBlacklistRepository;
     private final ConfigProperties configProperties;
 
-    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload) {
+    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(HttpServletRequest request, HttpServletResponse response, ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         UserEntity user = userRepository.findByEmail(payload.getEmail());
@@ -34,7 +36,7 @@ public class AuthUserService {
             throw new UsernameNotFoundException("Неправильные данные авторизации");
         }
         try {
-            authLoginResponseDto = userRegister.jwtLogin(payload);
+            authLoginResponseDto = userRegister.jwtLogin(request, response, payload);
         } catch (Exception e) {
             throw new UsernameNotFoundException("Неправильные данные авторизации");
         }

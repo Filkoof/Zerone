@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandlerController {
-    @ExceptionHandler({LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class})
+    @ExceptionHandler({LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class, AuthenticationException.class})
     public ResponseEntity<ResultMessageDto> handleAuthenticationsException(Exception e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
@@ -131,10 +131,10 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(FriendsRequestException.class)
-    public ResponseEntity<ResultMessageDto> handleFriendsRequestException(FriendsRequestException e,
-                                                                              ResultMessageDto commonResponseDto){
-        log.info(e.getMessage());
-        commonResponseDto.setErrorDescription(commonResponseDto.getError());
+    public ResponseEntity<ResultMessageDto> handleFriendsRequestException(FriendsRequestException e){
+        ResultMessageDto commonResponseDto = new ResultMessageDto();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        commonResponseDto.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 

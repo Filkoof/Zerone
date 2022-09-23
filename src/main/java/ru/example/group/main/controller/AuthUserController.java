@@ -15,6 +15,7 @@ import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.service.AuthUserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
@@ -28,8 +29,9 @@ public class AuthUserController {
     @PostMapping("/login")
     @ApiOperation(value = "Handle login authorization by checking provided login and password")
     public CommonResponseDto<UserDataResponseDto> handleLoginApi(@ApiParam(value = "Email and password data payload.")
-                                                                 @Valid @RequestBody ContactConfirmationPayloadRequestDto payload) {
-        return authUserService.getAuthLoginResponse(payload);
+                                                                 @Valid @RequestBody ContactConfirmationPayloadRequestDto payload,
+                                                                 HttpServletRequest request, HttpServletResponse response) {
+        return authUserService.getAuthLoginResponse(request, response, payload);
     }
 
     @GetMapping("/logout")
