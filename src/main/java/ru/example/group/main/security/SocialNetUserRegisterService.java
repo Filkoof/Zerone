@@ -1,11 +1,9 @@
 package ru.example.group.main.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -32,18 +30,15 @@ public class SocialNetUserRegisterService {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
 
-    public CommonResponseDto<UserDataResponseDto> jwtLogin(HttpServletRequest request,HttpServletResponse response, ContactConfirmationPayloadRequestDto payload) {
+    public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto;
-        //try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
+           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
                     payload.getPassword()));
-        /*} catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, new AuthenticationException("Неверные данные пользователя"));
-        }*/
+
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         authLoginResponseDto = setAuthLoginResponse(userDetails);
-        authLoginResponseDto.setError("ошибка");
+        authLoginResponseDto.setError("");
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         return authLoginResponseDto;
     }

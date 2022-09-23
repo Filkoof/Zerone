@@ -46,13 +46,11 @@ public class LoggerAspect {
 
   @AfterThrowing(value = "methodExecuting()", throwing = "exception")
   public void recordFailedExecution(JoinPoint joinPoint, Exception exception) throws Exception {
-
     log.error("Метод - {}, класса- {}, был аварийно завершен с исключением - {}\n" +
             "стек: {}",
         joinPoint.getSignature().getName(),
         joinPoint.getSourceLocation().getWithinType().getName(),
         exception.getMessage(), exception.getStackTrace());
-
   }
 
 }

@@ -28,7 +28,7 @@ public class AuthUserService {
     private final JwtBlacklistRepository jwtBlacklistRepository;
     private final ConfigProperties configProperties;
 
-    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(HttpServletRequest request, HttpServletResponse response, ContactConfirmationPayloadRequestDto payload) {
+    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         UserEntity user = userRepository.findByEmail(payload.getEmail());
@@ -36,7 +36,7 @@ public class AuthUserService {
             throw new UsernameNotFoundException("Неправильные данные авторизации");
         }
         try {
-            authLoginResponseDto = userRegister.jwtLogin(request, response, payload);
+            authLoginResponseDto = userRegister.jwtLogin(payload);
         } catch (Exception e) {
             throw new UsernameNotFoundException("Неправильные данные авторизации");
         }

@@ -29,9 +29,8 @@ public class AuthUserController {
     @PostMapping("/login")
     @ApiOperation(value = "Handle login authorization by checking provided login and password")
     public CommonResponseDto<UserDataResponseDto> handleLoginApi(@ApiParam(value = "Email and password data payload.")
-                                                                 @Valid @RequestBody ContactConfirmationPayloadRequestDto payload,
-                                                                 HttpServletRequest request, HttpServletResponse response) {
-        return authUserService.getAuthLoginResponse(request, response, payload);
+                                                                 @Valid @RequestBody ContactConfirmationPayloadRequestDto payload) {
+        return authUserService.getAuthLoginResponse(payload);
     }
 
     @GetMapping("/logout")

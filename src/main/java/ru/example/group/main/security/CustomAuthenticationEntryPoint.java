@@ -1,7 +1,6 @@
 package ru.example.group.main.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 
 import javax.servlet.ServletException;
