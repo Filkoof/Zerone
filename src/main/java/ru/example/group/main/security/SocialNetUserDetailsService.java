@@ -30,7 +30,7 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         if (user != null) {
             return new SocialNetUserDetails(user);
         }
-        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
+        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("loadUserByUsername user not found!"));
         return null;
     }
 
@@ -39,50 +39,8 @@ public class SocialNetUserDetailsService implements UserDetailsService {
         if (user != null) {
             return user;
         }
-        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("user not found doh!"));
+        handlerController.handleUsernameNotFoundException(new UsernameNotFoundException("loadUserEntityByUsername user not found!"));
         return null;
     }
 
-    public UserDataResponseDto setUserDataResponseDto(UserEntity user, String token) {
-        return UserDataResponseDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .regDate(user.getRegDate())
-                .birthDate(user.getBirthDate())
-                .eMail(user.getEmail())
-                .phone(user.getPhone())
-                .photo(user.getPhoto())
-                .about(user.getAbout())
-                .city(user.getCity())
-                .country(user.getCountry())
-                .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
-                .lastOnlineTime(user.getLastOnlineTime())
-                .isBlocked(user.isBlocked())
-                .isDeleted(user.isDeleted())
-                .token(token)
-                .build();
-    }
-
-
-
-    public UserDataResponseDto setUserDataResponseDto(UserEntity user) {
-        return UserDataResponseDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .regDate(user.getRegDate())
-                .birthDate(user.getBirthDate())
-                .eMail(user.getEmail())
-                .phone(user.getPhone())
-                .photo(user.getPhoto())
-                .about(user.getAbout())
-                .city(user.getCity())
-                .country(user.getCountry())
-                .messagePermissions(MessagesPermission.getFromBoolean(user.isMessagePermissions()))
-                .lastOnlineTime(user.getLastOnlineTime())
-                .isBlocked(user.isBlocked())
-                .isDeleted(user.isDeleted())
-                .build();
-    }
 }

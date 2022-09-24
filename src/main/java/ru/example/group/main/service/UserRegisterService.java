@@ -1,18 +1,18 @@
 package ru.example.group.main.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
 import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
-import ru.example.group.main.exception.UserWithThatEmailALreadyExistException;
+import ru.example.group.main.exception.UserWithThatEmailAlreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
 
@@ -20,31 +20,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+@RequiredArgsConstructor
 @Service
 public class UserRegisterService {
 
     @Value("${config.frontend}")
     private String mailHost;
-
     @Value("${cloudinary.default_avatar}")
     private String default_avatar;
-
     private final UserRepository userRepository;
-
     private final ZeroneMailSenderService zeroneMailSenderService;
-
     private final PasswordEncoder passwordEncoder;
-
     private final RecommendedFriendsService recommendedFriendsService;
-
-
-    public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, RecommendedFriendsService recommendedFriendsService) {
-        this.userRepository = userRepository;
-        this.zeroneMailSenderService = zeroneMailSenderService;
-        this.passwordEncoder = passwordEncoder;
-        this.recommendedFriendsService = recommendedFriendsService;
-    }
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
@@ -85,7 +72,7 @@ public class UserRegisterService {
             user.setPhone("");
             userRepository.save(user);
         } catch (Exception e) {
-            throw new NewUserWasNotSavedToDBException("New user registration failed, User was not added to DB: " + e.getMessage());
+            throw new NewUserWasNotSavedToDBException("Ошибка создания нового пользователя: " + e.getMessage());
         }
         return true;
     }
@@ -94,7 +81,7 @@ public class UserRegisterService {
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
-            throw new NewUserConfirmationViaEmailFailedException("No such user found during account activation via email.");
+            throw new NewUserConfirmationViaEmailFailedException("Не удалось найти этого пользователя во время активации");
         }
         try {
             user.setConfirmationCode(null);
@@ -105,7 +92,7 @@ public class UserRegisterService {
             registrationCompleteResponseDto.setKey(registerConfirmRequestDto.getToken());
             sendRegistrationConfirmationEmail(user);
         } catch (Exception e) {
-            throw new NewUserConfirmationViaEmailFailedException("Failed to activate user via email: " + e.getMessage());
+            throw new NewUserConfirmationViaEmailFailedException("Ошибка активации пользователя: " + e.getMessage());
         }
         return registrationCompleteResponseDto;
     }
@@ -119,23 +106,18 @@ public class UserRegisterService {
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
-    public ApiResponseDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
-        ApiResponseDto apiResponseDto = new ApiResponseDto();
+    public ResultMessageDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+        ResultMessageDto apiResponseDto = new ResultMessageDto();
         if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
-            throw new NewUserWasNotSavedToDBException("New user registration failed (wrong reg data). User was not added to DB." + userRegisterRequestDto);
+            throw new NewUserWasNotSavedToDBException("Не удается создать пользователя");
         }
 
         if (userRepository.existsByEmail(userRegisterRequestDto.getEmail())) {
-            apiResponseDto.setStatus(HttpStatus.BAD_REQUEST);
-            apiResponseDto.setMessage("User with that email already exists");
-            throw new UserWithThatEmailALreadyExistException("User with that email already exist.", apiResponseDto);
+            apiResponseDto.setMessage("Пользователь с такой почтой уже существует");
+            throw new UserWithThatEmailAlreadyExistException("Пользователь с такой почтой уже существует", apiResponseDto);
         } else {
             if (addUser(userRegisterRequestDto)) {
-                apiResponseDto.setStatus(HttpStatus.OK);
-                apiResponseDto.setMessage("User created");
-            } else {
-                apiResponseDto.setStatus(HttpStatus.OK);
-                apiResponseDto.setMessage("User creation mistake. Please contact support.");
+                apiResponseDto.setMessage("Пользователь создан");
             }
             return apiResponseDto;
         }

@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:root}
   mvc:
@@ -28,7 +28,7 @@ server:
   port: ${PORT:8080}
 
 config:
-  frontend: "195.161.62.32:80"
+  frontend: "195.161.62.32"
   backend: "195.161.62.32:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
@@ -64,5 +64,17 @@ vk:
   deactivated: true
 
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
 
 

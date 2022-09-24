@@ -78,7 +78,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
         UserEntity user = userRepository.findByEmail(EMAIL);
         user.setConfirmationCode("test");
         userRepository.save(user);
-        mockMvc.perform(get("/email_change/confirm")
+        mockMvc.perform(get("/api/v1/account/email_change/confirm")
                         .param("code", "test")
                         .param("newEmail", EMAIL)
                 )
@@ -91,7 +91,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
         UserEntity user = userRepository.findByEmail(EMAIL);
         user.setConfirmationCode("test");
         userRepository.save(user);
-        mockMvc.perform(get("/password_change/confirm")
+        mockMvc.perform(get("/api/v1/account/password_change/confirm")
                         .param("code", "test")
                         .param("code1", passwordEncoder.encode("11111111"))
                 )
@@ -104,7 +104,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
         UserEntity user = userRepository.findByEmail(EMAIL);
         user.setConfirmationCode("testDelete");
         userRepository.save(user);
-        mockMvc.perform(get("/user_delete/confirm")
+        mockMvc.perform(get("/api/v1/account/user_delete/confirm")
                         .param("code", "testDelete")
                 )
                 .andDo(print())
@@ -116,7 +116,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
         UserEntity user = userRepository.findByEmail(EMAIL);
         user.setConfirmationCode("testRecovery");
         userRepository.save(user);
-        mockMvc.perform(get("/user_delete_recovery/confirm")
+        mockMvc.perform(get("/api/v1/account/user_delete_recovery/confirm")
                         .param("code", "testRecovery")
                 )
                 .andDo(print())

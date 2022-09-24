@@ -1,58 +1,35 @@
 package ru.example.group.main.service;
 
-import com.vk.api.sdk.client.Lang;
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.base.Country;
-import com.vk.api.sdk.objects.database.City;
-import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
-import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.LogoutDataResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
-import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.*;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class UserSettingsService {
 
     @Value("${config.backend}")
     private String backend;
-
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
-    private final UserActor userActor;
-    private final VkApiClient vkApiClient;
-    private final SocialNetUserDetailsService socialNetUserDetailsService;
-
-    public UserSettingsService(SocialNetUserRegisterService socialNetUserRegisterService, ZeroneMailSenderService zeroneMailSenderService, UserRepository userRepository, JWTUtilService jwtUtilService, PasswordEncoder passwordEncoder, UserActor userActor, VkApiClient vkApiClient, SocialNetUserDetailsService socialNetUserDetailsService) {
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.zeroneMailSenderService = zeroneMailSenderService;
-        this.userRepository = userRepository;
-        this.jwtUtilService = jwtUtilService;
-        this.passwordEncoder = passwordEncoder;
-        this.userActor = userActor;
-        this.vkApiClient = vkApiClient;
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-    }
+    private final UserMapper userMapper;
 
     public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -71,7 +48,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
                         "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
+                        "http://"+ backend + "/api/v1/account/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -87,10 +64,10 @@ public class UserSettingsService {
                 sendEmailChangedNotice(user.getEmail());
                 return true;
             }catch (Exception e){
-                throw new EmailOrPasswordChangeException("Email was not changed via confirmation link. Error: " + e);
+                throw new EmailOrPasswordChangeException("Ошибка изменения почты: " + e.getMessage());
             }
         } else {
-            throw new EmailOrPasswordChangeException("Wrong email change confirmation code.");
+            throw new EmailOrPasswordChangeException("Неправильный код подтверждения, ошибка");
         }
     }
 
@@ -120,7 +97,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение пароля в сеть Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
+                        "http://"+ backend + "/api/v1/account/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -136,10 +113,10 @@ public class UserSettingsService {
                 sendPasswordChangedNotice(user.getEmail());
                 return true;
             }catch (Exception e){
-                throw new EmailOrPasswordChangeException("Password was not changed via confirmation link. Error: " + e);
+                throw new EmailOrPasswordChangeException("Ошибка изменения пароля: " + e);
             }
         } else {
-            throw new EmailOrPasswordChangeException("Wrong password change confirmation code.");
+            throw new EmailOrPasswordChangeException("Неправильный код подтверждения, ошибка");
         }
     }
 
@@ -152,23 +129,18 @@ public class UserSettingsService {
         zeroneMailSenderService.emailSend( email, title, message);
     }
 
-    public CommonResponseDto<LogoutDataResponseDto> handleUserDelete() throws EmailNotSentException {
+    public ResultMessageDto handleUserDelete() throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        CommonResponseDto<LogoutDataResponseDto> deleteResponse = new CommonResponseDto<>();
+        ResultMessageDto deleteResponse = new ResultMessageDto();
         if (user != null){
             sendUserDeleteConfirmation(user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
             deleteResponse.setTimeStamp(LocalDateTime.now());
-            LogoutDataResponseDto logoutDataResponseDto = new LogoutDataResponseDto();
-            logoutDataResponseDto.setAdditionalProp1("prop1del");
-            logoutDataResponseDto.setAdditionalProp2("prop2del");
-            logoutDataResponseDto.setAdditionalProp3("prop3del");
-            deleteResponse.setData(logoutDataResponseDto);
             return deleteResponse;
         }
         deleteResponse.setMessage("Deletion fail.");
-        deleteResponse.setError("User delition error.");
+        deleteResponse.setError("User delete error.");
         return deleteResponse;
     }
 
@@ -180,7 +152,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
                         "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
-                        "http://"+ backend + "/user_delete/confirm?code=" + code + "\n" +
+                        "http://"+ backend + "/api/v1/account/user_delete/confirm?code=" + code + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -197,10 +169,10 @@ public class UserSettingsService {
                 userDeletedNotice(userToDelete.getEmail(), code);
                 return true;
             }catch (Exception e){
-                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status, error: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка удаления: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to update deleted status - wrong email code.");
+            throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка удаления, неверный код.");
         }
     }
 
@@ -209,7 +181,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + email + "\n\n" +
                         "Ваш аккаунт в сеть Зерон успешно удален. \n\n" +
                         "Для восстановления аккаунта активируйте его по ссылке: \n\n" +
-                        "http://" + backend + "/user_delete_recovery/confirm?code=" + code + "\n" +
+                        "http://" + backend + "/api/v1/account/user_delete_recovery/confirm?code=" + code + "\n" +
                         "\n\nСпасибо!";
         String title = "Успешное удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(email, title, message);
@@ -218,7 +190,7 @@ public class UserSettingsService {
     public CommonResponseDto<UserDataResponseDto> getMeData() {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         CommonResponseDto<UserDataResponseDto> commonResponseDto = new CommonResponseDto<>();
-        commonResponseDto.setData(socialNetUserDetailsService.setUserDataResponseDto(user, ""));
+        commonResponseDto.setData(userMapper.userEntityToDtoWithToken(user, ""));
         commonResponseDto.setError("");
         commonResponseDto.setMessage("ok");
         commonResponseDto.setTimeStamp(LocalDateTime.now());
@@ -235,10 +207,10 @@ public class UserSettingsService {
                 recoveryUserDeletedNotice(userToDelete.getEmail());
                 return true;
             } catch (Exception e) {
-                throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status, error: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("UПользователь: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + " failed to recover deleted status - wrong email recovery code.");
+            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта, неверный код");
         }
     }
 
@@ -254,7 +226,7 @@ public class UserSettingsService {
     public CommonResponseDto<UserDataResponseDto> getUserMeResponse() {
         CommonResponseDto<UserDataResponseDto> response = new CommonResponseDto<>();
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        response.setData(socialNetUserDetailsService.setUserDataResponseDto(user));
+        response.setData(userMapper.userEntityToDto(user));
         response.setError("OK");
         response.setTimeStamp(LocalDateTime.now());
         return response;
@@ -274,50 +246,9 @@ public class UserSettingsService {
                 userRepository.save(currentUser);
                 return true;
             } catch (Exception e) {
-                throw new UpdateUserMainSettingsException("Cannot update user! Check UserDataResponseDto object: " + e.getMessage());
+                throw new UpdateUserMainSettingsException("Невозможно обновиться данные пользователя: " + e.getMessage());
             }
     }
-
-    public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
-
-        try {
-                GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
-                        .lang(Lang.RU)
-                        .needAll(true)
-                        .count(235)
-                        .execute();
-                if (!Objects.equals(country, "")) {
-                    countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
-                }
-            LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
-            locationResponseDto.setData(countries.getItems());
-            locationResponseDto.setError("OK");
-            locationResponseDto.setTimestamp(LocalDateTime.now());
-            return locationResponseDto;
-        } catch (Exception e) {
-            throw new VkApiException("Ошибка получения VK API стран(ы) - " + e.getMessage());
-        }
-    }
-
-    public LocationResponseDto<City> getCities(Integer countryId, String city) throws VkApiException {
-        if (countryId != 0) {
-            try {
-                GetCitiesResponse getCitiesResponse = vkApiClient.database().getCities(userActor, countryId)
-                        .lang(Lang.RU)
-                        .q(city)
-                        .execute();
-                LocationResponseDto<City> locationResponseDto = new LocationResponseDto<>();
-                locationResponseDto.setData(getCitiesResponse.getItems());
-                locationResponseDto.setError("OK");
-                locationResponseDto.setTimestamp(LocalDateTime.now());
-                return locationResponseDto;
-            } catch (Exception e) {
-                throw new VkApiException("Ошибка получения VK API города(ов) - " + e.getMessage());
-            }
-        }
-        return new LocationResponseDto<>();
-    }
-
 
     public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
         CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();
@@ -325,7 +256,7 @@ public class UserSettingsService {
         friendDto.setTimeStamp(LocalDateTime.now());
         try {
             UserEntity friend = userRepository.findById(friendId).orElseThrow();
-            friendDto.setData(socialNetUserDetailsService.setUserDataResponseDto(friend, ""));
+            friendDto.setData(userMapper.userEntityToDtoWithToken(friend, ""));
             return friendDto;
         } catch (Exception e){
             friendDto.setError("Ошибка");

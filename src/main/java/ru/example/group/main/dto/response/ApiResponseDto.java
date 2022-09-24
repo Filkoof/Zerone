@@ -8,4 +8,5 @@ public class ApiResponseDto {
 
   private String message;
   private HttpStatus status;
+
 }

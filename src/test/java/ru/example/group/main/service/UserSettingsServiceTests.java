@@ -14,6 +14,7 @@ import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
@@ -66,7 +67,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private SocialNetUserDetailsService socialNetUserDetailsService;
+    private UserMapper userMapper;
 
 
     @BeforeEach
@@ -150,23 +151,9 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @Test
-    @DisplayName("Тест на заполнение пользовательского DTO @GetMapping(/api/v1/users/me) данными")
-    void getUserMeResponse() {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
-        assertNotNull(userDataResponseDto);
-    }
-
-    @Test
-    @DisplayName("Тест для проверки отсутствия токена для Dto после авторизации")
-    void updateUserMainSettings() {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
-        assertNull(userDataResponseDto.getToken());
-    }
-
-    @Test
     @DisplayName("Тест на обновление персональных данных пользователя метода @PutMapping(/api/v1/users/me)")
     void setUserDataResponseDto() throws UpdateUserMainSettingsException {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
+        UserDataResponseDto userDataResponseDto = userMapper.userEntityToDto(user1);
         assertTrue(userSettingsService.updateUserMainSettings(userDataResponseDto));
     }
 }

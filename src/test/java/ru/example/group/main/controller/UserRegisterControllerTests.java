@@ -50,8 +50,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                                         """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("User created"))
-                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.message").value("Пользователь создан"))
                 .andDo(print())
                 .andExpect(status().isOk());
         assertTrue(userRepository.findByEmail(email) != null);
@@ -88,8 +87,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                                         """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("User with that email already exists"))
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error_description").value("Пользователь с такой почтой уже существует"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -109,8 +107,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                                         """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("User creation mistake. Please contact support."))
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error_description").value("Не удается создать пользователя"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

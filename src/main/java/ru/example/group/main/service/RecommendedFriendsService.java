@@ -1,5 +1,7 @@
 package ru.example.group.main.service;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -9,35 +11,24 @@ import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
-import ru.example.group.main.helper.CpuCoresValidator;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class RecommendedFriendsService {
 
-    private SocialNetUserRegisterService socialNetUserRegisterService;
-    private SocialNetUserDetailsService socialNetUserDetailsService;
-    private JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
-    private RecommendedFriendsMultithreadUpdate executePool;
-    private FriendsService friendsService;
-
-
-    public RecommendedFriendsService(SocialNetUserRegisterService socialNetUserRegisterService, SocialNetUserDetailsService socialNetUserDetailsService
-            , JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository,
-                                     RecommendedFriendsMultithreadUpdate executePool, FriendsService friendsService) {
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-        this.jdbcRecommendedFriendsRepository = jdbcRecommendedFriendsRepository;
-        this.executePool = executePool;
-        this.friendsService = friendsService;
-    }
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
+    private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
+    private final RecommendedFriendsMultithreadUpdate executePool;
+    private final FriendsService friendsService;
+    private final UserMapper userMapper;
 
     public RecommendedFriendsResponseDto getRecommendedFriendsResponse(Integer offset, Integer itemsPerPage) throws RecommendedFriendsLoadingFromDbToApiException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -53,7 +44,7 @@ public class RecommendedFriendsService {
             recommendedFriendsResponseDto.setTotal(recommendedFriendsResponseDto.getUserDataResponseDtoList().size());
         } catch (Exception e) {
             e.printStackTrace();
-            recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендованных пользователей. ");
+            recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендованных пользователей");
             throw new RecommendedFriendsLoadingFromDbToApiException(e.getMessage(), recommendedFriendsResponseDto);
         }
         return recommendedFriendsResponseDto;
@@ -68,7 +59,7 @@ public class RecommendedFriendsService {
             Integer userToId = userToIdFriendship != null ? FriendshipStatusType.getLongFromEnum(userToIdFriendship.getStatus().getCode()).intValue() : 1;
             Integer idToUser = idToUserFriendship != null ? FriendshipStatusType.getLongFromEnum(idToUserFriendship.getStatus().getCode()).intValue() : 1;
             if (!(userToId == 5 || userToId == 2 || userToId == 6 || userToId == 7 || userToId == 3 || idToUser == 3 || idToUser == 4 || idToUser == 7)) {
-                potentialUserEntities.add(socialNetUserDetailsService.setUserDataResponseDto(nextPotentialFriend, ""));
+                potentialUserEntities.add(userMapper.userEntityToDtoWithToken(nextPotentialFriend, ""));
             }
         }
 
@@ -78,7 +69,7 @@ public class RecommendedFriendsService {
     private ArrayList<Map<Long, Long[]>> getArrayForMultithreadingRecsUpdate(Map<Long, Long[]> recommendedFriendsMap) {
         ArrayList<Map<Long, Long[]>> listOfRecsForThreading = new ArrayList<>();
 
-        int cores = CpuCoresValidator.getNumberOfCPUCores();
+        int cores = Runtime.getRuntime().availableProcessors();
         Map<Long, Long[]> splitForThread = new HashMap<>();
 
         int splitSize = recommendedFriendsMap.size() / cores;
@@ -129,7 +120,6 @@ public class RecommendedFriendsService {
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
         List<Long> activeUsersIds = jdbcRecommendedFriendsRepository.getAllActiveUsersIds();
         for (Long userId : activeUsersIds) {
-            //List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(userId);
             List<Long> friendsOfUserIds = jdbcRecommendedFriendsRepository.getRecommendedFriendsForUser(userId);
             recommendedFriendsMapArray.put(userId, friendsOfUserIds.toArray(Long[]::new));
             updateCount++;

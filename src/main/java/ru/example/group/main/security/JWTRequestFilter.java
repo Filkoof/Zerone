@@ -1,5 +1,6 @@
 package ru.example.group.main.security;
 
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,24 +43,30 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token;
-        String username;
+        String username = null;
         try {
             token = httpServletRequest.getHeader(authHeader);
-            username = checkToken(token);
+            if (!token.equals("") && token != null) {
+                username = checkToken(token);
+            }
             if (username != null) {
                 checkAuthenticationToken(username, token, httpServletRequest);
             }
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
         }
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
+        try {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } catch (Exception e){
+            handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
+        }
+
     }
 
     private void checkAuthenticationToken(String username, String token,
                                           HttpServletRequest httpServletRequest) {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails;
-            userDetails = socialNetUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             if (jwtUtilService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

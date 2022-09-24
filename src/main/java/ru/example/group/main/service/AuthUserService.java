@@ -1,15 +1,13 @@
 package ru.example.group.main.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.config.ConfigProperties;
 import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.LogoutDataResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 import ru.example.group.main.entity.UserEntity;
@@ -18,81 +16,57 @@ import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-
+@RequiredArgsConstructor
 @Service
 public class AuthUserService {
 
-    @Value("${config.authorization}")
-    private String authHeader;
-    private SocialNetUserRegisterService userRegister;
-    private UserRepository userRepository;
+    private final SocialNetUserRegisterService userRegister;
+    private final UserRepository userRepository;
+    private final JwtBlacklistRepository jwtBlacklistRepository;
+    private final ConfigProperties configProperties;
 
-    private JwtBlacklistRepository jwtBlacklistRepository;
-    private final HandlerExceptionResolver handlerExceptionResolver;
-    private ConfigProperties configProperties;
-
-    public AuthUserService(SocialNetUserRegisterService userRegister, UserRepository userRepository, JwtBlacklistRepository jwtBlacklistRepository, HandlerExceptionResolver handlerExceptionResolver, ConfigProperties configProperties) {
-        this.userRegister = userRegister;
-        this.userRepository = userRepository;
-        this.jwtBlacklistRepository = jwtBlacklistRepository;
-        this.handlerExceptionResolver = handlerExceptionResolver;
-        this.configProperties = configProperties;
-    }
-
-    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload, HttpServletRequest request, HttpServletResponse response) {
+    public CommonResponseDto<UserDataResponseDto> getAuthLoginResponse(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         authLoginResponseDto.setTimeStamp(LocalDateTime.now());
         UserEntity user = userRepository.findByEmail(payload.getEmail());
-        if (user == null || !user.isApproved() || user.isBlocked() || user.isDeleted()) {
-            authLoginResponseDto.setError("User is inactivated, blocked or deleted.");
-            authLoginResponseDto.setMessage("User is inactivated, blocked or deleted.");
-        } else {
-            try {
-                authLoginResponseDto = userRegister.jwtLogin(payload, request, response);
-            } catch (Exception e) {
-                e.getMessage();
-                handlerExceptionResolver.resolveException(request, response, null, new UsernameNotFoundException("Wrong user name or password. " + e.getMessage()));
-                authLoginResponseDto.setError("Wrong user name or password.");
-            }
+        if (user == null) {
+            throw new UsernameNotFoundException("Неправильные данные авторизации");
+        }
+        try {
+            authLoginResponseDto = userRegister.jwtLogin(payload);
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Неправильные данные авторизации");
+        }
+        if (!user.isApproved() || user.isBlocked() || user.isDeleted()) {
+            throw new UsernameNotFoundException("Пользователь неактивен");
         }
         return authLoginResponseDto;
     }
 
-    public CommonResponseDto<LogoutDataResponseDto> getAuthLogoutResponse() {
-        CommonResponseDto<LogoutDataResponseDto> authLogoutResponseDto = new CommonResponseDto<>();
-        authLogoutResponseDto.setError("");
-        LogoutDataResponseDto logoutDataResponseDto = new LogoutDataResponseDto();
-        logoutDataResponseDto.setAdditionalProp1("prop1");
-        logoutDataResponseDto.setAdditionalProp2("prop2");
-        logoutDataResponseDto.setAdditionalProp3("prop3");
-        authLogoutResponseDto.setData(new LogoutDataResponseDto());
-        authLogoutResponseDto.setTimeStamp(LocalDateTime.now());
-        return authLogoutResponseDto;
-    }
-
-    private void setJwtBlackList(HttpServletRequest request) {
-        String jwtToken = request.getHeader(authHeader);
+    private void setJwtBlackList(String token) {
         JwtBlacklistEntity jwtBlacklistEntity = new JwtBlacklistEntity();
-        jwtBlacklistEntity.setJwtBlacklistedToken(jwtToken);
+        jwtBlacklistEntity.setJwtBlacklistedToken(token);
         jwtBlacklistEntity.setRevocationDate(LocalDateTime.now());
         jwtBlacklistRepository.save(jwtBlacklistEntity);
     }
 
-    public void logoutProcessing(HttpServletRequest request) throws ServletException {
-        if (request.getHeader(authHeader) != null) {
+    public ResultMessageDto logoutProcessing(String token) throws AuthLogoutException {
+        if (token != null) {
             if (configProperties.getJwtBlackListOn()) {
                 try {
-                    setJwtBlackList(request);
+                    setJwtBlackList(token);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    handlerExceptionResolver.resolveException(null, null, null, new AuthLogoutException("Something went wrong with adding jwtToken to blacklist. " + e.getMessage()));
+                    throw new AuthLogoutException("Ошибка: " + e.getMessage());
                 }
             }
         }
+        ResultMessageDto resultMessageDto = new ResultMessageDto();
+        resultMessageDto.setError("");
+        resultMessageDto.setTimeStamp(LocalDateTime.now());
+        return resultMessageDto;
     }
 }

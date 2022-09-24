@@ -1,5 +1,6 @@
 package ru.example.group.main.entity;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.persistence.Entity;
@@ -19,7 +20,6 @@ import lombok.Setter;
   @Table(name = "tags")
 public class TagEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +30,6 @@ public class TagEntity {
     @JoinTable(name = "posts_to_tags",
         joinColumns = @JoinColumn(name = "post_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<PostEntity> postEntities = new LinkedHashSet<>();
+    private Set<PostEntity> postEntities = new HashSet<>();
   }
 

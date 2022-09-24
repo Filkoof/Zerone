@@ -11,16 +11,20 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-  @ValueMappings({@ValueMapping(source = "ALL",target = "ALL"),
-      @ValueMapping(source = "FRIENDS",target = "FRIENDS")})
-  MessagesPermission getMesPerm(MessagesPermission a);
   @Mapping(target = "isDeleted", source = "deleted")
   @Mapping(target = "eMail", source = "email")
   @Mapping(target = "isBlocked", source = "blocked")
   @Mapping(target = "token", ignore = true)
   @Mapping(target = "messagePermissions",
-      expression ="java(getMesPerm(MessagesPermission.getFromBoolean(userEntity.isMessagePermissions())))" )
+      expression ="java(ru.example.group.main.entity.enumerated.MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))" )
   UserDataResponseDto userEntityToDto(UserEntity userEntity);
+
+  @Mapping(target = "isDeleted", source = "userEntity.deleted")
+  @Mapping(target = "eMail", source = "userEntity.email")
+  @Mapping(target = "isBlocked", source = "userEntity.blocked")
+  @Mapping(target = "messagePermissions",
+          expression ="java(ru.example.group.main.entity.enumerated.MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))" )
+  UserDataResponseDto userEntityToDtoWithToken(UserEntity userEntity, String token);
 
 
 }

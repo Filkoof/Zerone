@@ -1,15 +1,18 @@
 package ru.example.group.main.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FriendsResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.FriendsRequestException;
 import ru.example.group.main.exception.GetUserFriendsException;
+import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.FriendshipRepository;
 import ru.example.group.main.repository.FriendshipStatusRepository;
 import ru.example.group.main.repository.UserRepository;
@@ -20,21 +23,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class FriendsService {
-    private SocialNetUserDetailsService socialNetUserDetailsService;
-    private SocialNetUserRegisterService socialNetUserRegisterService;
-    private UserRepository userRepository;
-    private FriendshipRepository friendshipRepository;
-    private FriendshipStatusRepository friendshipStatusRepository;
-
-    public FriendsService(SocialNetUserDetailsService socialNetUserDetailsService, SocialNetUserRegisterService socialNetUserRegisterService, UserRepository userRepository, FriendshipRepository friendshipRepository, FriendshipStatusRepository friendshipStatusRepository) {
-        this.socialNetUserDetailsService = socialNetUserDetailsService;
-        this.socialNetUserRegisterService = socialNetUserRegisterService;
-        this.userRepository = userRepository;
-        this.friendshipRepository = friendshipRepository;
-        this.friendshipStatusRepository = friendshipStatusRepository;
-    }
+    private final SocialNetUserDetailsService socialNetUserDetailsService;
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
+    private final UserRepository userRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final FriendshipStatusRepository friendshipStatusRepository;
+    private final UserMapper userMapper;
 
     public FriendsResponseDto getUserFriends(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType) throws GetUserFriendsException {
         FriendsResponseDto friendsResponseDto = new FriendsResponseDto();
@@ -64,26 +61,28 @@ public class FriendsService {
         List<UserEntity> userFriendsList = userRepository.getAllRelationsOfUser(user.getId(), FriendshipStatusType.getLongFromEnum(friendshipStatusType), nextPage);
         List<UserDataResponseDto> userFriendsDtoList = new ArrayList<>();
         for (UserEntity nextFriendToDto : userFriendsList) {
-            userFriendsDtoList.add(socialNetUserDetailsService.setUserDataResponseDto(nextFriendToDto, ""));
+            userFriendsDtoList.add(userMapper.userEntityToDtoWithToken(nextFriendToDto, ""));
         }
         return userFriendsDtoList;
     }
 
-
-    public CommonResponseDto<?> sendFriendRequest(Long id) throws FriendsRequestException {
+    public ResultMessageDto sendFriendRequest(Long id) throws FriendsRequestException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        CommonResponseDto<?> friendRequestResponse = new CommonResponseDto<>();
+        ResultMessageDto friendRequestResponse = new ResultMessageDto();
         friendRequestResponse.setError("");
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
-        friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
-        try {
-            FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
-            FriendshipEntity idToUserFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(id, user.getId());
-            UserEntity requestedUser = userRepository.findById(id).orElseThrow();
-            friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
-        } catch (Exception e) {
-            friendRequestResponse.setMessage("Ошибка добавления в друзья.");
-            throw new FriendsRequestException(e.getMessage(), friendRequestResponse);
+        if (id != user.getId()) {
+            friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
+            try {
+                FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
+                FriendshipEntity idToUserFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(id, user.getId());
+                UserEntity requestedUser = userRepository.findById(id).orElseThrow();
+                friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
+            } catch (Exception e) {
+                throw new FriendsRequestException("Ошибка добавления в друзья.");
+            }
+        } else {
+            return new ResultMessageDto();
         }
         return friendRequestResponse;
     }
@@ -122,15 +121,12 @@ public class FriendsService {
             friendshipRepository.save(userToIdFriendshipStatusCheck);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            CommonResponseDto<?> commonResponseDto = new CommonResponseDto<>();
-            commonResponseDto.setError("Ошибка запроса.");
-            throw new FriendsRequestException(e.getMessage(), commonResponseDto);
+            throw new FriendsRequestException("Ошибка запроса.");
         }
     }
 
-    public CommonResponseDto<?> deleteOrBlockFriend(Long id, int code) throws FriendsRequestException {
-        CommonResponseDto<?> deleteOrBlockFriendResponse = new CommonResponseDto<>();
+    public ResultMessageDto deleteOrBlockFriend(Long id, int code) throws FriendsRequestException {
+        ResultMessageDto deleteOrBlockFriendResponse = new ResultMessageDto();
         try {
             UserEntity user = socialNetUserRegisterService.getCurrentUser();
             FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
@@ -141,12 +137,13 @@ public class FriendsService {
             deleteOrBlockFriendResponse.setMessage(code == 3 ? "Пользователь удален." : "Пользователь заблокирован.");
             Boolean statusUpdate = deleteOrBlockUserDoInRepository(code, user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
             if (!statusUpdate) {
-                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки.");
-                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки.");
+                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки");
+                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки");
+                throw new FriendsRequestException("Ошибка обработки запроса, обратитесь в службу поддержки");
             }
         } catch (Exception e) {
-            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья.");
-            throw new FriendsRequestException(e.getMessage(), deleteOrBlockFriendResponse);
+            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья");
+            throw new FriendsRequestException("Ошибка добавления в друзья");
         }
         return deleteOrBlockFriendResponse;
     }

@@ -667,7 +667,7 @@ databaseChangeLog:
                   value: "true"
               - column:
                   name: photo
-                  value: "photo path here"
+                  value: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
 
   - changeSet:
       id: 5
@@ -706,6 +706,15 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/create_get_recommendations_stored_function.sql
+
+  - changeSet:
+      id: 9
+      author: Dmitry_Kochuev
+      comment: "added admin role migration for test user"
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: db/changelog/sql/roles.sql
 
       rollback:
         - delete:
