@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+
+ sonarqube:
+  image: sonarqube
+  container_name: sonarqube
+  restart: always
+  environment:
+    SONARQUBE_USER: zerone
+    SONARQUBE_PASSWORD: ktb80m
+    SONARQUBE_URL: jdbc:postgresql://sonarqube_db:6543/sonarqube
+  depends_on:
+    - sonarqube_db
+  ports:
+    - "9000:9000"
+  volumes:
+    - ./sonarqube/sonarqube_data:/opt/sonarqube/data
+    - ./sonarqube/sonarqube_logs:/opt/sonarqube/logs
+    - ./sonarqube/sonarqube_temp:/opt/sonarqube/temp
+
+
+ sonarqube_db:
+    image: postgres
+    container_name: "postgres_sonarqube"
+    restart: always
+    environment:
+      POSTGRES_DB: sonarqube
+      POSTGRES_USER: zerone_sq
+      POSTGRES_PASSWORD: 7tsfft
+    ports:
+      - "6543:6543"
+    volumes:
+      - ./postgres_sonarqube/data:/var/lib/postgres/data
