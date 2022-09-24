@@ -1,5 +1,6 @@
 package ru.example.group.main.controller;
 
+import com.maxmind.geoip2.exception.GeoIp2Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,12 @@ import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.service.UserRegisterService;
 import ru.example.group.main.service.UserSettingsService;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @Slf4j
@@ -23,9 +29,12 @@ public class UserSettingsController {
     @Value("${config.frontend}")
     private String front;
     private final UserSettingsService userSettingsService;
+    //TODO удалить!
+    private final UserRegisterService userRegisterService;
 
-    public UserSettingsController(UserSettingsService userSettingsService) {
+    public UserSettingsController(UserSettingsService userSettingsService, UserRegisterService userRegisterService) {
         this.userSettingsService = userSettingsService;
+        this.userRegisterService = userRegisterService;
     }
 
     @PutMapping("/api/v1/account/email")
@@ -58,8 +67,9 @@ public class UserSettingsController {
     }
 
     @GetMapping("/api/v1/users/me")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() throws IOException, URISyntaxException, NoSuchAlgorithmException, GeoIp2Exception, InterruptedException {
         log.info("getUser started");
+        userRegisterService.getLocationFromUserIp("172.4.1.3");
         return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }
 

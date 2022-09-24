@@ -15,6 +15,7 @@ import ru.example.group.main.service.UserRegisterService;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 public class UserRegisterController {
@@ -32,7 +33,7 @@ public class UserRegisterController {
 
     @PostMapping("/api/v1/account/register/confirm")
     public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                    HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception {
+                                                    HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
 
         return userRegisterService.activateUser(registerConfirmRequestDto, request);
     }

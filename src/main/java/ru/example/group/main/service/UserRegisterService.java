@@ -3,6 +3,7 @@ package ru.example.group.main.service;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,12 +23,17 @@ import ru.example.group.main.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.io.InputStream;
+import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -47,6 +53,10 @@ public class UserRegisterService {
     private final PasswordEncoder passwordEncoder;
 
     private final RecommendedFriendsService recommendedFriendsService;
+
+    private final static String localFileGeoLite2 = "static/GeoLite2-City.mmdb";
+
+    private final static String remoteFileGeoLite2 = "https://git.io/GeoLite2-City.mmdb";
 
 
     public UserRegisterService(UserRepository userRepository, ZeroneMailSenderService zeroneMailSenderService, PasswordEncoder passwordEncoder, RecommendedFriendsService recommendedFriendsService) {
@@ -101,8 +111,8 @@ public class UserRegisterService {
     }
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception {
-        CityResponse cityResponse = getLocationFromUserIp(getClientIp(request));
+                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
+        List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
@@ -111,8 +121,8 @@ public class UserRegisterService {
         try {
             user.setConfirmationCode(null);
             user.setApproved(true);
-            user.setCountry(cityResponse.getCountry().getNames().get("ru"));
-            user.setCity(cityResponse.getCity().getNames().get("ru"));
+            user.setCountry(cityResponse.get(0));
+            user.setCity(cityResponse.get(1));
             userRepository.save(user);
             recommendedFriendsService.runNewUserActivatedFriendsRecommendationsUpdate(user.getId());
             registrationCompleteResponseDto.setEMail(user.getEmail());
@@ -155,17 +165,55 @@ public class UserRegisterService {
         }
     }
 
-    public CityResponse getLocationFromUserIp(String  ipAddress) throws IOException, GeoIp2Exception, URISyntaxException {
-        URL resource = getClass().getClassLoader().getResource("static/GeoLite2-City.mmdb");
+    public List<String> getLocationFromUserIp(String  ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
+        List<String> location = new ArrayList<>(List.of("Арракис", "Большой дворец"));
         File database;
-        if (resource == null) {
-            throw new IllegalArgumentException("file not found!");
+        if (ipAddress.equals("127.0.0.1")) {
+            return location;
         } else {
-            database = new File(resource.toURI());
+                URL resource = getClass().getClassLoader().getResource(localFileGeoLite2);
+                    if (resource == null || localFileSizeEquallyRemoteFileSize()) {
+                        downLoadGeoLite();
+                    }
+            URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
+                        database = new File(resourceUpdated.toURI());
+                }
+                DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
+                InetAddress addr = InetAddress.getByName(ipAddress);
+                CityResponse locationResponse = dbReader.city(addr);
+                location.set(0, locationResponse.getCountry().getNames().get("ru"));
+                location.set(1, locationResponse.getCity().getNames().get("ru"));
+            return location;
         }
-        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
-        InetAddress addr = InetAddress.getByName(ipAddress);
-        return dbReader.city(addr);
+
+    private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
+        int sizeRemoteFile = getRemoteFileSize(new URL(remoteFileGeoLite2));
+        long sizeLocalFile = FileUtils.sizeOf(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(localFileGeoLite2)).toURI()));
+        return sizeRemoteFile != sizeLocalFile;
+    }
+
+    private static int getRemoteFileSize(URL url) {
+        URLConnection conn = null;
+        try {
+            conn = url.openConnection();
+            if(conn instanceof HttpURLConnection) {
+                ((HttpURLConnection)conn).setRequestMethod("HEAD");
+            }
+            conn.getInputStream();
+            return conn.getContentLength();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if(conn instanceof HttpURLConnection) {
+                ((HttpURLConnection)conn).disconnect();
+            }
+        }
+    }
+
+    private void downLoadGeoLite() throws IOException {
+        InputStream in = new URL(remoteFileGeoLite2).openStream();
+        Files.copy(in, Paths.get("src/main/resources/static/GeoLite2-City.mmdb"), StandardCopyOption.REPLACE_EXISTING);
+        in.close();
     }
 
     public String getClientIp(HttpServletRequest request) {
