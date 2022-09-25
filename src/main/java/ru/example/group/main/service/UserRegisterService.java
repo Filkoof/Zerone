@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import org.apache.commons.io.FileUtils;
@@ -165,26 +166,31 @@ public class UserRegisterService {
         }
     }
 
-    public List<String> getLocationFromUserIp(String  ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
+    public List<String> getLocationFromUserIp(String ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
         List<String> location = new ArrayList<>(List.of("Арракис", "Большой дворец"));
         File database;
-        if (ipAddress.equals("127.0.0.1")) {
+        if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
             return location;
         } else {
-                URL resource = getClass().getClassLoader().getResource(localFileGeoLite2);
-                    if (resource == null || localFileSizeEquallyRemoteFileSize()) {
-                        downLoadGeoLite();
-                    }
+            URL resource = getClass().getClassLoader().getResource(localFileGeoLite2);
+            if (resource == null || localFileSizeEquallyRemoteFileSize()) {
+                downLoadGeoLite();
+            }
             URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
-                        database = new File(resourceUpdated.toURI());
-                }
-                DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
-                InetAddress addr = InetAddress.getByName(ipAddress);
-                CityResponse locationResponse = dbReader.city(addr);
-                location.set(0, locationResponse.getCountry().getNames().get("ru"));
-                location.set(1, locationResponse.getCity().getNames().get("ru"));
-            return location;
+            database = new File(resourceUpdated.toURI());
         }
+        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
+        InetAddress addr = InetAddress.getByName(ipAddress);
+        try {
+            CityResponse locationResponse = dbReader.city(addr);
+            location.set(0, locationResponse.getCountry().getNames().get("ru"));
+            location.set(1, locationResponse.getCity().getNames().get("ru"));
+            return location;
+        } catch (AddressNotFoundException e) {
+            e.getMessage();
+        }
+        return location;
+    }
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
         int sizeRemoteFile = getRemoteFileSize(new URL(remoteFileGeoLite2));
@@ -196,16 +202,16 @@ public class UserRegisterService {
         URLConnection conn = null;
         try {
             conn = url.openConnection();
-            if(conn instanceof HttpURLConnection) {
-                ((HttpURLConnection)conn).setRequestMethod("HEAD");
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).setRequestMethod("HEAD");
             }
             conn.getInputStream();
             return conn.getContentLength();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            if(conn instanceof HttpURLConnection) {
-                ((HttpURLConnection)conn).disconnect();
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
             }
         }
     }
@@ -218,19 +224,19 @@ public class UserRegisterService {
 
     public String getClientIp(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
         }
 
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
 
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
             String LOCALHOST_IPV4 = "127.0.0.1";
             String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
-            if(LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
+            if (LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
                 try {
                     InetAddress inetAddress = InetAddress.getLocalHost();
                     ipAddress = inetAddress.getHostAddress();
@@ -239,7 +245,7 @@ public class UserRegisterService {
                 }
             }
         }
-        if(!StringUtils.isEmpty(ipAddress)
+        if (!StringUtils.isEmpty(ipAddress)
                 && ipAddress.length() > 15
                 && ipAddress.indexOf(",") > 0) {
             ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));

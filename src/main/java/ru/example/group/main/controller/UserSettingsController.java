@@ -67,9 +67,8 @@ public class UserSettingsController {
     }
 
     @GetMapping("/api/v1/users/me")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() throws IOException, URISyntaxException, NoSuchAlgorithmException, GeoIp2Exception, InterruptedException {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser()  {
         log.info("getUser started");
-        userRegisterService.getLocationFromUserIp("172.4.1.3");
         return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }
 
