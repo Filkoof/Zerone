@@ -163,7 +163,7 @@ public class UserRegisterService {
             if (resource == null || localFileSizeEquallyRemoteFileSize()) {
                 downLoadGeoLite();
             }
-            database = new File(new URI(localFileGeoLite2.replace(" ", "%20")).getSchemeSpecificPart());
+            database = new File(getClass().getResource(localFileGeoLite2).toExternalForm());
         }
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         InetAddress addr = InetAddress.getByName(ipAddress);
