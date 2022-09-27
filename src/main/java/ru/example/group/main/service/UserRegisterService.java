@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
@@ -22,9 +23,7 @@ import ru.example.group.main.exception.UserWithThatEmailAlreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,7 +56,7 @@ public class UserRegisterService {
 
     private final RecommendedFriendsService recommendedFriendsService;
 
-    private final static String localFileGeoLite2 = "GeoLite2-City.mmdb";
+    private final static String localFileGeoLite2 = "static/GeoLite2-City.mmdb";
 
     private final static String remoteFileGeoLite2 = "https://git.io/GeoLite2-City.mmdb";
 
@@ -157,26 +156,13 @@ public class UserRegisterService {
 
     public List<String> getLocationFromUserIp(String ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
         List<String> location = new ArrayList<>(List.of("Арракис", "Большой дворец"));
-        File database;
+        File database = loadEmployeesWithSpringInternalClass(localFileGeoLite2);
         if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
             return location;
         } else {
-            URL resource = getClass().getClassLoader().getResource(localFileGeoLite2);
-            if (resource == null || localFileSizeEquallyRemoteFileSize()) {
+            if (database == null || localFileSizeEquallyRemoteFileSize()) {
                 downLoadGeoLite();
             }
-
-//            try {
-//                File sourceFile = new File(new
-//                        URI(this.getClass().getClassLoader().getResource(localFileGeoLite2).toString()));
-//                File targetFile = new File(localFileGeoLite2,sourceFile.getName());
-//                copyFile(sourceFile,targetFile);
-//            } catch (URISyntaxException e) {
-//                e.printStackTrace();
-//            }
-
-            URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
-            database = new File(resourceUpdated.toURI());
         }
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         InetAddress addr = InetAddress.getByName(ipAddress);
@@ -189,6 +175,12 @@ public class UserRegisterService {
             e.getMessage();
         }
         return location;
+    }
+
+    public File loadEmployeesWithSpringInternalClass(String localUrl)
+            throws FileNotFoundException {
+        return ResourceUtils.getFile(
+                "classpath:" + localUrl);
     }
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
