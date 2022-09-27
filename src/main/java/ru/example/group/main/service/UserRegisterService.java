@@ -7,6 +7,7 @@ import com.maxmind.geoip2.model.CityResponse;
 import org.apache.commons.io.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -178,9 +179,8 @@ public class UserRegisterService {
     }
 
     public File loadEmployeesWithSpringInternalClass(String localUrl)
-            throws FileNotFoundException {
-        return ResourceUtils.getFile(
-                "classpath:" + localUrl);
+            throws IOException {
+        return new ClassPathResource(localUrl, this.getClass().getClassLoader()).getFile();
     }
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
