@@ -7,7 +7,9 @@ import com.maxmind.geoip2.model.CityResponse;
 import org.apache.commons.io.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -56,6 +58,8 @@ public class UserRegisterService {
     private final PasswordEncoder passwordEncoder;
 
     private final RecommendedFriendsService recommendedFriendsService;
+
+    private final ApplicationContext context;
 
     private final static String localFileGeoLite2 = "static/GeoLite2-City.mmdb";
 
@@ -180,7 +184,8 @@ public class UserRegisterService {
 
     public File loadEmployeesWithSpringInternalClass(String localUrl)
             throws IOException {
-        return new ClassPathResource(localUrl, this.getClass().getClassLoader()).getFile();
+        return context.getResource(
+                "classpath:" + localUrl).getFile();
     }
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {

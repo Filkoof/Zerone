@@ -28,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 public class UserSettingsController {
 
     private final UserSettingsService userSettingsService;
+    private final UserRegisterService userRegisterService;
 
     @GetMapping("/me")
     @ApiOperation("Operation to get user data for authorized user.")
