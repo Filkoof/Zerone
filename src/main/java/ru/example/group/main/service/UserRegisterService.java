@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.apache.commons.io.FileUtils.copyFile;
+
 @RequiredArgsConstructor
 @Service
 public class UserRegisterService {
@@ -105,7 +107,7 @@ public class UserRegisterService {
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
                                                         HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
-        List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
+       // List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
@@ -114,8 +116,8 @@ public class UserRegisterService {
         try {
             user.setConfirmationCode(null);
             user.setApproved(true);
-            user.setCountry(cityResponse.get(0));
-            user.setCity(cityResponse.get(1));
+          //  user.setCountry(cityResponse.get(0));
+          //  user.setCity(cityResponse.get(1));
             userRepository.save(user);
             recommendedFriendsService.runNewUserActivatedFriendsRecommendationsUpdate(user.getId());
             registrationCompleteResponseDto.setEMail(user.getEmail());
@@ -163,7 +165,18 @@ public class UserRegisterService {
             if (resource == null || localFileSizeEquallyRemoteFileSize()) {
                 downLoadGeoLite();
             }
-            database = new File(getClass().getResource(localFileGeoLite2).toExternalForm());
+
+//            try {
+//                File sourceFile = new File(new
+//                        URI(this.getClass().getClassLoader().getResource(localFileGeoLite2).toString()));
+//                File targetFile = new File(localFileGeoLite2,sourceFile.getName());
+//                copyFile(sourceFile,targetFile);
+//            } catch (URISyntaxException e) {
+//                e.printStackTrace();
+//            }
+
+            URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
+            database = new File(resourceUpdated.toURI());
         }
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         InetAddress addr = InetAddress.getByName(ipAddress);
