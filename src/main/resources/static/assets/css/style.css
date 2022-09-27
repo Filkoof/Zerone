@@ -14186,9 +14186,12 @@ dl {
     -ms-flex-direction: row;
     flex-direction: row; }
     .navbar .navbar-brand-wrapper {
-      width: 75px; }
+      width: 40px; }
       .navbar .navbar-brand-wrapper .navbar-brand.brand-logo {
-        display: none; }
+        display: none;
+        width: 20px;
+        height: 20px;
+      }
       .navbar .navbar-brand-wrapper .navbar-brand.brand-logo-mini {
         display: inline-block; }
   .navbar-collapse {

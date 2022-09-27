@@ -105,7 +105,7 @@ public class UserRegisterService {
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
                                                         HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
-       // List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
+        List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
         if (user == null || !user.getEmail().equals(registerConfirmRequestDto.getUserId())) {
@@ -114,8 +114,8 @@ public class UserRegisterService {
         try {
             user.setConfirmationCode(null);
             user.setApproved(true);
-          //  user.setCountry(cityResponse.get(0));
-          //  user.setCity(cityResponse.get(1));
+            user.setCountry(cityResponse.get(0));
+            user.setCity(cityResponse.get(1));
             userRepository.save(user);
             recommendedFriendsService.runNewUserActivatedFriendsRecommendationsUpdate(user.getId());
             registrationCompleteResponseDto.setEMail(user.getEmail());
@@ -163,8 +163,7 @@ public class UserRegisterService {
             if (resource == null || localFileSizeEquallyRemoteFileSize()) {
                 downLoadGeoLite();
             }
-            URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
-            database = new File(resourceUpdated.toURI());
+            database = new File(new URI(localFileGeoLite2.replace(" ", "%20")).getSchemeSpecificPart());
         }
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         InetAddress addr = InetAddress.getByName(ipAddress);
