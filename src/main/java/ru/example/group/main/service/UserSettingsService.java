@@ -1,5 +1,13 @@
 package ru.example.group.main.service;
 
+import com.vk.api.sdk.client.Lang;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.objects.base.Country;
+import com.vk.api.sdk.objects.database.City;
+import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
+import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,14 +16,15 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
+import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.*;
 import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -24,12 +33,15 @@ public class UserSettingsService {
 
     @Value("${config.backend}")
     private String backend;
+
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final UserRepository userRepository;
     private final JWTUtilService jwtUtilService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final VkApiClient vkApiClient;
+    private final UserActor userActor;
 
     public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -207,7 +219,7 @@ public class UserSettingsService {
                 recoveryUserDeletedNotice(userToDelete.getEmail());
                 return true;
             } catch (Exception e) {
-                throw new UserDeleteOrRecoveryException("UПользователь: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта: " + e.getMessage());
+                throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта: " + e.getMessage());
             }
         } else {
             throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта, неверный код");
@@ -249,6 +261,47 @@ public class UserSettingsService {
                 throw new UpdateUserMainSettingsException("Невозможно обновиться данные пользователя: " + e.getMessage());
             }
     }
+
+    public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
+
+        try {
+                GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
+                        .lang(Lang.RU)
+                        .needAll(true)
+                        .count(235)
+                        .execute();
+                if (!Objects.equals(country, "")) {
+                    countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
+                }
+            LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
+            locationResponseDto.setData(countries.getItems());
+            locationResponseDto.setError("OK");
+            locationResponseDto.setTimestamp(LocalDateTime.now());
+            return locationResponseDto;
+        } catch (Exception e) {
+            throw new VkApiException("Ошибка получения VK API стран(ы) - " + e.getMessage());
+        }
+    }
+
+    public LocationResponseDto<City> getCities(Integer countryId, String city) throws VkApiException {
+        if (countryId != 0) {
+            try {
+                GetCitiesResponse getCitiesResponse = vkApiClient.database().getCities(userActor, countryId)
+                        .lang(Lang.RU)
+                        .q(city)
+                        .execute();
+                LocationResponseDto<City> locationResponseDto = new LocationResponseDto<>();
+                locationResponseDto.setData(getCitiesResponse.getItems());
+                locationResponseDto.setError("OK");
+                locationResponseDto.setTimestamp(LocalDateTime.now());
+                return locationResponseDto;
+            } catch (Exception e) {
+                throw new VkApiException("Ошибка получения VK API города(ов) - " + e.getMessage());
+            }
+        }
+        return new LocationResponseDto<>();
+    }
+
 
     public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
         CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();

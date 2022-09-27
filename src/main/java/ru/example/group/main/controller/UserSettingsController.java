@@ -21,6 +21,7 @@ import javax.validation.constraints.Min;
 @RequestMapping("/api/v1/users")
 @Api("Operations to get or change user data api")
 public class UserSettingsController {
+
     private final UserSettingsService userSettingsService;
 
     @GetMapping("/me")

@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import org.apache.catalina.connector.Request;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
@@ -24,6 +27,8 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private HttpServletRequest request;
 
     @Value("${config.zeroneEmail}")
     private String email;
@@ -71,7 +76,7 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
             RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
             registerConfirmRequestDto.setUserId(email);
             registerConfirmRequestDto.setToken(code);
-            assertTrue(userRegisterService.activateUser(registerConfirmRequestDto).getEMail().equals(email));
+            assertTrue(userRegisterService.activateUser(registerConfirmRequestDto, request).getEMail().equals(email));
         }
     }
 }

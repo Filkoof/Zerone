@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.example.group.main.security.CustomAccessDeniedHandler;
-import ru.example.group.main.security.JWTRequestFilter;
 import ru.example.group.main.security.CustomAuthenticationEntryPoint;
+import ru.example.group.main.security.JWTRequestFilter;
 
 
 @Configuration

@@ -17,8 +17,8 @@ public class SearchController {
 
     @GetMapping("/api/v1/users/search")
     public ResponseEntity<CommonListResponseDto<Object>> usersSearch(
-            @RequestParam(defaultValue = "first_name") String first_name,
-            @RequestParam(defaultValue = "last_name") String last_name,
+            @RequestParam(defaultValue = "") String first_name,
+            @RequestParam(defaultValue = "") String last_name,
             @RequestParam(defaultValue = "-1") Long age_from,
             @RequestParam(defaultValue = "-1") Long age_to,
             @RequestParam(defaultValue = "") String country,
