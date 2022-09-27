@@ -164,7 +164,7 @@ public class UserRegisterService {
                 downLoadGeoLite();
             }
             URL resourceUpdated = getClass().getClassLoader().getResource(localFileGeoLite2);
-            database = new File(resourceUpdated.toURI());
+            database = new File(localFileGeoLite2);
         }
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         InetAddress addr = InetAddress.getByName(ipAddress);
