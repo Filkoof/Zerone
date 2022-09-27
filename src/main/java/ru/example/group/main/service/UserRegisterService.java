@@ -7,9 +7,6 @@ import com.maxmind.geoip2.model.CityResponse;
 import org.apache.commons.io.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -59,9 +56,7 @@ public class UserRegisterService {
 
     private final RecommendedFriendsService recommendedFriendsService;
 
-    private final ApplicationContext context;
-
-    private final static String localFileGeoLite2 = "static/GeoLite2-City.mmdb";
+    private final static String localFileGeoLite2 = "/GeoLite2-City.mmdb";
 
     private final static String remoteFileGeoLite2 = "https://git.io/GeoLite2-City.mmdb";
 
@@ -161,36 +156,47 @@ public class UserRegisterService {
 
     public List<String> getLocationFromUserIp(String ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
         List<String> location = new ArrayList<>(List.of("Арракис", "Большой дворец"));
-        File database = loadEmployeesWithSpringInternalClass(localFileGeoLite2);
-        if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
+        File database;
+        if (ipAddress.equals("127.0.0.2") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
             return location;
         } else {
-            if (database == null || localFileSizeEquallyRemoteFileSize()) {
+            URL resource = getClass().getResource(localFileGeoLite2);
+            if (resource == null
+                  //  || localFileSizeEquallyRemoteFileSize()
+            ) {
                 downLoadGeoLite();
             }
-        }
-        DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
-        InetAddress addr = InetAddress.getByName(ipAddress);
-        try {
-            CityResponse locationResponse = dbReader.city(addr);
-            location.set(0, locationResponse.getCountry().getNames().get("ru"));
-            location.set(1, locationResponse.getCity().getNames().get("ru"));
-            return location;
-        } catch (AddressNotFoundException e) {
-            e.getMessage();
+
+//            URL resourceUpdated = getClass().getResource(localFileGeoLite2);
+//            database = new File(resourceUpdated.toURI());
+         //   database = loadEmployeesWithSpringInternalClass(localFileGeoLite2);
+            try
+            {
+                InputStream stream = getClass().getResourceAsStream(localFileGeoLite2);
+                InetAddress addr = InetAddress.getByName(ipAddress);
+                DatabaseReader dbReader = new DatabaseReader.Builder(stream).build();
+                CityResponse locationResponse = dbReader.city(addr);
+                location.set(0, locationResponse.getCountry().getNames().get("ru"));
+                location.set(1, locationResponse.getCity().getNames().get("ru"));
+                return location;
+            }
+            catch (AddressNotFoundException e)
+            {
+       e.getMessage();
+            }
         }
         return location;
     }
 
     public File loadEmployeesWithSpringInternalClass(String localUrl)
-            throws IOException {
-        return context.getResource(
-                "classpath:" + localUrl).getFile();
+            throws FileNotFoundException {
+        return ResourceUtils.getFile(
+                "classpath:" + localUrl);
     }
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
         int sizeRemoteFile = getRemoteFileSize(new URL(remoteFileGeoLite2));
-        int sizeLocalFile = (int) FileUtils.sizeOf(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(localFileGeoLite2)).toURI()));
+        int sizeLocalFile = (int) FileUtils.sizeOf(new File("static" + localFileGeoLite2));
         return sizeRemoteFile != sizeLocalFile;
     }
 
@@ -214,7 +220,7 @@ public class UserRegisterService {
 
     private void downLoadGeoLite() throws IOException {
         InputStream in = new URL(remoteFileGeoLite2).openStream();
-        Files.copy(in, Paths.get("src/main/resources/static/GeoLite2-City.mmdb"), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(in, Paths.get(localFileGeoLite2), StandardCopyOption.REPLACE_EXISTING);
         in.close();
     }
 
