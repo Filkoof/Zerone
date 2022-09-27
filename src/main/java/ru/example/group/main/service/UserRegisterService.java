@@ -181,7 +181,7 @@ public class UserRegisterService {
 
     private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
         int sizeRemoteFile = getRemoteFileSize(new URL(remoteFileGeoLite2));
-        long sizeLocalFile = FileUtils.sizeOf(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(localFileGeoLite2)).toURI()));
+        int sizeLocalFile = (int) FileUtils.sizeOf(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(localFileGeoLite2)).toURI()));
         return sizeRemoteFile != sizeLocalFile;
     }
 
