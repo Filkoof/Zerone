@@ -2,7 +2,6 @@ package ru.example.group.main.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.response.CommonListResponseDto;
@@ -30,14 +29,13 @@ public class SearchService {
             Long ageTo, String country, String city,
             Integer offset, Integer itemPerPage) {
 
-        Condition condition = trueCondition();
-
-        condition = conditionName(condition, firstName, lastName);
-        condition = conditionPlace(condition, country, city);
-        condition = conditionAge(condition, ageTo, ageFrom);
-
         List<Object> userListResult = dsl.selectFrom(table("users"))
-                .where(condition)
+                .where(!firstName.equals("") ? field("first_name").likeIgnoreCase('%' + firstName + '%') : noCondition())
+                .and(!lastName.equals("") ? field("last_name").likeIgnoreCase('%' + lastName + '%') : noCondition())
+                .and(!country.equals("") ? field("Country").likeIgnoreCase('%' + country + '%') : noCondition())
+                .and(!city.equals("") ? field("City").likeIgnoreCase('%' + city + '%') : noCondition())
+                .and(ageTo != -1 ? field("birth_date").greaterThan(LocalDate.now().minusYears(ageTo)) : noCondition())
+                .and(ageFrom != -1 ? field("birth_date").lessThan(LocalDate.now().minusYears(ageFrom)) : noCondition())
                 .fetchInto(UserSearchResponseDto.class);
 
         return CommonListResponseDto.builder()
@@ -62,64 +60,19 @@ public class SearchService {
         String end = endDate.format(formatter);
         String start = startDate.format(formatter);
 
-        Condition condition = trueCondition();
-        condition = conditionPost(condition, author, text, start, end, tag);
-
         List<Long> listPostId = dsl.select(field("p.id"))
                 .from(table("posts").as("p"))
                 .leftJoin(table("users").as("u")).on("p.author_id = u.id")
                 .leftJoin(table("posts_to_tags").as("ptt")).on("ptt.post_id = p.id")
                 .leftJoin(table("tags").as("t")).on("t.id = ptt.tag_id")
-                .where(condition)
+                .where(!author.equals("") ? field("u.first_name").likeIgnoreCase('%' + author + '%')
+                        .or(field("u.last_name").likeIgnoreCase('%' + author + '%')) : noCondition())
+                .and(!text.equals("") ? field("p.post_text").likeIgnoreCase('%' + text + '%') : noCondition())
+                .and(!tag.equals("") ? field("t.tag").likeIgnoreCase(tag) : noCondition())
+                .and(field("p.time").between(start).and(end))
+                .and(field("p.is_deleted").eq(false))
                 .fetchInto(Long.class);
 
         return postService.getNewsByListUserId(listPostId, offset);
-    }
-    //TODO доработать условия
-    private Condition conditionPost(Condition condition, String author, String text, String start, String end, String tag) {
-        if (!text.equals("")) {
-            condition = condition.and(field("p.post_text").likeIgnoreCase('%' + text + '%'));
-        }
-        if (!author.equals("")) {
-            condition = condition.and(field("u.first_name").likeIgnoreCase('%' + author + '%').or(field("u.last_name").likeIgnoreCase('%' + author + '%')));
-        }
-        if (!tag.equals("")) {
-            condition = condition.and(field("t.tag").likeIgnoreCase(tag));
-        }
-        condition = condition.and(field("p.time").between(start).and(end));
-        condition = condition.and(field("p.is_deleted").eq(false));
-        return condition;
-    }
-
-    private Condition conditionName(Condition condition, String propertyFirstName, String propertyLastName) {
-        if (!propertyFirstName.equals("")) condition = condition
-                .and(field("first_name").likeIgnoreCase('%' + propertyFirstName + '%'));
-        if (!propertyLastName.equals("")) condition = condition
-                .and(field("last_name").likeIgnoreCase('%' + propertyLastName + '%'));
-        return condition;
-    }
-
-    private Condition conditionTemplate(Condition condition, String conditionName, String sqlName) {
-        if (!conditionName.equals(""))
-            condition = condition
-                    .and(field(sqlName).likeIgnoreCase('%' + conditionName + '%'));
-            return condition;
-    }
-
-    private Condition conditionPlace(Condition condition, String propertyCountry, String propertyCity) {
-        if (!propertyCountry.equals("")) condition = condition
-                .and(field("Country").likeIgnoreCase('%' + propertyCountry + '%'));
-        if (!propertyCity.equals("")) condition = condition
-                .and(field("City").likeIgnoreCase('%' + propertyCity + '%'));
-        return condition;
-        //trueCondition();
-    }
-
-    private Condition conditionAge(Condition condition, Long propertyAgeTo, Long propertyAgeFrom) {
-        if (propertyAgeTo != -1) condition = condition
-                .and(field("birth_date").greaterThan(LocalDate.now().minusYears(propertyAgeTo)));
-        if (propertyAgeFrom != -1) condition = condition
-                .and(field("birth_date").lessThan(LocalDate.now().minusYears(propertyAgeFrom)));
-        return condition;
     }
 }

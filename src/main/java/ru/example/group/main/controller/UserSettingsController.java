@@ -1,6 +1,5 @@
 package ru.example.group.main.controller;
 
-import com.maxmind.geoip2.exception.GeoIp2Exception;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +11,10 @@ import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
-import ru.example.group.main.service.UserRegisterService;
 import ru.example.group.main.service.UserSettingsService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,11 +23,10 @@ import java.security.NoSuchAlgorithmException;
 public class UserSettingsController {
 
     private final UserSettingsService userSettingsService;
-    private final UserRegisterService userRegisterService;
 
     @GetMapping("/me")
     @ApiOperation("Operation to get user data for authorized user.")
-    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() throws IOException, URISyntaxException, NoSuchAlgorithmException, InterruptedException, GeoIp2Exception {
+    public ResponseEntity<CommonResponseDto<UserDataResponseDto>> getUser() {
         return new ResponseEntity<>(userSettingsService.getUserMeResponse(), HttpStatus.OK);
     }
 

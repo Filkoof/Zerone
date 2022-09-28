@@ -4,13 +4,11 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
-import org.apache.commons.io.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
@@ -25,18 +23,13 @@ import ru.example.group.main.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-import static org.apache.commons.io.FileUtils.copyFile;
 
 @RequiredArgsConstructor
 @Service
@@ -56,9 +49,7 @@ public class UserRegisterService {
 
     private final RecommendedFriendsService recommendedFriendsService;
 
-    private final static String localFileGeoLite2 = "/GeoLite2-City.mmdb";
-
-    private final static String remoteFileGeoLite2 = "https://git.io/GeoLite2-City.mmdb";
+    private final DatabaseReader databaseReader;
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
@@ -80,7 +71,7 @@ public class UserRegisterService {
         return false;
     }
 
-    private boolean newUserAddToDB( UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
+    private boolean newUserAddToDB(UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
         UserEntity user = new UserEntity();
         try {
             user.setStatus(true);
@@ -94,7 +85,7 @@ public class UserRegisterService {
             user.setPhoto(default_avatar);
             user.setCountry("");
             user.setCity("");
-            user.setBirthDate(LocalDate.of(1970, 01, 01));
+            user.setBirthDate(LocalDate.of(1970, 1, 1));
             user.setAbout("");
             user.setPhone("");
             userRepository.save(user);
@@ -139,7 +130,7 @@ public class UserRegisterService {
 
     public ResultMessageDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
         ResultMessageDto apiResponseDto = new ResultMessageDto();
-        if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null){
+        if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null) {
             throw new NewUserWasNotSavedToDBException("Не удается создать пользователя");
         }
 
@@ -154,87 +145,37 @@ public class UserRegisterService {
         }
     }
 
-    public List<String> getLocationFromUserIp(String ipAddress) throws IOException, GeoIp2Exception, URISyntaxException, NoSuchAlgorithmException, InterruptedException {
+    public List<String> getLocationFromUserIp(String ipAddress) {
         List<String> location = new ArrayList<>(List.of("Арракис", "Большой дворец"));
-        File database;
         if (ipAddress.equals("127.0.0.2") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
             return location;
         } else {
-            URL resource = getClass().getResource(localFileGeoLite2);
-            if (resource == null
-                  //  || localFileSizeEquallyRemoteFileSize()
-            ) {
-                downLoadGeoLite();
-            }
-
-//            URL resourceUpdated = getClass().getResource(localFileGeoLite2);
-//            database = new File(resourceUpdated.toURI());
-         //   database = loadEmployeesWithSpringInternalClass(localFileGeoLite2);
-            try
-            {
-                InputStream stream = getClass().getResourceAsStream(localFileGeoLite2);
-                InetAddress addr = InetAddress.getByName(ipAddress);
-                DatabaseReader dbReader = new DatabaseReader.Builder(stream).build();
-                CityResponse locationResponse = dbReader.city(addr);
+        try {
+                InetAddress inetAddress = InetAddress.getByName(ipAddress);
+                CityResponse locationResponse = databaseReader.city(inetAddress);
                 location.set(0, locationResponse.getCountry().getNames().get("ru"));
                 location.set(1, locationResponse.getCity().getNames().get("ru"));
                 return location;
-            }
-            catch (AddressNotFoundException e)
-            {
-       e.getMessage();
-            }
+            } catch (AddressNotFoundException | UnknownHostException e) {
+                e.getMessage();
+            } catch (IOException | GeoIp2Exception e) {
+            e.printStackTrace();
+        }
         }
         return location;
     }
 
-    public File loadEmployeesWithSpringInternalClass(String localUrl)
-            throws FileNotFoundException {
-        return ResourceUtils.getFile(
-                "classpath:" + localUrl);
-    }
-
-    private boolean localFileSizeEquallyRemoteFileSize() throws MalformedURLException, URISyntaxException {
-        int sizeRemoteFile = getRemoteFileSize(new URL(remoteFileGeoLite2));
-        int sizeLocalFile = (int) FileUtils.sizeOf(new File("static" + localFileGeoLite2));
-        return sizeRemoteFile != sizeLocalFile;
-    }
-
-    private static int getRemoteFileSize(URL url) {
-        URLConnection conn = null;
-        try {
-            conn = url.openConnection();
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).setRequestMethod("HEAD");
-            }
-            conn.getInputStream();
-            return conn.getContentLength();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
-            }
-        }
-    }
-
-    private void downLoadGeoLite() throws IOException {
-        InputStream in = new URL(remoteFileGeoLite2).openStream();
-        Files.copy(in, Paths.get(localFileGeoLite2), StandardCopyOption.REPLACE_EXISTING);
-        in.close();
-    }
-
     public String getClientIp(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
-        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
         }
 
-        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
 
-        if (StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
             String LOCALHOST_IPV4 = "127.0.0.1";
             String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
@@ -247,7 +188,7 @@ public class UserRegisterService {
                 }
             }
         }
-        if (!StringUtils.isEmpty(ipAddress)
+        if (!ObjectUtils.isEmpty(ipAddress)
                 && ipAddress.length() > 15
                 && ipAddress.indexOf(",") > 0) {
             ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
