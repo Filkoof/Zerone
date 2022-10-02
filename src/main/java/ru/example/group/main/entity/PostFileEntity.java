@@ -19,11 +19,8 @@ public class PostFileEntity{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   @ManyToOne
   @JoinColumn(name = "post_id")
   private PostEntity post;
-
   private String path;
-
 }

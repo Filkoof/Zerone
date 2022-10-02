@@ -61,5 +61,4 @@ public class PostController {
     public ResponseEntity<PostResponseDto> postRecover(@PathVariable Long id) throws PostsException {
         return postService.recoverPost(id);
     }
-
 }

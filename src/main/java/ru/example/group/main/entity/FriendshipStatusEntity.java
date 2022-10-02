@@ -2,7 +2,6 @@ package ru.example.group.main.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -16,18 +15,13 @@ import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 @Table(name = "friendship_statuses")
 public class FriendshipStatusEntity {
 
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  private LocalDateTime time;
-
-  private String name;
-
-  @Enumerated(EnumType.STRING)
-  private FriendshipStatusType code;
-
-  @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
-  private List<FriendshipEntity> relationsExistsTotal = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDateTime time;
+    private String name;
+    @Enumerated(EnumType.STRING)
+    private FriendshipStatusType code;
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+    private List<FriendshipEntity> relationsExistsTotal = new ArrayList<>();
 }

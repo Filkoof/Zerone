@@ -2,7 +2,7 @@ package ru.example.group.main.exception;
 
 import ru.example.group.main.dto.response.FriendsResponseDto;
 
-public class GetUserFriendsException extends Exception{
+public class GetUserFriendsException extends Exception {
 
     private final FriendsResponseDto friendsResponseDto;
 

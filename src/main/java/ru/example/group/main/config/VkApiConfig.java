@@ -25,8 +25,7 @@ public class VkApiConfig {
 
     @Bean
     public UserActor userActor() {
-        return new UserActor(userId,
-                accessToken);
+        return new UserActor(userId, accessToken);
     }
 
     @Bean
@@ -37,11 +36,7 @@ public class VkApiConfig {
     @Bean
     public GetCountriesResponse getVkApiCountries() throws ClientException, ApiException {
         if (!deactivated) {
-            return vkApiClient().database().getCountries(userActor())
-                    .lang(Lang.RU)
-                    .needAll(true)
-                    .count(235)
-                    .execute();
+            return vkApiClient().database().getCountries(userActor()).lang(Lang.RU).needAll(true).count(235).execute();
         }
         return new GetCountriesResponse();
     }

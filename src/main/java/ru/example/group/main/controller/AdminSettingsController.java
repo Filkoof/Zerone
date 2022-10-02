@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.service.AdminService;
+
 @RequiredArgsConstructor
 @RestController
 public class AdminSettingsController {

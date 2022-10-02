@@ -38,5 +38,4 @@ public class AuthUserController {
     public ResultMessageDto handleLogoutApi(HttpServletRequest request) throws AuthLogoutException {
         return authUserService.logoutProcessing(request.getHeader("Authorization"));
     }
-
 }

@@ -45,5 +45,4 @@ public class SearchController {
         return new ResponseEntity<>(searchService.postSearch(text, date_from, date_to,
                 offset, itemPerPage, author, tag), HttpStatus.OK);
     }
-
 }

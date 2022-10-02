@@ -3,7 +3,6 @@ package ru.example.group.main.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
@@ -50,7 +49,7 @@ public class FriendsService {
         return friendsResponseDto;
     }
 
-    private List<UserDataResponseDto> getUserDataResponseDtoList(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType){
+    private List<UserDataResponseDto> getUserDataResponseDtoList(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType) {
         UserEntity user;
         if (name.equals("name")) {
             user = socialNetUserRegisterService.getCurrentUser();
@@ -89,7 +88,7 @@ public class FriendsService {
 
     private String sendFriendRequestDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
         if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
-            Boolean check =insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.SUBSCRIBED, new FriendshipEntity()) &&
+            Boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.SUBSCRIBED, new FriendshipEntity()) &&
                     insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.REQUEST, new FriendshipEntity());
             if (!check) {
                 return "Ошибка отправки запроса, обратитесь в службу поддержки.";
@@ -101,14 +100,14 @@ public class FriendsService {
             return "Запрос на дружбу был отправлен ранее и находится в статусе - " + idToUserFriendshipStatusCheck.getStatus().getName();
         }
         if (idToUserStatusCode == 5) {
-            Boolean check =  insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND, userToIdFriendshipStatusCheck)
+            Boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND, userToIdFriendshipStatusCheck)
                     && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.FRIEND, idToUserFriendshipStatusCheck);
             if (!check) {
                 return "Ошибка отправки запроса, обратитесь в службу поддержки.";
             }
             return "Данный пользователь уже отправлял вам запрос и теперь вы друзья.";
         }
-        return  "Ошибка добавления в друзья.";
+        return "Ошибка добавления в друзья.";
     }
 
     private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, FriendshipStatusType userGetStatus, FriendshipEntity friendship) throws FriendsRequestException {

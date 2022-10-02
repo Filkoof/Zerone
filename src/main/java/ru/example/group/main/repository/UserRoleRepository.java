@@ -8,7 +8,7 @@ import ru.example.group.main.entity.UserRoleEntity;
 import java.util.List;
 
 @Repository
-public interface UserRoleRepository extends JpaRepository<UserRoleEntity, Long>{
+public interface UserRoleRepository extends JpaRepository<UserRoleEntity, Long> {
 
     List<UserRoleEntity> findUserRoleEntitiesByUserForRole(UserEntity user);
 }

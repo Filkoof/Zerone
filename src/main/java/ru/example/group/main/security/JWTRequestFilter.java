@@ -1,6 +1,5 @@
 package ru.example.group.main.security;
 
-import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,7 +56,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         }
         try {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-        } catch (Exception e){
+        } catch (Exception e) {
             handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
         }
 

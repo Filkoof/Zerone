@@ -10,15 +10,12 @@ public class JwtBlackListService {
 
     private final JwtBlacklistRepository jwtBlacklistRepository;
 
-
     @Autowired
     public JwtBlackListService(JwtBlacklistRepository jwtBlacklistRepository) {
         this.jwtBlacklistRepository = jwtBlacklistRepository;
     }
 
-    public JwtBlacklistEntity getBlackListEntity(String token){
+    public JwtBlacklistEntity getBlackListEntity(String token) {
         return jwtBlacklistRepository.findJwtBlacklistEntityByJwtBlacklistedToken(token);
     }
-
-
 }

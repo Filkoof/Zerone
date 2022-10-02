@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Data
 public class ApiResponseDto {
 
-  private String message;
-  private HttpStatus status;
+    private String message;
+    private HttpStatus status;
 
 }

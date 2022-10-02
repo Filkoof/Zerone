@@ -7,8 +7,7 @@ import lombok.Data;
 @Builder
 @Data
 public class TagResponseDto {
-  Long id;
-  @JsonProperty("tag")
-  String tag;
-
+    Long id;
+    @JsonProperty("tag")
+    String tag;
 }

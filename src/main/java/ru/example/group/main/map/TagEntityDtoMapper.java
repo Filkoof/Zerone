@@ -6,7 +6,7 @@ import ru.example.group.main.entity.TagEntity;
 
 @Mapper
 public interface TagEntityDtoMapper {
-  TagEntity dtoToEntity(TagResponseDto dto);
-  TagResponseDto entityToDto(TagEntity entity);
+    TagEntity dtoToEntity(TagResponseDto dto);
 
+    TagResponseDto entityToDto(TagEntity entity);
 }

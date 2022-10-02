@@ -1,11 +1,9 @@
 package ru.example.group.main.security;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.example.group.main.controller.GlobalExceptionHandlerController;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 
@@ -14,13 +12,14 @@ import java.util.*;
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
     private final UserEntity user;
-    public SocialNetUserDetails(UserEntity user){
+
+    public SocialNetUserDetails(UserEntity user) {
         this.user = user;
     }
+
     public UserEntity getUser() {
         return user;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -39,7 +38,7 @@ public class SocialNetUserDetails implements UserDetails {
                     simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

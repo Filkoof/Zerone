@@ -1,6 +1,5 @@
 package ru.example.group.main.entity.enumerated;
 
-
 public enum FriendshipStatusType {
     REQUEST,
     FRIEND,
@@ -11,64 +10,27 @@ public enum FriendshipStatusType {
     DEADLOCK;
 
     public static Long getLongFromEnum(FriendshipStatusType friendshipStatusType) {
-        Long result;
-        switch (friendshipStatusType) {
-            case REQUEST:
-                result = 1L;
-            break;
-            case FRIEND:
-                result = 2L;
-                break;
-            case BLOCKED:
-                result = 3L;
-                break;
-            case DECLINED:
-                result = 4L;
-                break;
-            case SUBSCRIBED:
-                result = 5L;
-                break;
-            case WASBLOCKEDBY:
-                result = 6L;
-                break;
-            case DEADLOCK:
-                result = 7L;
-                break;
-            default:
-                result = 0L;
-                break;
+        return switch (friendshipStatusType) {
+            case REQUEST -> 1L;
+            case FRIEND -> 2L;
+            case BLOCKED -> 3L;
+            case DECLINED -> 4L;
+            case SUBSCRIBED -> 5L;
+            case WASBLOCKEDBY -> 6L;
+            case DEADLOCK -> 7L;
         };
-        return result;
     }
 
     public static FriendshipStatusType getFriendshipFromString(String code) {
-        FriendshipStatusType result;
-        switch (code) {
-            case "REQUEST":
-                result = REQUEST;
-                break;
-            case "FRIEND":
-                result = FRIEND;
-                break;
-            case "BLOCKED":
-                result = BLOCKED;
-                break;
-            case "DECLINED":
-                result = DECLINED;
-                break;
-            case "SUBSCRIBED":
-                result = SUBSCRIBED;
-                break;
-            case "WASBLOCKEDBY":
-                result = WASBLOCKEDBY;
-                break;
-            case "DEADLOCK":
-                result = DEADLOCK;
-                break;
-            default:
-                result = null;
-                break;
+        return switch (code) {
+            case "REQUEST" -> REQUEST;
+            case "FRIEND" -> FRIEND;
+            case "BLOCKED" -> BLOCKED;
+            case "DECLINED" -> DECLINED;
+            case "SUBSCRIBED" -> SUBSCRIBED;
+            case "WASBLOCKEDBY" -> WASBLOCKEDBY;
+            case "DEADLOCK" -> DEADLOCK;
+            default -> null;
         };
-        return result;
     }
 }

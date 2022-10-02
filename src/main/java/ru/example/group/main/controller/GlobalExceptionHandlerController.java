@@ -69,7 +69,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(UserWithThatEmailAlreadyExistException.class)
-    public ResponseEntity<ResultMessageDto> handleUserWithThatEmailALreadyExistException(UserWithThatEmailAlreadyExistException e){
+    public ResponseEntity<ResultMessageDto> handleUserWithThatEmailALreadyExistException(UserWithThatEmailAlreadyExistException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
@@ -79,7 +79,7 @@ public class GlobalExceptionHandlerController {
 
 
     @ExceptionHandler(NewUserConfirmationViaEmailFailedException.class)
-    public ResponseEntity<ResultMessageDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e){
+    public ResponseEntity<ResultMessageDto> handleNewUserConfirmationViaEmailFailedException(NewUserConfirmationViaEmailFailedException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
@@ -88,7 +88,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(AuthLogoutException.class)
-    public ResponseEntity<ResultMessageDto> handleAuthLogoutException(AuthLogoutException e){
+    public ResponseEntity<ResultMessageDto> handleAuthLogoutException(AuthLogoutException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка выхода из системы");
@@ -97,7 +97,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
-    public ResponseEntity<ResultMessageDto> handleEmailChangeException(EmailOrPasswordChangeException e){
+    public ResponseEntity<ResultMessageDto> handleEmailChangeException(EmailOrPasswordChangeException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
@@ -106,7 +106,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(UserDeleteOrRecoveryException.class)
-    public ResponseEntity<ResultMessageDto> handleUserSetDeletedFail(UserDeleteOrRecoveryException e){
+    public ResponseEntity<ResultMessageDto> handleUserSetDeletedFail(UserDeleteOrRecoveryException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
@@ -116,7 +116,7 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(RecommendedFriendsLoadingFromDbToApiException.class)
     public ResponseEntity<RecommendedFriendsResponseDto> handleRecommendedFriendsLoadingFromDbToApiException(RecommendedFriendsLoadingFromDbToApiException e,
-                                                                                                             RecommendedFriendsResponseDto recommendedFriendsResponseDto){
+                                                                                                             RecommendedFriendsResponseDto recommendedFriendsResponseDto) {
         log.info(e.getMessage());
         recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендуемых друзей");
         return new ResponseEntity(recommendedFriendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
@@ -124,14 +124,14 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(GetUserFriendsException.class)
     public ResponseEntity<FriendsResponseDto> handleGetUserFriendsException(GetUserFriendsException e,
-                                                                            FriendsResponseDto friendsResponseDto){
+                                                                            FriendsResponseDto friendsResponseDto) {
         log.info(e.getMessage());
         friendsResponseDto.setError("Ошибка загрузки друзей");
         return new ResponseEntity(friendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(FriendsRequestException.class)
-    public ResponseEntity<ResultMessageDto> handleFriendsRequestException(FriendsRequestException e){
+    public ResponseEntity<ResultMessageDto> handleFriendsRequestException(FriendsRequestException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
@@ -139,7 +139,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ResultMessageDto> handleConstraintViolationException(ConstraintViolationException e){
+    public ResponseEntity<ResultMessageDto> handleConstraintViolationException(ConstraintViolationException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
@@ -147,7 +147,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResultMessageDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<ResultMessageDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
@@ -156,7 +156,7 @@ public class GlobalExceptionHandlerController {
 
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ResultMessageDto> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+    public ResponseEntity<ResultMessageDto> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка в запросе");
         log.info(e.getMessage());
@@ -165,7 +165,7 @@ public class GlobalExceptionHandlerController {
 
 
     @ExceptionHandler(VkApiException.class)
-    public ResponseEntity<ResultMessageDto> handleVkApiException(VkApiException e){
+    public ResponseEntity<ResultMessageDto> handleVkApiException(VkApiException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
@@ -173,7 +173,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(CloudinaryException.class)
-    public ResponseEntity<ResultMessageDto> handleCloudinaryException(CloudinaryException e){
+    public ResponseEntity<ResultMessageDto> handleCloudinaryException(CloudinaryException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
@@ -181,7 +181,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(IdUserException.class)
-    public ResponseEntity<ResultMessageDto> handleIdUserException(IdUserException e){
+    public ResponseEntity<ResultMessageDto> handleIdUserException(IdUserException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
@@ -189,7 +189,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(CommentPostNotFoundException.class)
-    public ResponseEntity<ResultMessageDto> handleCommentPostNotFoundException(CommentPostNotFoundException e){
+    public ResponseEntity<ResultMessageDto> handleCommentPostNotFoundException(CommentPostNotFoundException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
@@ -197,7 +197,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(PostsException.class)
-    public ResponseEntity<ResultMessageDto> handlePostDeleteException(PostsException e){
+    public ResponseEntity<ResultMessageDto> handlePostDeleteException(PostsException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());

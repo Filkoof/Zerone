@@ -37,18 +37,12 @@ public class UserRegisterService {
 
     @Value("${config.frontend}")
     private String mailHost;
-
     @Value("${cloudinary.default_avatar}")
     private String default_avatar;
-
     private final UserRepository userRepository;
-
     private final ZeroneMailSenderService zeroneMailSenderService;
-
     private final PasswordEncoder passwordEncoder;
-
     private final RecommendedFriendsService recommendedFriendsService;
-
     private final DatabaseReader databaseReader;
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
@@ -150,7 +144,7 @@ public class UserRegisterService {
         if (ipAddress.equals("127.0.0.2") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
             return location;
         } else {
-        try {
+            try {
                 InetAddress inetAddress = InetAddress.getByName(ipAddress);
                 CityResponse locationResponse = databaseReader.city(inetAddress);
                 location.set(0, locationResponse.getCountry().getNames().get("ru"));
@@ -159,8 +153,8 @@ public class UserRegisterService {
             } catch (AddressNotFoundException | UnknownHostException e) {
                 e.getMessage();
             } catch (IOException | GeoIp2Exception e) {
-            e.printStackTrace();
-        }
+                e.printStackTrace();
+            }
         }
         return location;
     }

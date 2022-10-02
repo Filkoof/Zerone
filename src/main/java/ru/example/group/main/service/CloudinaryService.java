@@ -15,6 +15,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.util.HashMap;
 import java.util.Map;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -51,7 +52,7 @@ public class CloudinaryService {
 
     public void deleteFile(String publicId) throws CloudinaryException {
         try {
-            Map<String, String> param = new HashMap<String, String>();
+            Map<String, String> param = new HashMap<>();
             param.put("folder", "pets");
             param.put("invalidate", "true");
             cloudinary.uploader().destroy(publicId, param);
@@ -68,5 +69,4 @@ public class CloudinaryService {
         response.setData(urlImageDto);
         return response;
     }
-
 }

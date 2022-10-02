@@ -4,10 +4,11 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
 @ConfigurationProperties(prefix = "config")
 @Configuration
 @Data
-public class ConfigProperties{
+public class ConfigProperties {
     @Value("${config.frontend}")
     private String frontend;
     @Value("${config.backend}")

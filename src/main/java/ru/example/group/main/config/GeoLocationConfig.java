@@ -27,16 +27,11 @@ public class GeoLocationConfig {
 
             log.info("GeoLocationConfig: Database was loaded successfully.");
 
-            return new DatabaseReader
-                    .Builder(dbAsStream)
-                    .fileMode(Reader.FileMode.MEMORY)
-                    .build();
+            return new DatabaseReader.Builder(dbAsStream).fileMode(Reader.FileMode.MEMORY).build();
 
         } catch (IOException | NullPointerException e) {
             log.error("Database reader cound not be initialized. ", e);
             return null;
         }
     }
-
-
 }

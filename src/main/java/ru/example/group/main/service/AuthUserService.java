@@ -1,6 +1,5 @@
 package ru.example.group.main.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,8 @@ import ru.example.group.main.repository.JwtBlacklistRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class AuthUserService {

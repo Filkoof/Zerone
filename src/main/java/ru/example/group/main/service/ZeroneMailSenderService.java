@@ -7,11 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.exception.EmailNotSentException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @Service
@@ -22,7 +18,6 @@ public class ZeroneMailSenderService {
 
     @Value("${spring.mail.username}")
     private String username;
-
 
     private boolean send(String emailTo, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -44,5 +39,4 @@ public class ZeroneMailSenderService {
         }
         return false;
     }
-
 }

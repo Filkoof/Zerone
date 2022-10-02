@@ -22,17 +22,23 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String main (Model model) {
+    public String main(Model model) {
         model.addAttribute("title", "Админ панель");
         return "index";
     }
-    
+
     @ModelAttribute("allUsers")
-    public int getCountAllUsers() { return userRepository.findAll().size(); }
+    public int getCountAllUsers() {
+        return userRepository.findAll().size();
+    }
 
     @ModelAttribute("allPosts")
-    public int getCountAllPosts() { return postRepository.findAll().size(); }
+    public int getCountAllPosts() {
+        return postRepository.findAll().size();
+    }
 
     @ModelAttribute("allComments")
-    public int getCountAllComments() { return commentRepository.findAll().size(); }
+    public int getCountAllComments() {
+        return commentRepository.findAll().size();
+    }
 }

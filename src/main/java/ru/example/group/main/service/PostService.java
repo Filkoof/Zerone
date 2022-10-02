@@ -56,7 +56,6 @@ public class PostService {
         var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate / 1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
-        var isQueued = publishDateTime.isAfter(dateTimeNow);
 
         var tags = request.getTags() != null ? new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()) : null;
         var postE = mapper.postRequestToEntity(request, publishDateTime, tags, userEntity);
@@ -75,26 +74,16 @@ public class PostService {
                     .total((int) statePage.getTotalElements())
                     .perPage(itemPerPage)
                     .offset(offset)
-                    //.data(statePage.stream().map(this::getPostDtoFromEntity)
-                    .data(statePage.stream().map(postEntity -> {
-                                try {
-                                    return getPostDtoFromEntity(postEntity);
-                                } catch (PostsException e) {
-                                    return null;
-                                }
-                            })
-                            .toList())
+                    .data(statePage.stream().map(this::tryCatchPostsException).toList())
                     .error("")
                     .timestamp(LocalDateTime.now())
                     .build();
         } catch (Exception e) {
             throw new PostsException(e.getMessage());
         }
-
     }
 
-
-    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) throws PostsException {
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
         var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsUserId(id, pageable);
@@ -102,14 +91,7 @@ public class PostService {
                 .total((int) statePage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                //.data(statePage.stream().map(this::getPostDtoFromEntity).toList())
-                .data(statePage.stream().map(postEntity -> {
-                            try {
-                                return getPostDtoFromEntity(postEntity);
-                            } catch (PostsException e) {
-                                return null;
-                            }
-                        })
+                .data(statePage.stream().map(this::tryCatchPostsException)
                         .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
@@ -118,7 +100,7 @@ public class PostService {
 
     public CommonListResponseDto<Object> getNewsByListUserId(List<Long> listPostId, int offset) throws PostsException {
         var itemPerPage = 0;
-        List<Object> postList = new ArrayList();
+        List<Object> postList = new ArrayList<>();
         for (Long postId : listPostId) {
             itemPerPage += postRepository.findAllByUserPost(postId) == 0 ? 5 : postRepository.findAllByUserPost(postId);
             var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
@@ -193,5 +175,13 @@ public class PostService {
         } else if (post.getTime().isAfter(LocalDateTime.now())) {
             return PostType.QUEUED;
         } else return PostType.POSTED;
+    }
+
+    public PostResponseDto tryCatchPostsException(PostEntity entity) {
+        try {
+            return getPostDtoFromEntity(entity);
+        } catch (PostsException e) {
+            return null;
+        }
     }
 }

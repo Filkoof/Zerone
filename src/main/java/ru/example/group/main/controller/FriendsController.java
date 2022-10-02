@@ -71,5 +71,4 @@ public class FriendsController {
     public ResultMessageDto blockUser(@PathVariable Long id) throws FriendsRequestException {
         return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
     }
-
 }

@@ -2,16 +2,18 @@ package ru.example.group.main.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
+
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.example.group.main.dto.ImageDto;
 
-//@Builder
 @RequiredArgsConstructor
 @Setter
 @Getter
@@ -19,22 +21,22 @@ import ru.example.group.main.dto.ImageDto;
 public class CommentDto implements Serializable {
 
     @JsonProperty("comment_text")
-    private  String commentText;
+    private String commentText;
     @JsonProperty("is_blocked")
-    private  Boolean blocked;
-    private  List<ImageDto> images;
+    private Boolean blocked;
+    private List<ImageDto> images;
     @JsonProperty("is_deleted")
-    private  Boolean deleted;
+    private Boolean deleted;
     @JsonProperty("post_id")
-    private  Long postId;
+    private Long postId;
     @JsonProperty("my_like")
-    private  Boolean myLike;
-    private  UserDataResponseDto author;
+    private Boolean myLike;
+    private UserDataResponseDto author;
     @JsonProperty("parent_id")
-    private  Long parentId;
-    private  Long id;
-    private  LocalDateTime time;
+    private Long parentId;
+    private Long id;
+    private LocalDateTime time;
     @JsonProperty("sub_comments")
-    private  List<CommentDto> subComments;
-    private  int likes;
+    private List<CommentDto> subComments;
+    private int likes;
 }

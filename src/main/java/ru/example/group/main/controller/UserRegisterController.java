@@ -93,7 +93,7 @@ public class UserRegisterController {
 
     @GetMapping("/user_delete/confirm")
     @ApiOperation("Operation to confirm user delete via email confirmation link.")
-    public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code)throws UserDeleteOrRecoveryException {
+    public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.confirmUserDelete(code);
         return new RedirectView("http://" + frontCorsHttpAddress + "/login");
     }
@@ -104,5 +104,4 @@ public class UserRegisterController {
         userSettingsService.recoveryUserDelete(code);
         return new RedirectView("http://" + frontCorsHttpAddress + "/login");
     }
-
 }

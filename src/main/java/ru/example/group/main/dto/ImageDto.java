@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageDto {
 
-  private String id;
-  private String url;
+    private String id;
+    private String url;
 }

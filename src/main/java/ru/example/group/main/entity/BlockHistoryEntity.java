@@ -10,10 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 import ru.example.group.main.entity.enumerated.ActionBlockType;
-
 
 @Entity
 @Getter
@@ -21,25 +21,20 @@ import ru.example.group.main.entity.enumerated.ActionBlockType;
 @Table(name = "block_history")
 public class BlockHistoryEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  private LocalDateTime time;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserEntity user;
-
-  @ManyToOne
-  @JoinColumn(name = "post_id")
-  private PostEntity post;
-
-  @ManyToOne
-  @JoinColumn(name = "comment_id")
-  private CommentEntity comment;
-
-  @Enumerated(EnumType.STRING)
-  private ActionBlockType action;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDateTime time;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private PostEntity post;
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private CommentEntity comment;
+    @Enumerated(EnumType.STRING)
+    private ActionBlockType action;
 
 }

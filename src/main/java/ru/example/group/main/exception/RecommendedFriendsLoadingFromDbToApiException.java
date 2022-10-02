@@ -2,7 +2,7 @@ package ru.example.group.main.exception;
 
 import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 
-public class RecommendedFriendsLoadingFromDbToApiException extends Exception{
+public class RecommendedFriendsLoadingFromDbToApiException extends Exception {
 
     private final RecommendedFriendsResponseDto recommendedFriendsResponseDto;
 
@@ -10,5 +10,4 @@ public class RecommendedFriendsLoadingFromDbToApiException extends Exception{
         super(message);
         this.recommendedFriendsResponseDto = recommendedFriendsResponseDto;
     }
-
 }

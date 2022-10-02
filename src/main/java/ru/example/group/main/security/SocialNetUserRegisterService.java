@@ -12,11 +12,8 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.exception.AuthenticationException;
 import ru.example.group.main.map.UserMapper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
@@ -32,8 +29,8 @@ public class SocialNetUserRegisterService {
 
     public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto;
-           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
-                    payload.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getEmail(),
+                payload.getPassword()));
 
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
@@ -44,7 +41,7 @@ public class SocialNetUserRegisterService {
     }
 
     private CommonResponseDto<UserDataResponseDto> setAuthLoginResponse(SocialNetUserDetails userDetails) {
-        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<UserDataResponseDto>();
+        CommonResponseDto<UserDataResponseDto> authLoginResponseDto = new CommonResponseDto<>();
         ContactConfirmationResponseDto response = new ContactConfirmationResponseDto();
         if (!userDetails.getUser().isApproved()) {
             authLoginResponseDto.setTimeStamp(LocalDateTime.now());

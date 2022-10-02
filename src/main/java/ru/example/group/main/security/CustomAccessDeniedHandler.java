@@ -1,18 +1,13 @@
 package ru.example.group.main.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import ru.example.group.main.controller.GlobalExceptionHandlerController;
-import ru.example.group.main.dto.response.ApiResponseDto;
-import ru.example.group.main.dto.response.CommonResponseDto;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 

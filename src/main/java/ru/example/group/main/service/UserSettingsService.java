@@ -23,6 +23,7 @@ import ru.example.group.main.map.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -45,8 +46,8 @@ public class UserSettingsService {
 
     public Boolean changeEmailConfirmationSend(String newEmail) throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        if (!newEmail.isEmpty()){
-            sendEmailChangeConfirmation( newEmail, user);
+        if (!newEmail.isEmpty()) {
+            sendEmailChangeConfirmation(newEmail, user);
             return true;
         }
         return false;
@@ -60,7 +61,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
                         "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/api/v1/account/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
+                        "http://" + backend + "/api/v1/account/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -68,14 +69,14 @@ public class UserSettingsService {
 
     public boolean confirmEmailChange(String code, String newEmail) throws EmailOrPasswordChangeException {
         UserEntity user = userRepository.findByConfirmationCode(code);
-        if (user != null){
+        if (user != null) {
             user.setConfirmationCode(null);
             user.setEmail(newEmail);
             try {
                 userRepository.save(user);
                 sendEmailChangedNotice(user.getEmail());
                 return true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new EmailOrPasswordChangeException("Ошибка изменения почты: " + e.getMessage());
             }
         } else {
@@ -89,12 +90,12 @@ public class UserSettingsService {
                         "Ваш email в сеть Зерон успешно изменен." +
                         "\n\nСпасибо!";
         String title = "Успешное изменение почты(логина) Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend( email, title, message);
+        zeroneMailSenderService.emailSend(email, title, message);
     }
 
     public Boolean changePasswordConfirmationSend(PasswordChangeRequestDto passwordChangeRequestDto) throws EmailNotSentException {
         UserEntity user = userRepository.findByEmail(jwtUtilService.extractUsername(passwordChangeRequestDto.getToken()));
-        if (user != null){
+        if (user != null) {
             sendPasswordChangeConfirmation(passwordChangeRequestDto.getPassword(), user);
             return true;
         }
@@ -109,7 +110,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на изменение пароля в сеть Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                        "http://"+ backend + "/api/v1/account/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
+                        "http://" + backend + "/api/v1/account/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -117,14 +118,14 @@ public class UserSettingsService {
 
     public Boolean confirmPasswordChange(String code, String code1) throws EmailOrPasswordChangeException {
         UserEntity user = userRepository.findByConfirmationCode(code);
-        if (user != null){
+        if (user != null) {
             user.setConfirmationCode(null);
             user.setPassword(code1);
             try {
                 userRepository.save(user);
                 sendPasswordChangedNotice(user.getEmail());
                 return true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new EmailOrPasswordChangeException("Ошибка изменения пароля: " + e);
             }
         } else {
@@ -138,13 +139,13 @@ public class UserSettingsService {
                         "Ваш пароль в сеть Зерон успешно изменен." +
                         "\n\nСпасибо!";
         String title = "Успешное изменение пароля Вашего аккаунта Зерон";
-        zeroneMailSenderService.emailSend( email, title, message);
+        zeroneMailSenderService.emailSend(email, title, message);
     }
 
     public ResultMessageDto handleUserDelete() throws EmailNotSentException {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         ResultMessageDto deleteResponse = new ResultMessageDto();
-        if (user != null){
+        if (user != null) {
             sendUserDeleteConfirmation(user);
             deleteResponse.setMessage("User deleted.");
             deleteResponse.setError("");
@@ -164,7 +165,7 @@ public class UserSettingsService {
                 "Здравствуйте, " + user.getFirstName() + "\n\n" +
                         "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
                         "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
-                        "http://"+ backend + "/api/v1/account/user_delete/confirm?code=" + code + "\n" +
+                        "http://" + backend + "/api/v1/account/user_delete/confirm?code=" + code + "\n" +
                         "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
         String title = "Удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
@@ -172,7 +173,7 @@ public class UserSettingsService {
 
     public Boolean confirmUserDelete(String code) throws UserDeleteOrRecoveryException {
         UserEntity userToDelete = userRepository.findByConfirmationCode(code);
-        if (userToDelete != null){
+        if (userToDelete != null) {
             userToDelete.setDeleted(true);
             try {
                 code = UUID.randomUUID().toString().substring(0, 24);
@@ -180,7 +181,7 @@ public class UserSettingsService {
                 userRepository.save(userToDelete);
                 userDeletedNotice(userToDelete.getEmail(), code);
                 return true;
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new UserDeleteOrRecoveryException("Пользователь: " + userToDelete.getEmail() + ", ошибка удаления: " + e.getMessage());
             }
         } else {
@@ -245,34 +246,34 @@ public class UserSettingsService {
     }
 
     public Boolean updateUserMainSettings(UserDataResponseDto newDateUser) throws UpdateUserMainSettingsException {
-            try {
-                UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
-                currentUser.setFirstName(newDateUser.getFirstName());
-                currentUser.setLastName(newDateUser.getLastName());
-                currentUser.setPhone(newDateUser.getPhone());
-                currentUser.setCountry(newDateUser.getCountry());
-                currentUser.setCity(newDateUser.getCity());
-                currentUser.setBirthDate(newDateUser.getBirthDate());
-                currentUser.setPhoto(newDateUser.getPhoto());
-                currentUser.setAbout(newDateUser.getAbout());
-                userRepository.save(currentUser);
-                return true;
-            } catch (Exception e) {
-                throw new UpdateUserMainSettingsException("Невозможно обновиться данные пользователя: " + e.getMessage());
-            }
+        try {
+            UserEntity currentUser = socialNetUserRegisterService.getCurrentUser();
+            currentUser.setFirstName(newDateUser.getFirstName());
+            currentUser.setLastName(newDateUser.getLastName());
+            currentUser.setPhone(newDateUser.getPhone());
+            currentUser.setCountry(newDateUser.getCountry());
+            currentUser.setCity(newDateUser.getCity());
+            currentUser.setBirthDate(newDateUser.getBirthDate());
+            currentUser.setPhoto(newDateUser.getPhoto());
+            currentUser.setAbout(newDateUser.getAbout());
+            userRepository.save(currentUser);
+            return true;
+        } catch (Exception e) {
+            throw new UpdateUserMainSettingsException("Невозможно обновиться данные пользователя: " + e.getMessage());
+        }
     }
 
     public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
 
         try {
-                GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
-                        .lang(Lang.RU)
-                        .needAll(true)
-                        .count(235)
-                        .execute();
-                if (!Objects.equals(country, "")) {
-                    countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
-                }
+            GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
+                    .lang(Lang.RU)
+                    .needAll(true)
+                    .count(235)
+                    .execute();
+            if (!Objects.equals(country, "")) {
+                countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
+            }
             LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
             locationResponseDto.setData(countries.getItems());
             locationResponseDto.setError("OK");
@@ -311,7 +312,7 @@ public class UserSettingsService {
             UserEntity friend = userRepository.findById(friendId).orElseThrow();
             friendDto.setData(userMapper.userEntityToDtoWithToken(friend, ""));
             return friendDto;
-        } catch (Exception e){
+        } catch (Exception e) {
             friendDto.setError("Ошибка");
             return friendDto;
         }
