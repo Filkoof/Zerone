@@ -1,4 +1,4 @@
-package ru.example.group.main.map;
+package ru.example.group.main.mapper;
 
 import org.mapstruct.Mapper;
 import ru.example.group.main.dto.response.TagResponseDto;

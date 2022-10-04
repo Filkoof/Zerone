@@ -1,4 +1,4 @@
-package ru.example.group.main.map;
+package ru.example.group.main.mapper;
 
 import java.util.List;
 

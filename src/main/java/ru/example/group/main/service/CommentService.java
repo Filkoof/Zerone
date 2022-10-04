@@ -15,7 +15,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
-import ru.example.group.main.map.CommentMapper;
+import ru.example.group.main.mapper.CommentMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;

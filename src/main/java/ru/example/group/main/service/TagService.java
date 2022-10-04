@@ -13,7 +13,7 @@ import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.entity.TagEntity;
-import ru.example.group.main.map.TagEntityDtoMapper;
+import ru.example.group.main.mapper.TagEntityDtoMapper;
 import ru.example.group.main.repository.TagRepository;
 
 @Service

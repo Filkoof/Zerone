@@ -19,7 +19,7 @@ import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.*;
-import ru.example.group.main.map.UserMapper;
+import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserRegisterService;

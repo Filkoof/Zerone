@@ -10,7 +10,7 @@ import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
-import ru.example.group.main.map.UserMapper;
+import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
 import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
 import ru.example.group.main.security.SocialNetUserRegisterService;

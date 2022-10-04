@@ -11,7 +11,7 @@ import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.FriendsRequestException;
 import ru.example.group.main.exception.GetUserFriendsException;
-import ru.example.group.main.map.UserMapper;
+import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.FriendshipRepository;
 import ru.example.group.main.repository.FriendshipStatusRepository;
 import ru.example.group.main.repository.UserRepository;

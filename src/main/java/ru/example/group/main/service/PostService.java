@@ -26,7 +26,7 @@ import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.exception.PostsException;
-import ru.example.group.main.map.PostMapper;
+import ru.example.group.main.mapper.PostMapper;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;

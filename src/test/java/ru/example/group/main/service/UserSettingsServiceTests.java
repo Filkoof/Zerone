@@ -14,11 +14,10 @@ import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
-import ru.example.group.main.map.UserMapper;
+import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

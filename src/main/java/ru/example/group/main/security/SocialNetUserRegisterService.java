@@ -12,7 +12,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.map.UserMapper;
+import ru.example.group.main.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 
