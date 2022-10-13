@@ -23,6 +23,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
+import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.exception.PostsException;
@@ -45,6 +46,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CommentService commentService;
     private final PostMapper mapper;
+    private final LikesService likesService;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
             final PostRequestDto request,
@@ -163,7 +165,9 @@ public class PostService {
             var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
             var type = getType(postEntity);
             var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
-            return mapper.postEntityToDto(postEntity, tags, type, listComment);
+            Integer likesForPostCount = likesService.likesCountByPostIdAndType(postEntity.getId(), LikeType.POST);
+            Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(postEntity.getId(), LikeType.POST, registerService.getCurrentUser());
+            return mapper.postEntityToDto(postEntity, tags, type, listComment, isMyLike, likesForPostCount);
         } catch (Exception e) {
             throw new PostsException(e.getMessage());
         }

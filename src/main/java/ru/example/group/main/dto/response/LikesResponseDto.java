@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class VoteResponseDto {
+public class LikesResponseDto {
     List<Long> users;
     Integer likes;
 }

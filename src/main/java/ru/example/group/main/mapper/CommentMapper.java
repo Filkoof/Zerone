@@ -15,16 +15,18 @@ import ru.example.group.main.entity.UserEntity;
 public interface CommentMapper {
 
 
-    @Mapping(target = "myLike", ignore = true, defaultValue = "false")
-    @Mapping(target = "likes", ignore = true)
+    @Mapping(target = "myLike", source = "myLike")
+    @Mapping(target = "likes", source = "likesCount")
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "commentText", expression = "java(entity.isDeleted()?\"коммент удален\":entity.getCommentText())")
-    @Mapping(target = "author", source = "user")
-    @Mapping(target = "postId", source = "post.id")
-    @Mapping(target = "parentId", source = "parent.id")
-    @Mapping(target = "blocked", source = "blocked")
-    @Mapping(target = "deleted", source = "deleted")
-    CommentDto commentEntityToDto(CommentEntity entity);
+    @Mapping(target = "author", source = "entity.user")
+    @Mapping(target = "postId", source = "entity.post.id")
+    @Mapping(target = "parentId", source = "entity.parent.id")
+    @Mapping(target = "blocked", source = "entity.blocked")
+    @Mapping(target = "deleted", source = "entity.deleted")
+    CommentDto commentEntityToDto(CommentEntity entity,
+                                  Boolean myLike,
+                                  Integer likesCount);
 
     @Mapping(target = "subComments", ignore = true)
     @Mapping(target = "id", ignore = true)

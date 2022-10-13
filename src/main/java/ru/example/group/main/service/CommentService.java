@@ -1,6 +1,7 @@
 package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.entity.CommentEntity;
+import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.mapper.CommentMapper;
@@ -29,6 +31,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final CommentMapper mapper;
+    private final LikesService likesService;
 
     public CommonListResponseDto<CommentDto> getCommentsForPostId(Long idPost, int offset, int itemPerPage) {
         if (postRepository.existsById(idPost)) {
@@ -92,7 +95,9 @@ public class CommentService {
         var response = new CommonResponseDto<CommentDto>();
         response.setError("");
         response.setTimeStamp(LocalDateTime.now());
-        response.setData(mapper.commentEntityToDto(comment));
+        Integer likesForCommentCount = likesService.likesCountByPostIdAndType(comment.getId(), LikeType.COMMENT);
+        Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(), LikeType.COMMENT, socialNetUserRegisterService.getCurrentUser());
+        response.setData(mapper.commentEntityToDto(comment, isMyLike, likesForCommentCount));
         return response;
     }
 
@@ -114,12 +119,19 @@ public class CommentService {
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var listCommentEntity = commentRepository.findByCommentToPost(idPost, pageable);
+        List<CommentDto> listCommentDto = listCommentEntity.stream().map(this::getCommentDto).toList();
         return CommonListResponseDto.<CommentDto>builder()
                 .perPage(itemPerPage)
                 .total((int) listCommentEntity.getTotalElements())
                 .error("")
                 .timestamp(LocalDateTime.now())
-                .data(mapper.commentListDto(listCommentEntity))
+                .data(listCommentDto)
                 .offset(offset).build();
+    }
+
+    private CommentDto getCommentDto(CommentEntity commentEntity) {
+        Integer likesForCommentCount = likesService.likesCountByPostIdAndType(commentEntity.getId(), LikeType.COMMENT);
+        Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(commentEntity.getId(), LikeType.COMMENT, socialNetUserRegisterService.getCurrentUser());
+        return mapper.commentEntityToDto(commentEntity, isMyLike, likesForCommentCount);
     }
 }

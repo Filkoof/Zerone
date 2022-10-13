@@ -5,8 +5,8 @@ import lombok.Data;
 import ru.example.group.main.entity.enumerated.LikeType;
 
 @Data
-public class VoteRequestDto {
+public class LikesRequestDto {
     @JsonAlias("item_id")
     private Long itemId;
-    private LikeType type;
+    private String type;
 }

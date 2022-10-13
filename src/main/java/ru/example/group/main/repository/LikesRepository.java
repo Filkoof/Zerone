@@ -5,13 +5,15 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.entity.LikeEntity;
+import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.LikeType;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface VoteRepository extends JpaRepository<LikeEntity, Long> {
+public interface LikesRepository extends JpaRepository<LikeEntity, Long> {
+
     Optional<List<LikeEntity>> findByEntityIdAndType(
         long entityId,
         LikeType type
@@ -25,7 +27,7 @@ public interface VoteRepository extends JpaRepository<LikeEntity, Long> {
         LikeType type
     );
 
-    boolean existsByEntityIdAndType(long entityId, LikeType type);
+    boolean existsByEntityIdAndTypeAndUser(long entityId, LikeType type, UserEntity userId);
 
     int countByEntityIdAndType(long itemId, LikeType valueOf);
 }
