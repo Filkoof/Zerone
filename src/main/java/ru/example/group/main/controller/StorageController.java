@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.UrlImageResponseDto;
+import ru.example.group.main.dto.response.ImageResponseDto;
 import ru.example.group.main.exception.CloudinaryException;
 import ru.example.group.main.service.CloudinaryService;
 
@@ -29,7 +29,7 @@ public class StorageController {
 
     @PostMapping("/storage")
     @ApiOperation("Operation to upload avatar image (as MultipartFile file IMAGE) to cloudinary service and provide back")
-    public ResponseEntity<CommonResponseDto<UrlImageResponseDto>> downloadImage(@Valid @NotNull MultipartFile file) throws CloudinaryException {
+    public ResponseEntity<CommonResponseDto<ImageResponseDto>> downloadImage(@Valid @NotNull MultipartFile file) throws CloudinaryException {
         log.info("downloadImage started");
         return new ResponseEntity<>(cloudinaryService.uploadFileEndGetUrl(file), HttpStatus.OK);
     }

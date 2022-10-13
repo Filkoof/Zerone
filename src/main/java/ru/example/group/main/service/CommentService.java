@@ -47,17 +47,7 @@ public class CommentService {
 
     public CommonListResponseDto<CommentDto> getComments(Long postId, int offset, int itemPerPage) {
         Assert.notNull(postId, "id поста не может быть null");
-
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var commentEntityPage = commentRepository.findByCommentToPost(postId, pageable);
-
-        return CommonListResponseDto.<CommentDto>builder()
-                .total((int) commentEntityPage.getTotalElements())
-                .data(commentEntityPage.stream().map(commentMapper::commentEntityToDto).toList())
-                .perPage(itemPerPage)
-                .error("")
-                .timestamp(LocalDateTime.now())
-                .offset(offset).build();
+        return getCommonList(postId, itemPerPage, offset);
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long comment_id)
