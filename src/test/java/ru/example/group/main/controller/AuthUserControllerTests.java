@@ -33,7 +33,6 @@ class AuthUserControllerTests  extends AbstractAllTestH2ContextLoad {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data.city").value("Suzdal"))
-                .andExpect(jsonPath("$.error").value(""))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

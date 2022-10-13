@@ -8,15 +8,14 @@ server:
   port: 8086
 
 config:
-  frontend: "195.161.114.18:8082"
+  frontend: "195.161.62.32:8082"
   backend: "localhost:8086"
 
 logging:
   file:
     path: logs
   level:
-    ru.example.group.main: OFF
-
+    ru.example.group.main: debug
 
 
 

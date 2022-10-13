@@ -7,8 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,23 +18,17 @@ import lombok.Setter;
 @Table(name = "friendships")
 public class FriendshipEntity {
 
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @OneToOne
-  @JoinColumn(name = "status_id")
-  private FriendshipStatusEntity status;
-
-  @ManyToOne
-  @JoinColumn(name = "src_person_id")
-  private UserEntity srcPerson;
-
-  @ManyToOne
-  @JoinColumn(name = "dst_person_id")
-  private UserEntity dstPerson;
-
-  private LocalDateTime time;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private FriendshipStatusEntity status;
+    @ManyToOne
+    @JoinColumn(name = "src_person_id")
+    private UserEntity srcPerson;
+    @ManyToOne
+    @JoinColumn(name = "dst_person_id")
+    private UserEntity dstPerson;
+    private LocalDateTime time;
 }

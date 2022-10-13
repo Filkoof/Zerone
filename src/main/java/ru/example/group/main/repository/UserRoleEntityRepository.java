@@ -8,5 +8,4 @@ import ru.example.group.main.entity.UserRoleEntity;
 public interface UserRoleEntityRepository extends JpaRepository<UserRoleEntity, Long> {
 
     UserRoleEntity findUserRoleEntitiesByUserRole(String role);
-
 }

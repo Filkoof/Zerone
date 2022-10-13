@@ -15,12 +15,9 @@ import java.time.LocalDateTime;
 @Table(name = "blacklisted_tokens")
 public class JwtBlacklistEntity {
 
-
     @Id
     @Column(name = "jwt_blacklisted")
     private String jwtBlacklistedToken;
-
     @Column(name = "revocation_date")
     private LocalDateTime revocationDate;
-
 }

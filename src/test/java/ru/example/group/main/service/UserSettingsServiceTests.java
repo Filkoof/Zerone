@@ -14,10 +14,10 @@ import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.EmailOrPasswordChangeException;
 import ru.example.group.main.exception.UpdateUserMainSettingsException;
 import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
-import ru.example.group.main.security.SocialNetUserDetailsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,7 +66,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private SocialNetUserDetailsService socialNetUserDetailsService;
+    private UserMapper userMapper;
 
 
     @BeforeEach
@@ -85,7 +85,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
     @Test
     void changeEmailConfirmationSendTest() throws EmailNotSentException {
-        assertTrue(userSettingsService.changeEmailConfirmationSend(null,null,EMAIL));
+        assertTrue(userSettingsService.changeEmailConfirmationSend(EMAIL));
     }
 
     @Test
@@ -108,7 +108,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
         passwordChangeRequestDto.setPassword("11111111");
         passwordChangeRequestDto.setToken(token);
 
-        assertTrue(userSettingsService.changePasswordConfirmationSend(null,null, passwordChangeRequestDto));
+        assertTrue(userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto));
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void handleUserDelete() throws EmailNotSentException {
-        assertTrue(userSettingsService.handleUserDelete(null, null).getMessage().equals("User deleted."));
+        assertTrue(userSettingsService.handleUserDelete().getMessage().equals("User deleted."));
     }
 
     @Test
@@ -150,23 +150,9 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @Test
-    @DisplayName("Тест на заполнение пользовательского DTO @GetMapping(/api/v1/users/me) данными")
-    void getUserMeResponse() {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
-        assertNotNull(userDataResponseDto);
-    }
-
-    @Test
-    @DisplayName("Тест для проверки отсутствия токена для Dto после авторизации")
-    void updateUserMainSettings() {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
-        assertNull(userDataResponseDto.getToken());
-    }
-
-    @Test
     @DisplayName("Тест на обновление персональных данных пользователя метода @PutMapping(/api/v1/users/me)")
     void setUserDataResponseDto() throws UpdateUserMainSettingsException {
-        UserDataResponseDto userDataResponseDto = socialNetUserDetailsService.setUserDataResponseDto(user1);
+        UserDataResponseDto userDataResponseDto = userMapper.userEntityToDto(user1);
         assertTrue(userSettingsService.updateUserMainSettings(userDataResponseDto));
     }
 }

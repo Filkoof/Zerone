@@ -2,6 +2,7 @@ package ru.example.group.main.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,27 +23,31 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
     @Autowired
     private MockMvc mockMvc;
 
+    @Value("${config.initRecommendations}")
+    private Boolean initRecommendations;
+
     @Test
     void activateUserTrue() throws Exception {
         UserEntity user = userRepository.findByEmail("test@test.tu");
         user.setConfirmationCode("test");
         userRepository.save(user);
 
-        mockMvc.perform(post("/api/v1/account/register/confirm")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""     
-                                {
-                                "token": "test",
-                                "userId": "test@test.tu"
-                                }
-                                """)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.key").value("test"))
-                .andExpect(jsonPath("$.eMail").value("test@test.tu"))
-                .andDo(print())
-                .andExpect(status().isOk());
-
+        if (initRecommendations) {
+            mockMvc.perform(post("/api/v1/account/register/confirm")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""     
+                                    {
+                                    "token": "test",
+                                    "userId": "test@test.tu"
+                                    }
+                                    """)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.key").value("test"))
+                    .andExpect(jsonPath("$.eMail").value("test@test.tu"))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
     }
 
     @Test
@@ -58,8 +63,7 @@ class MailSenderControllerTests extends AbstractAllTestH2ContextLoad {
                                 """)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.key").isEmpty())
-                .andExpect(jsonPath("$.eMail").isEmpty())
+                .andExpect(jsonPath("$.error_description").value("Не удалось найти этого пользователя во время активации"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
 

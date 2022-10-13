@@ -4,10 +4,11 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,18 +21,15 @@ import ru.example.group.main.dto.request.PostRequestDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
-import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.LikeType;
-import ru.example.group.main.entity.enumerated.MessagesPermission;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
+import ru.example.group.main.exception.PostsException;
+import ru.example.group.main.mapper.PostMapper;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
-import ru.example.group.main.repository.VoteRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 @Service
@@ -46,69 +44,81 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CommentService commentService;
-    private final VoteRepository voteRepository;
+    private final PostMapper mapper;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
-        final PostRequestDto request,
-        final long id,
-        final long publishDate
-    ) {
+            final PostRequestDto request,
+            final long id,
+            final long publishDate
+    ) throws PostsException {
         var response = new CommonResponseDto<PostResponseDto>();
         var userEntity = userRepository.findById(id).orElseThrow();
-        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate/1000, 0, ZoneOffset.UTC);
+        var requestedDateTime = LocalDateTime.ofEpochSecond(publishDate / 1000, 0, ZoneOffset.UTC);
         var dateTimeNow = LocalDateTime.now();
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
-        var isQueued = publishDateTime.isAfter(dateTimeNow);
-        var userDto = getUserDtoFromEntity(userEntity);
-        var postEntity = new PostEntity();
-        postEntity.setTime(publishDateTime);
-        postEntity.setTitle(request.getTitle());
-        postEntity.setPostText(request.getText());
-        postEntity.setUpdateDate(dateTimeNow);
-        postEntity.setUser(userEntity);
-        if(request.getTags().size()!=0) {
-            var listTag=request.getTags();
-            var tagEntities=listTag.stream().map(tagRepository::findByTag).toList();
-            postEntity.setTagEntities(new HashSet<>(tagEntities));
-        }
-        var post = postRepository.save(postEntity);
 
-        response.setData(getFromAddRequest(isQueued, userDto, post));
+        var tags = request.getTags() != null ? new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()) : null;
+        var postE = mapper.postRequestToEntity(request, publishDateTime, tags, userEntity);
+        postRepository.save(postE);
+
+        response.setData(getPostDtoFromEntity(postE));
         return ResponseEntity.ok(response);
     }
 
-    public CommonListResponseDto<PostResponseDto> getNewsfeed(String text, int offset, int itemPerPage) {
+    public CommonListResponseDto<PostResponseDto> getNewsfeed(int offset, int itemPerPage) throws PostsException {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsWithPagination(text, pageable);
+        var statePage = postRepository.findAllPostsWithPagination(pageable);
 
-        return CommonListResponseDto.<PostResponseDto>builder()
-            .total((int) statePage.getTotalElements())
-            .perPage(itemPerPage)
-            .offset(offset)
-            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
-            .error("")
-            .timestamp(LocalDateTime.now())
-            .build();
+        try {
+            return CommonListResponseDto.<PostResponseDto>builder()
+                    .total((int) statePage.getTotalElements())
+                    .perPage(itemPerPage)
+                    .offset(offset)
+                    .data(statePage.stream().map(this::tryCatchPostsException).toList())
+                    .error("")
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        } catch (Exception e) {
+            throw new PostsException(e.getMessage());
+        }
     }
 
-
-    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset){
-        var itemPerPage=postRepository.findAllByUserPost(id)==0?5:postRepository.findAllByUserPost(id);
+    public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
+        var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         var statePage = postRepository.findAllPostsUserId(id, pageable);
         return CommonListResponseDto.<PostResponseDto>builder()
-            .total((int)statePage.getTotalElements())
-            .perPage(itemPerPage)
-            .offset(offset)
-            .data(statePage.stream().map(this::getPostDtoFromEntity).toList())
-            .error("")
-            .timestamp(LocalDateTime.now())
-            .build();
+                .total((int) statePage.getTotalElements())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(statePage.stream().map(this::tryCatchPostsException)
+                        .toList())
+                .error("")
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    public CommonListResponseDto<Object> getNewsByListUserId(List<Long> listPostId, int offset) throws PostsException {
+        var itemPerPage = 0;
+        List<Object> postList = new ArrayList<>();
+        for (Long postId : listPostId) {
+            itemPerPage += postRepository.findAllByUserPost(postId) == 0 ? 5 : postRepository.findAllByUserPost(postId);
+            var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+            postList.add(getPostDtoFromEntity(postRepository.findPostEntityById(postId)));
+        }
+        return CommonListResponseDto.builder()
+                .total(postList.size())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(postList)
+                .error("OK")
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @Transactional
     public ResponseEntity<CommonResponseDto<PostResponseDto>> deletePost(Long id)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, PostsException {
         try {
             var post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
             var user = registerService.getCurrentUser();
@@ -118,21 +128,16 @@ public class PostService {
             }
             post.setDeleted(true);
             postRepository.saveAndFlush(post);
-
             var response = new CommonResponseDto<PostResponseDto>();
-            response.setError("ERROR");
             response.setTimeStamp(LocalDateTime.now());
             response.setData(getPostDtoFromEntity(post));
             return ResponseEntity.ok(response);
-        }catch (EntityNotFoundException|IdUserException e){
-            log.debug(e.getMessage());
-            var dto=new CommonResponseDto<PostResponseDto>();
-            dto.setError(e.getMessage());
-            return ResponseEntity.ok(dto);
+        } catch (EntityNotFoundException | IdUserException e) {
+            throw new PostsException(e.getMessage());
         }
     }
 
-    public ResponseEntity<PostResponseDto> recoverPost(Long id){
+    public ResponseEntity<PostResponseDto> recoverPost(Long id) throws PostsException {
         try {
             var post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
             var user = registerService.getCurrentUser();
@@ -143,9 +148,8 @@ public class PostService {
             postRepository.saveAndFlush(post);
 
             return ResponseEntity.ok(PostResponseDto.builder().build());
-        }catch (EntityNotFoundException|IdUserException e){
-            log.debug("такого поста нет {}", e.getMessage());
-            return ResponseEntity.ok(PostResponseDto.builder().build());
+        } catch (EntityNotFoundException | IdUserException e) {
+            throw new PostsException(e.getMessage());
         }
     }
 
@@ -154,68 +158,30 @@ public class PostService {
         postRepository.deletePostEntity(LocalDateTime.now().minusDays(postLife));
     }
 
-    private PostResponseDto.PostResponseDtoBuilder getDefaultBuilder(PostEntity postEntity) {
-        return PostResponseDto.builder()
-            .isBlocked(false)
-            .id(postEntity.getId())
-            .time(postEntity.getTime())
-            .title(postEntity.getTitle())
-            .postText(postEntity.getPostText())
-            .tags(postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList()));
+    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) throws PostsException {
+        try {
+            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
+            var type = getType(postEntity);
+            var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
+            return mapper.postEntityToDto(postEntity, tags, type, listComment);
+        } catch (Exception e) {
+            throw new PostsException(e.getMessage());
+        }
     }
 
-    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) {
-        var likes = voteRepository.findByEntityIdAndType(postEntity.getId(), LikeType.POST);
-        var user = registerService.getCurrentUser();
-        var isMyLike = new AtomicBoolean(false);
-
-        likes.flatMap(
-            likeEntities -> likeEntities.stream().filter(likeEntity -> likeEntity.getUser().equals(user)).findFirst())
-            .ifPresent(likeEntity -> isMyLike.set(true));
-
-        return getDefaultBuilder(postEntity)
-            .comments(commentService.getCommonList(postEntity.getId(),5,0))
-            .author(getUserDtoFromEntity(postEntity.getUser()))
-            .type(getType(postEntity))
-            .myLike(isMyLike.get())
-            .likes(likes.map(List::size).orElse(0))
-            .build();
+    private PostType getType(PostEntity post) {
+        if (post.isDeleted()) {
+            return PostType.DELETED;
+        } else if (post.getTime().isAfter(LocalDateTime.now())) {
+            return PostType.QUEUED;
+        } else return PostType.POSTED;
     }
 
-    private PostResponseDto getFromAddRequest(
-        final boolean isQueued,
-        final UserDataResponseDto userDto,
-        final PostEntity post
-    ) {
-        return getDefaultBuilder(post)
-            .author(userDto)
-            .type(isQueued ? PostType.QUEUED.name() : PostType.POSTED.name())
-            .myLike(false)
-            .likes(0)
-            .build();
-    }
-    private UserDataResponseDto getUserDtoFromEntity(final UserEntity userEntity) {
-        return UserDataResponseDto.builder()
-            .id(userEntity.getId())
-            .firstName(userEntity.getFirstName())
-            .lastName(userEntity.getLastName())
-            .regDate(userEntity.getRegDate())
-            .birthDate(userEntity.getBirthDate())
-            .eMail(userEntity.getEmail())
-            .phone(userEntity.getPhone())
-            .photo(userEntity.getPhoto())
-            .about(userEntity.getAbout())
-            .city(userEntity.getCity())
-            .country(userEntity.getCountry())
-            .messagePermissions(MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))
-            .lastOnlineTime(userEntity.getLastOnlineTime())
-            .isBlocked(userEntity.isBlocked())
-            .isDeleted(userEntity.isDeleted())
-            .build();
-    }
-    private String getType(PostEntity post){
-        if(post.isDeleted()){return PostType.DELETED.name();}
-        else if(post.getTime().isAfter(LocalDateTime.now())){return PostType.QUEUED.name();}
-        else return PostType.POSTED.name();
+    public PostResponseDto tryCatchPostsException(PostEntity entity) {
+        try {
+            return getPostDtoFromEntity(entity);
+        } catch (PostsException e) {
+            return null;
+        }
     }
 }

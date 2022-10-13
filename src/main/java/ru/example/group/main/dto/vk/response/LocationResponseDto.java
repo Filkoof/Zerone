@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-
 @RequiredArgsConstructor
 @Data
 public class LocationResponseDto<T> {
@@ -18,7 +16,6 @@ public class LocationResponseDto<T> {
     private List<T> data;
     private String error;
     private LocalDateTime timestamp;
-
 }
 
 

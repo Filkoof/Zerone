@@ -10,8 +10,9 @@ import ru.example.group.main.entity.TagEntity;
 @Repository
 public interface TagRepository extends JpaRepository<TagEntity, Long> {
 
-  Page<TagEntity> findByTagStartingWithIgnoreCase(@Param("tag") String tag, Pageable pageable);
+    Page<TagEntity> findByTagStartingWithIgnoreCase(@Param("tag") String tag, Pageable pageable);
 
-  boolean existsByTag(String text);
-  TagEntity findByTag(String tag);
+    boolean existsByTag(String text);
+
+    TagEntity findByTag(String tag);
 }

@@ -1,5 +1,6 @@
 package ru.example.group.main.service;
 
+import org.apache.catalina.connector.Request;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,11 @@ import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.response.ApiResponseDto;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,10 +27,14 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private HttpServletRequest request;
 
     @Value("${config.zeroneEmail}")
     private String email;
 
+    @Value("${config.initRecommendations}")
+    private Boolean initRecommendations;
 
     UserRegisterRequestDto createUserRegisterDto(){
         UserRegisterRequestDto userRegisterRequestDto = new UserRegisterRequestDto();
@@ -55,18 +63,20 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void createUser() throws Exception {
-        ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
-        assertTrue(apiResponseDto.getMessage().equals("User created"));
+        ResultMessageDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
+        assertTrue(apiResponseDto.getMessage().equals("Пользователь создан"));
     }
 
     @Test
     void activateUser() throws Exception {
-        ApiResponseDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
-        assertTrue(apiResponseDto.getMessage().equals("User created"));
-        String code = userRepository.findByEmail(email).getConfirmationCode();
-        RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
-        registerConfirmRequestDto.setUserId(email);
-        registerConfirmRequestDto.setToken(code);
-        assertTrue(userRegisterService.activateUser(registerConfirmRequestDto,null, null).getEMail().equals(email));
+        ResultMessageDto apiResponseDto = userRegisterService.createUser(createUserRegisterDto());
+        assertTrue(apiResponseDto.getMessage().equals("Пользователь создан"));
+        if (initRecommendations) {
+            String code = userRepository.findByEmail(email).getConfirmationCode();
+            RegisterConfirmRequestDto registerConfirmRequestDto = new RegisterConfirmRequestDto();
+            registerConfirmRequestDto.setUserId(email);
+            registerConfirmRequestDto.setToken(code);
+            assertTrue(userRegisterService.activateUser(registerConfirmRequestDto, request).getEMail().equals(email));
+        }
     }
 }

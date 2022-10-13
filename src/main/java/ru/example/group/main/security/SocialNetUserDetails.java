@@ -9,10 +9,8 @@ import ru.example.group.main.entity.UserRoleEntity;
 
 import java.util.*;
 
-
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
-
     private final UserEntity user;
 
     public SocialNetUserDetails(UserEntity user) {
@@ -31,7 +29,7 @@ public class SocialNetUserDetails implements UserDetails {
         try {
             userRoleEntityList = user.getUserRoleEntities();
         } catch (Exception e) {
-            userRoleEntityList = new ArrayList<>();
+            userRoleEntityList = null;
             log.info("ОШИБКА " + e.getMessage());
         }
         try {
@@ -40,8 +38,8 @@ public class SocialNetUserDetails implements UserDetails {
                     simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
                 }
             }
-        }catch (Exception e){
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return Collections.unmodifiableList(simpleGrantedAuthorityList);

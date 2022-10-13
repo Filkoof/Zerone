@@ -12,11 +12,11 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommonListResponseDto<T> {
 
-  private int total;
-  private int perPage;
-  private int offset;
-  private List<T> data;
-  private String error;
-  private LocalDateTime timestamp;
+    private int total;
+    private int perPage;
+    private int offset;
+    private List<T> data;
+    private String error;
+    private LocalDateTime timestamp;
 
 }

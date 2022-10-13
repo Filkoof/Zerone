@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,25 +17,16 @@ import lombok.Setter;
 @Table(name = "notification_settings")
 public class NotificationSettingEntity {
 
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private UserEntity user;
-
-  private boolean postEnabled;
-
-  private boolean postCommentEnabled;
-
-  private boolean commentCommentEnabled;
-
-  private boolean friendRequestEnabled;
-
-  private boolean messagesEnabled;
-
-  private boolean friendBirthdayEnabled;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+    private boolean postEnabled;
+    private boolean postCommentEnabled;
+    private boolean commentCommentEnabled;
+    private boolean friendRequestEnabled;
+    private boolean messagesEnabled;
+    private boolean friendBirthdayEnabled;
 }

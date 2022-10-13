@@ -11,8 +11,7 @@ import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class SecurityControllersTests extends AbstractAllTestH2ContextLoad {
 
@@ -22,8 +21,8 @@ public class SecurityControllersTests extends AbstractAllTestH2ContextLoad {
     @Test
     public void accessOnlyAuthorizedPageFailTest() throws Exception {
         mockMvc.perform(get("/my"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(jsonPath("$.error_description").value("Ошибка авторизации"))
+                .andDo(print());
     }
 
 }
