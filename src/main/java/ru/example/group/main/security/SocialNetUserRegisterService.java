@@ -24,8 +24,6 @@ public class SocialNetUserRegisterService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtilService jwtUtilService;
     private final UserMapper userMapper;
-    private final HandlerExceptionResolver handlerExceptionResolver;
-
 
     public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto;

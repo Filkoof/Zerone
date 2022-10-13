@@ -5,6 +5,7 @@ import javax.persistence.EntityNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.request.PostRequestDto;
@@ -48,9 +49,16 @@ public class PostController {
         return postService.getNewsUserId(id, offset);
     }
 
+    @GetMapping("/post/{id}")
+    @ApiOperation("Operation to get post by post_id (@PathVariable).")
+    public ResponseEntity<CommonResponseDto<PostResponseDto>> getPostById(@PathVariable long id)
+            throws EntityNotFoundException, PostsException {
+        //return postService.getPost(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @DeleteMapping("/post/{id}")
-    @ApiOperation("Operation to get all post for user id (@PathVariable).")
+    @ApiOperation("Operation to delete post for post_id (@PathVariable).")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> postDeletedById(@PathVariable long id)
             throws EntityNotFoundException, PostsException {
         return postService.deletePost(id);
