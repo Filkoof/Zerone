@@ -3,7 +3,6 @@ package ru.example.group.main.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.UserEntity;
 
@@ -20,6 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             IN (SELECT friendships.src_person_id FROM friendships WHERE friendships.dst_person_id = :id AND ((friendships.status_id) = :status))
             """
             , nativeQuery = true)
-    List<UserEntity> getAllRelationsOfUser(@Param("id") Long id, @Param("status") Long status, Pageable pageable);
+    List<UserEntity> getAllRelationsOfUser(Long id, Long status, Pageable pageable);
 }
 
