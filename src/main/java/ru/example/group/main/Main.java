@@ -15,9 +15,9 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 
-    @Bean(initMethod = "runFriendsRecommendationsUpdateAfterStartUp")
-    public BeanInitMethodImpl getFriendsRecommendationsUpdateAfterStartUpBean() {
-        return new BeanInitMethodImpl();
-    }
+//    @Bean(initMethod = "runFriendsRecommendationsUpdateAfterStartUp")
+//    public BeanInitMethodImpl getFriendsRecommendationsUpdateAfterStartUpBean() {
+//        return new BeanInitMethodImpl();
+//    }
 
 }
