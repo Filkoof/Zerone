@@ -23,7 +23,7 @@ public class CommentDto implements Serializable {
     private String commentText;
     @JsonProperty("is_blocked")
     private Boolean blocked;
-    private List<ImageResponseDto> images;
+    private List<FileResponseDto> images;
     @JsonProperty("is_deleted")
     private Boolean deleted;
     @JsonProperty("post_id")

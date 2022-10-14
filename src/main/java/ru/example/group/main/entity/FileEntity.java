@@ -24,6 +24,6 @@ public class FileEntity {
   private PostEntity post;
   private String path;
   @ManyToOne
-  @JoinColumn(name = "post_comments")
+  @JoinColumn(name = "comment_id")
   private CommentEntity comment;
 }

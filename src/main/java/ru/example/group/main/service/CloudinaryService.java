@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.group.main.dto.response.CommonResponseDto;
-import ru.example.group.main.dto.response.ImageResponseDto;
+import ru.example.group.main.dto.response.FileResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.exception.CloudinaryException;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -61,10 +61,10 @@ public class CloudinaryService {
         }
     }
 
-    public CommonResponseDto<ImageResponseDto> uploadFileEndGetUrl(MultipartFile file) throws CloudinaryException {
+    public CommonResponseDto<FileResponseDto> uploadFileEndGetUrl(MultipartFile file) throws CloudinaryException {
         deleteImageFromUserEntity();
-        CommonResponseDto<ImageResponseDto> response = new CommonResponseDto<>();
-        ImageResponseDto urlImageDto = new ImageResponseDto();
+        CommonResponseDto<FileResponseDto> response = new CommonResponseDto<>();
+        FileResponseDto urlImageDto = new FileResponseDto();
         urlImageDto.setUrl(uploadFile(file));
         response.setData(urlImageDto);
         return response;

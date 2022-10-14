@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import ru.example.group.main.dto.response.ImageResponseDto;
+import ru.example.group.main.dto.response.FileResponseDto;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -21,7 +21,7 @@ public class CommentRequestDto {
 
     @ApiModelProperty(notes = "Картинки к комментарию")
     @JsonProperty("images")
-    private List<ImageResponseDto> imageDtoList;
+    private List<FileResponseDto> imageDtoList;
 
     @ApiModelProperty(notes = "ID родительского комментария", required = true)
     @JsonProperty("parent_id")

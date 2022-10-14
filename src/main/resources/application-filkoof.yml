@@ -3,6 +3,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified
     username: postgres
     password: 1234567890
+  redis:
+    host: localhost
+    password: 1234567890
+    port: 6379
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -33,3 +37,15 @@ config:
   secret: SocialNetwork26
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
+
+socketio:
+  host: localhost
+  port: 1111
+  maxFramePayloadLength: 1048576
+  maxHttpContentLength: 1048576
+  bossCount: 1
+  workCount: 100
+  allowCustomRequests: true
+  upgradeTimeout: 1000000
+  pingTimeout: 6000000
+  pingInterval: 25000

@@ -2,65 +2,35 @@ version: '3.1'
 
 services:
 
-  #  zerone_backend:
-  #    restart: always
-  #    image: azul/zulu-openjdk-alpine:17-jre
-  #    volumes:
-  #      - ./:/app
-  #    working_dir: /app
-  #    command: java -jar app.jar
-  #    environment:
-  #      DATABASE_URL: jdbc:postgresql://db:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
-  #      DATABASE_USERNAME: zerone
-  #      DATABASE_PASSWORD: 7tsfft
-  #    ports:
-  #      - "8086:8080"
-  #
-  #  db:
-  #    image: postgres
-  #    container_name: "postgres"
-  #    restart: always
-  #    environment:
-  #      POSTGRES_USER: zerone
-  #      POSTGRES_PASSWORD: 7tsfft
-  #    ports:
-  #      - "5432:5432"
-  #    volumes:
-  #      - ./postgres/data:/var/lib/postgres/data
-  #
-  #  zerone_frontend:
-  #    container_name: zerone_frontend
-  #    restart: always
-  #    image: permishin/frontend:new_url
-  #    ports:
-  #      - "80:80"
+    zerone_backend:
+      restart: always
+      image: azul/zulu-openjdk-alpine:17-jre
+      volumes:
+        - ./:/app
+      working_dir: /app
+      command: java -jar app.jar
+      environment:
+        DATABASE_URL: jdbc:postgresql://db:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
+        DATABASE_USERNAME: zerone
+        DATABASE_PASSWORD: 7tsfft
+      ports:
+        - "8086:8080"
 
-  postgres_local:
-    image: postgres
-    container_name: "postgres_local"
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234567890
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres/data:/var/lib/postgres/data
+    db:
+      image: postgres
+      container_name: "postgres"
+      restart: always
+      environment:
+        POSTGRES_USER: zerone
+        POSTGRES_PASSWORD: 7tsfft
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./postgres/data:/var/lib/postgres/data
 
-  frontend_local:
-    container_name: "frontend_local"
-    restart: always
-    image: permishin/frontend
-    ports:
-      - "80:80"
-
-  redis_local:
-    image: redis:6.2.7-alpine
-    container_name: "redis_local"
-    restart: always
-    environment:
-      REDIS_PASSWORD: 1234567890
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./redis/data:/var/lib/redis/data
+    zerone_frontend:
+      container_name: zerone_frontend
+      restart: always
+      image: permishin/frontend:new_url
+      ports:
+        - "80:80"

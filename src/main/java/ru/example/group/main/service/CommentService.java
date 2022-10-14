@@ -1,6 +1,8 @@
 package ru.example.group.main.service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 
 import io.jsonwebtoken.lang.Assert;
@@ -13,12 +15,14 @@ import ru.example.group.main.dto.request.CommentRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.dto.response.FileResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.mapper.CommentMapper;
-import ru.example.group.main.mapper.UserMapper;
+import ru.example.group.main.mapper.FileMapper;
 import ru.example.group.main.repository.CommentRepository;
+import ru.example.group.main.repository.FileRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
@@ -26,11 +30,13 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
-
     private final CommentRepository commentRepository;
+
     private final PostRepository postRepository;
+    private final FileRepository fileRepository;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final CommentMapper commentMapper;
+    private final FileMapper fileMapper;
 
     public CommonResponseDto<CommentDto> postComment(Long postId, CommentRequestDto request) {
         Assert.notNull(postId, "id поста не может быть null");
@@ -42,12 +48,10 @@ public class CommentService {
         var commentEntity = commentMapper.commentRequestDtoToEntity(request, postEntity, currentUser, parentComment);
         commentRepository.save(commentEntity);
 
-        return getCommonResponseDto(commentEntity);
-    }
+        if (!request.getImageDtoList().isEmpty()) fileRepository.saveAll(request.getImageDtoList().stream()
+                .map(file -> fileMapper.commentFileRequestToEntity(file, postEntity, commentEntity)).toList());
 
-    public CommonListResponseDto<CommentDto> getComments(Long postId, int offset, int itemPerPage) {
-        Assert.notNull(postId, "id поста не может быть null");
-        return getCommonList(postId, itemPerPage, offset);
+        return getCommonResponseDto(commentEntity);
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long comment_id)
@@ -105,24 +109,35 @@ public class CommentService {
         return ResponseEntity.ok(getCommonResponseDto(comment));
     }
 
+    public CommonListResponseDto<CommentDto> getComments(Long postId, int offset, int itemPerPage) {
+        Assert.notNull(postId, "id поста не может быть null");
+        return getCommonList(postId, itemPerPage, offset);
+    }
+
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var commentEntityPage = commentRepository.findByCommentToPost(idPost, pageable);
+        var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, pageable);
+
         return CommonListResponseDto.<CommentDto>builder()
-                .perPage(itemPerPage)
                 .total((int) commentEntityPage.getTotalElements())
+                .perPage(itemPerPage)
+                .offset(offset)
+                .data(commentEntityPage.stream().map(comment -> commentMapper.commentEntityToDto(comment, getFilesDtoList(comment))).toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
-                .data(commentEntityPage.stream().map(commentMapper::commentEntityToDto).toList())
-                .offset(offset)
                 .build();
     }
 
     private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment) {
         return CommonResponseDto.<CommentDto>builder()
-                .data(commentMapper.commentEntityToDto(comment))
+                .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment)))
                 .error("")
                 .timeStamp(LocalDateTime.now())
                 .build();
+    }
+
+    private List<FileResponseDto> getFilesDtoList(CommentEntity comment) {
+        var files = fileRepository.findAllByComment(comment);
+        return files.isEmpty() ? Collections.emptyList() : files.stream().map(fileMapper::fileEntityToDto).toList();
     }
 }

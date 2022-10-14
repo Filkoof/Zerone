@@ -16,7 +16,7 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   liquibase:
     enabled: true
   servlet:
