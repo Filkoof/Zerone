@@ -35,19 +35,19 @@ public class CommentController {
 
     @GetMapping("/{id}/comments")
     @ApiOperation("Operation to get comments for post id(as @PathVariable) and segmenting by offset(@RequestParam) and itemsPerPage(@RequestParam) as body params")
-    public CommonListResponseDto<CommentDto> getCommentsForPostId(
+    public CommonListResponseDto<CommentDto> getComments(
             @PathVariable @Min(1) Long id,
             @RequestParam(name = "offset", defaultValue = "0") int offset,
             @RequestParam(name = "itemPerPage", defaultValue = "5") int itemPerPage) {
-        return service.getCommentsForPostId(id, offset, itemPerPage);
+        return service.getComments(id, offset, itemPerPage);
     }
 
     @PostMapping("/{id}/comments")
     @ApiOperation("operation to add a comment for post id (@PathVariable) providing CommentRequestDto (@RequestBody)")
-    public ResponseEntity<CommonResponseDto<CommentDto>> postCommentForPostId(
+    public CommonResponseDto<CommentDto> postCommentForPostId(
             @Valid @PathVariable @Min(1) Long id,
             @Valid @RequestBody CommentRequestDto request) {
-        return service.postCommentForPostId(id, request);
+        return service.postComment(id, request);
     }
 
     @DeleteMapping("/{id}/comments/{comment_id}")

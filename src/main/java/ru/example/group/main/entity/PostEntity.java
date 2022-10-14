@@ -45,7 +45,7 @@ public class PostEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<BlockHistoryEntity> blockHistoryEntities = new ArrayList<>();
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostFileEntity> postFileEntities = new ArrayList<>();
+    private List<FileEntity> postFileEntities = new ArrayList<>();
     @ManyToMany
     @JoinTable(name = "posts_to_tags",
             joinColumns = @JoinColumn(name = "post_id"),

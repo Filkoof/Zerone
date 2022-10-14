@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UrlImageResponseDto {
+public class FileResponseDto {
 
     @JsonProperty("id")
     private Long id;

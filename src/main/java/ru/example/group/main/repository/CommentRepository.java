@@ -13,9 +13,8 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     @Query("""
             SELECT c FROM CommentEntity c
-            LEFT JOIN PostEntity p ON c.post.id = p.id
             WHERE c.post.id = :id AND c.isBlocked = false AND c.parent.id is null
             ORDER BY c.time
             """)
-    Page<CommentEntity> findByCommentToPost(@Param("id") Long id, Pageable pageable);
+    Page<CommentEntity> findCommentsByPostIdWithPagination(@Param("id") Long id, Pageable pageable);
 }
