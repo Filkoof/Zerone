@@ -13,8 +13,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "post_files")
-public class PostFileEntity{
+@Table(name = "files")
+public class FileEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,7 @@ public class PostFileEntity{
   @JoinColumn(name = "post_id")
   private PostEntity post;
   private String path;
+  @ManyToOne
+  @JoinColumn(name = "comment_id")
+  private CommentEntity comment;
 }

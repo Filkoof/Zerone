@@ -12,7 +12,6 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import ru.example.group.main.dto.ImageDto;
 
 @RequiredArgsConstructor
 @Setter
@@ -24,7 +23,7 @@ public class CommentDto implements Serializable {
     private String commentText;
     @JsonProperty("is_blocked")
     private Boolean blocked;
-    private List<ImageDto> images;
+    private List<FileResponseDto> images;
     @JsonProperty("is_deleted")
     private Boolean deleted;
     @JsonProperty("post_id")
