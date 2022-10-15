@@ -30,5 +30,5 @@ public class DialogEntity {
     @JoinColumn(name = "recipient_id")
     private UserEntity recipient;
     @OneToMany(mappedBy = "dialog")
-    private List<MessageEntity> messageSet = new ArrayList<>();
+    private List<MessageEntity> messages = new ArrayList<>();
 }

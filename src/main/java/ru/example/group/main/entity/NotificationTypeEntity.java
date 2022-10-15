@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.example.group.main.entity.enumerated.NotificationType;
+import ru.example.group.main.entity.enumerated.EventType;
 
 @Entity
 @Getter
@@ -26,7 +26,7 @@ public class NotificationTypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private NotificationType name;
+    private EventType name;
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
     private List<NotificationEntity> notificationEntities = new ArrayList<>();
 }
