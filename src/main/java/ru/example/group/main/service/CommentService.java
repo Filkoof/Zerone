@@ -122,7 +122,7 @@ public class CommentService {
                 .total((int) commentEntityPage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(commentEntityPage.stream().map(comment -> commentMapper.commentEntityToDto(comment, getFilesDtoList(comment))).toList())
+                .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream().map(comment -> commentMapper.commentEntityToDto(comment, getFilesDtoList(comment))).toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();
