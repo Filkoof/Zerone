@@ -4,10 +4,13 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:root}
+  redis:
+    host: localhost
+    password: 8FvUYL
+    port: 6379
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
