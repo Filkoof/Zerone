@@ -19,6 +19,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentDto implements Serializable {
 
+    private Long id;
     @JsonProperty("comment_text")
     private String commentText;
     @JsonProperty("is_blocked")
@@ -33,7 +34,6 @@ public class CommentDto implements Serializable {
     private UserDataResponseDto author;
     @JsonProperty("parent_id")
     private Long parentId;
-    private Long id;
     private LocalDateTime time;
     @JsonProperty("sub_comments")
     private List<CommentDto> subComments;

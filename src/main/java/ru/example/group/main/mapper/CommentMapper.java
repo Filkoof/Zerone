@@ -14,16 +14,19 @@ import ru.example.group.main.entity.UserEntity;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface CommentMapper {
 
-    @Mapping(target = "myLike", ignore = true, defaultValue = "false")
-    @Mapping(target = "likes", ignore = true)
+    @Mapping(target = "id", source = "comment.id")
+    @Mapping(target = "commentText", expression = "java(comment.isDeleted() ? \"коммент удален\" : comment.getCommentText())")
+    @Mapping(target = "blocked", expression = "java(comment.isBlocked())")
     @Mapping(target = "images", source = "images")
-    @Mapping(target = "commentText", expression = "java(entity.isDeleted() ? \"коммент удален\" : entity.getCommentText())")
-    @Mapping(target = "author", source = "entity.user")
-    @Mapping(target = "postId", source = "entity.post.id")
-    @Mapping(target = "parentId", source = "entity.parent.id")
-    @Mapping(target = "blocked", source = "entity.blocked")
-    @Mapping(target = "deleted", source = "entity.deleted")
-    CommentDto commentEntityToDto(CommentEntity entity, List<FileResponseDto> images);
+    @Mapping(target = "deleted", expression = "java(comment.isDeleted())")
+    @Mapping(target = "postId", source = "comment.post.id")
+    @Mapping(target = "myLike", ignore = true, defaultValue = "false")
+    @Mapping(target = "author", source = "comment.user")
+    @Mapping(target = "parentId", source = "comment.parent.id") //"java(comment.getParent() == null ? null : comment.getParent().getId())")
+    @Mapping(target = "time", source = "comment.time")
+    @Mapping(target = "subComments", expression = "java(subComments)")
+    @Mapping(target = "likes", ignore = true)
+    CommentDto commentEntityToDto(CommentEntity comment, List<FileResponseDto> images, List<CommentDto> subComments);
 
     @Mapping(target = "subComments", ignore = true)
     @Mapping(target = "id", ignore = true)
@@ -33,7 +36,11 @@ public interface CommentMapper {
     @Mapping(target = "post", source = "postEntity")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "time", ignore = true)
-    @Mapping(target = "commentText", expression = "java(dto.getCommentText())")
-    CommentEntity commentRequestDtoToEntity(CommentRequestDto dto, PostEntity postEntity, UserEntity user, CommentEntity parentComment);
+    @Mapping(target = "commentText", source = "dto.commentText")
+    CommentEntity commentRequestDtoToEntity(
+            CommentRequestDto dto,
+            PostEntity postEntity,
+            UserEntity user,
+            CommentEntity parentComment);
 }
 
