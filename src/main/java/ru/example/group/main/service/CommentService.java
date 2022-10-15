@@ -122,7 +122,9 @@ public class CommentService {
                 .total((int) commentEntityPage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream().map(comment -> commentMapper.commentEntityToDto(comment, getFilesDtoList(comment))).toList())
+                .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream()
+                                .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments())))
+                                .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -130,10 +132,15 @@ public class CommentService {
 
     private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment) {
         return CommonResponseDto.<CommentDto>builder()
-                .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment)))
+                .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment), getSubComments(comment.getSubComments())))
                 .error("")
                 .timeStamp(LocalDateTime.now())
                 .build();
+    }
+
+    private List<CommentDto> getSubComments(List<CommentEntity> commentEntities) {
+        return commentEntities.stream()
+                .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()))).toList();
     }
 
     private List<FileResponseDto> getFilesDtoList(CommentEntity comment) {
