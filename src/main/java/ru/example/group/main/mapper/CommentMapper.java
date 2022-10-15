@@ -22,9 +22,9 @@ public interface CommentMapper {
     @Mapping(target = "postId", source = "comment.post.id")
     @Mapping(target = "myLike", ignore = true, defaultValue = "false")
     @Mapping(target = "author", source = "comment.user")
-    @Mapping(target = "parentId", source = "comment.parent.id") //"java(comment.getParent() == null ? null : comment.getParent().getId())")
+    @Mapping(target = "parentId", source = "comment.parent.id")
     @Mapping(target = "time", source = "comment.time")
-    @Mapping(target = "subComments", expression = "java(subComments)")
+    @Mapping(target = "subComments", source = "subComments")
     @Mapping(target = "likes", ignore = true)
     CommentDto commentEntityToDto(CommentEntity comment, List<FileResponseDto> images, List<CommentDto> subComments);
 
