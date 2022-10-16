@@ -40,11 +40,7 @@ liquibase:
     - prod
   script:
     - echo "Тут будет прописана логика миграции бд при деплое"
-    - changeLogFile = .\db.changelog-master.yaml
-    - url = jdbc:postgresql://localhost:5432/postgres
-    - username = postgres
-    - password = 1234567890
-    - update
+    - liquibase --changeLogFile=.\db.changelog-master.yaml --url=jdbc:postgresql://localhost:5432/postgres --username=postgres --password=1234567890 update
 
 
 #sonar-scan:
