@@ -362,7 +362,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createTable:
-            tableName: post_files
+            tableName: files
             columns:
               - column:
                   name: id
@@ -373,6 +373,9 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: post_id
+                  type: bigint
+              - column:
+                  name: comment_id
                   type: bigint
               - column:
                   name: path

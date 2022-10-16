@@ -6,17 +6,10 @@ variables:
 stages:
   - build
   - test
+  - liquibase
   - sonar-scan
   - package
   - deploy
-
-test:
-  stage: test
-  tags:
-    - prod
-  script:
-    - echo 'testing'
-    - mvn test
 
 build:
   stage: build
@@ -31,6 +24,21 @@ build:
     paths:
       - ./target
       - ./.m2
+
+test:
+  stage: test
+  tags:
+    - prod
+  script:
+    - echo 'testing'
+    - mvn test
+
+liquibase:
+  stage: liquibase
+  tags:
+    - prod
+  script:
+    - echo "Тут будет прописана логика миграции бд при деплое"
 
 sonar-scan:
   stage: sonar-scan
