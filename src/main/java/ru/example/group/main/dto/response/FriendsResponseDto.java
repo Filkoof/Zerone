@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class FriendsResponseDto {
+
     private Integer total;
     private Integer itemPerPage;
     private Integer offset;

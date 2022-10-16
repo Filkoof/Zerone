@@ -15,7 +15,7 @@ public interface MessageMapper {
     @Mapping(target = "id", source = "entity.id")
     @Mapping(target = "time", source = "entity.sentTime")
     @Mapping(target = "authorId", source = "entity.user.id")
-    @Mapping(target = "readStatus", expression ="java(entity.getReadStatus().getValue())")
+    @Mapping(target = "readStatus", expression = "java(entity.getReadStatus().getValue())")
     @Mapping(target = "sendByMe", expression = "java(entity.getUser().getId().equals(currentUser.getId()))")
     @Mapping(target = "dialogId", source = "entity.dialog.id")
     MessageDto messageEntityToDto(MessageEntity entity, UserEntity currentUser);
@@ -23,7 +23,7 @@ public interface MessageMapper {
     @Mapping(target = "id", source = "entity.id")
     @Mapping(target = "time", expression = "java(entity.getSentTime().toInstant(java.time.ZoneOffset.UTC))")
     @Mapping(target = "authorId", source = "entity.user.id")
-    @Mapping(target = "readStatus", expression ="java(entity.getReadStatus().name())")
+    @Mapping(target = "readStatus", expression = "java(entity.getReadStatus().name())")
     @Mapping(target = "isSendByMe", expression = "java(entity.getUser().getId().equals(currentUser.getId()))")
     @Mapping(target = "dialogId", source = "entity.dialog.id")
     MessageSocketDto messageEntityToSocketDto(MessageEntity entity, UserEntity currentUser);

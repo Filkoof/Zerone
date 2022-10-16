@@ -21,7 +21,8 @@ public class SocketIOConfig {
         return new SpringAnnotationScanner(server);
     }
 
-    @Bean public SocketIOServer socketIOServer() {
+    @Bean
+    public SocketIOServer socketIOServer() {
         SocketConfig socketConfig = new SocketConfig();
         socketConfig.setTcpNoDelay(true);
         socketConfig.setSoLinger(0);
@@ -43,7 +44,8 @@ public class SocketIOConfig {
         return server;
     }
 
-    @PreDestroy public void stop() {
+    @PreDestroy
+    public void stop() {
         this.stop();
     }
 }

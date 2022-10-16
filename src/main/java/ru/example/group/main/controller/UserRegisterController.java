@@ -24,10 +24,10 @@ import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.service.UserRegisterService;
 import ru.example.group.main.service.UserSettingsService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
@@ -38,6 +38,8 @@ import java.security.NoSuchAlgorithmException;
 @RequestMapping("/api/v1/account")
 @Api("User registration operations api")
 public class UserRegisterController {
+
+    private final static String HTTP = "http://";
     @Value("${config.frontend}")
     private String frontCorsHttpAddress;
     private final UserRegisterService userRegisterService;
@@ -62,7 +64,7 @@ public class UserRegisterController {
         userSettingsService.changeEmailConfirmationSend(newEmail.getEmail());
         ResultMessageDto resultMessageDto = new ResultMessageDto();
         resultMessageDto.setMessage("Email change confirmation needed sent");
-        return new ResponseEntity(resultMessageDto, HttpStatus.OK);
+        return new ResponseEntity<>(resultMessageDto, HttpStatus.OK);
     }
 
     @GetMapping("/email_change/confirm")
@@ -72,7 +74,7 @@ public class UserRegisterController {
                                                                @NotEmpty(message = "Please provide correct email.")
                                                                String newEmail) throws EmailOrPasswordChangeException {
         userSettingsService.confirmEmailChange(code, newEmail);
-        return new RedirectView("http://" + frontCorsHttpAddress + "/login");
+        return new RedirectView(HTTP + frontCorsHttpAddress + "/login");
     }
 
     @PutMapping("/password/set")
@@ -81,27 +83,27 @@ public class UserRegisterController {
         userSettingsService.changePasswordConfirmationSend(passwordChangeRequestDto);
         ResultMessageDto resultMessageDto = new ResultMessageDto();
         resultMessageDto.setMessage("Password change confirmation needed sent");
-        return new ResponseEntity(resultMessageDto, HttpStatus.OK);
+        return new ResponseEntity<>(resultMessageDto, HttpStatus.OK);
     }
 
     @GetMapping("/password_change/confirm")
     @ApiOperation("Operation to confirm password change via email confirmation link.")
     public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code, @RequestParam @Min(139) String code1) throws EmailOrPasswordChangeException {
         userSettingsService.confirmPasswordChange(code, code1);
-        return new RedirectView("http://" + frontCorsHttpAddress + "/login");
+        return new RedirectView(HTTP + frontCorsHttpAddress + "/login");
     }
 
     @GetMapping("/user_delete/confirm")
     @ApiOperation("Operation to confirm user delete via email confirmation link.")
     public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.confirmUserDelete(code);
-        return new RedirectView("http://" + frontCorsHttpAddress + "/login");
+        return new RedirectView(HTTP + frontCorsHttpAddress + "/login");
     }
 
     @GetMapping("/user_delete_recovery/confirm")
     @ApiOperation("Operation to recover deleted user via email recovery link.")
     public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.recoveryUserDelete(code);
-        return new RedirectView("http://" + frontCorsHttpAddress + "/login");
+        return new RedirectView(HTTP + frontCorsHttpAddress + "/login");
     }
 }

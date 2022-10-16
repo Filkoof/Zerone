@@ -9,7 +9,7 @@ import ru.example.group.main.entity.NotificationEntity;
 import java.util.List;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<NotificationEntity,Long> {
+public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
     @Query("SELECT n FROM NotificationEntity n WHERE n.user.id = :currentUserId")
     List<NotificationEntity> findAllNotifications(Pageable pageable, Long currentUserId);
 }

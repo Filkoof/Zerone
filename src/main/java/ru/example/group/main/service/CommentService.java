@@ -1,14 +1,8 @@
 package ru.example.group.main.service;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
-
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.CommentRequestDto;
@@ -25,6 +19,12 @@ import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.FileRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+import ru.example.group.main.util.PaginationForm;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -70,11 +70,11 @@ public class CommentService {
         return ResponseEntity.ok(getCommonResponseDto(comment));
     }
 
-    public ResponseEntity<CommonResponseDto<CommentDto>> editComment(long idPost, long comment_id, CommentRequestDto requestDto)
+    public ResponseEntity<CommonResponseDto<CommentDto>> editComment(long idPost, long commentId, CommentRequestDto requestDto)
             throws EntityNotFoundException, IdUserException, CommentPostNotFoundException {
         var user = socialNetUserRegisterService.getCurrentUser();
         var post = postRepository.findById(idPost).orElseThrow(EntityNotFoundException::new);
-        var comment = commentRepository.findById(comment_id).orElseThrow(EntityNotFoundException::new);
+        var comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
         if (!user.getId().equals(comment.getUser().getId())) {
             throw new IdUserException("Автор комментария и пользователь который хочет его редактировать не совпадают");
         } else if (!post.getId().equals(comment.getPost().getId())) {
@@ -115,16 +115,14 @@ public class CommentService {
     }
 
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, pageable);
-
+        var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, PaginationForm.getPagination(itemPerPage, offset));
         return CommonListResponseDto.<CommentDto>builder()
                 .total((int) commentEntityPage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
                 .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream()
-                                .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments())))
-                                .toList())
+                        .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments())))
+                        .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();

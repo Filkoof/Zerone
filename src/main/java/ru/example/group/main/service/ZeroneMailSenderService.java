@@ -2,11 +2,11 @@ package ru.example.group.main.service;
 
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.example.group.main.exception.EmailNotSentException;
 
 @RequiredArgsConstructor

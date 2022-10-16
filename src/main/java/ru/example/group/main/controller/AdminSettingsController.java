@@ -20,6 +20,6 @@ public class AdminSettingsController {
         Boolean setJwtBlacklist = adminService.setBlacklistOnOf(changeTo);
         CommonResponseDto<?> jwtBlacklistSet = new CommonResponseDto<>();
         jwtBlacklistSet.setMessage("Jwt blacklist is on: " + setJwtBlacklist.toString());
-        return new ResponseEntity(jwtBlacklistSet, HttpStatus.OK);
+        return new ResponseEntity<>(jwtBlacklistSet, HttpStatus.OK);
     }
 }

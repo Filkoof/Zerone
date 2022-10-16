@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.jooq.impl.DSL.*;
-import static org.jooq.impl.DSL.field;
 
 @Service
 @RequiredArgsConstructor

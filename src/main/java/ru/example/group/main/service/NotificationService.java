@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import ru.example.group.main.dto.response.*;
+import ru.example.group.main.dto.response.CommonListResponseDto;
+import ru.example.group.main.dto.response.NotificationResponseDto;
 import ru.example.group.main.entity.NotificationEntity;
 import ru.example.group.main.mapper.NotificationMapper;
-import ru.example.group.main.repository.*;
+import ru.example.group.main.repository.CommentRepository;
+import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.socketIO.SocketEvents;
+import ru.example.group.main.util.PaginationForm;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -26,15 +29,13 @@ public class NotificationService {
     private final SocketEvents socketEvents;
 
     public CommonListResponseDto<NotificationResponseDto> putNotifications(Integer offset, Integer itemPerPage, long id, boolean all) {
-        Assert.isTrue(all ? id == 0L : id != 0L, "Нельзя отправлять два параметра");
+        Assert.isTrue(all == (id == 0L), "Нельзя отправлять два параметра");
         return all ? putAllNotifications(offset, itemPerPage) : putNotificationById(offset, itemPerPage, id);
     }
 
     private CommonListResponseDto<NotificationResponseDto> putAllNotifications(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-
-        var allNotifications = notificationRepository.findAllNotifications(pageable, currentUser.getId());
+        var allNotifications = notificationRepository.findAllNotifications(PaginationForm.getPagination(itemPerPage, offset), currentUser.getId());
         allNotifications.forEach(notification -> notification.setStatus(true));
         notificationRepository.saveAll(allNotifications);
 
@@ -52,6 +53,7 @@ public class NotificationService {
         var notification = notificationRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         notification.setStatus(true);
         notificationRepository.save(notification);
+
         return CommonListResponseDto.<NotificationResponseDto>builder()
                 .total(1)
                 .perPage(itemPerPage)
@@ -64,8 +66,7 @@ public class NotificationService {
 
     public CommonListResponseDto<NotificationResponseDto> getNotifications(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var notifications = notificationRepository.findAllNotifications(pageable, currentUser.getId());
+        var notifications = notificationRepository.findAllNotifications(PaginationForm.getPagination(itemPerPage, offset), currentUser.getId());
 
         return CommonListResponseDto.<NotificationResponseDto>builder()
                 .total(notifications.size())

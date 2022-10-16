@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.example.group.main.dto.response.UserDataResponseDto;
-
 import ru.example.group.main.entity.enumerated.MessagesPermission;
 
 import java.util.List;

@@ -7,13 +7,12 @@ import com.vk.api.sdk.objects.base.Country;
 import com.vk.api.sdk.objects.database.City;
 import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
 import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.request.PasswordChangeRequestDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.dto.vk.response.LocationResponseDto;

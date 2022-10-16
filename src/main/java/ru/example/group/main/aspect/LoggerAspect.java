@@ -19,30 +19,8 @@ public class LoggerAspect {
     public void methodExecuting() {
     }
 
-/*  @Before(value = "methodExecuting()")//сюда бы еще параметры метода передать...
-  public void beforeLogInfo(JoinPoint joinPoint) {
-    log.debug("вызывается метод - {}, класса- {}, с параметрами - {}\n",
-        joinPoint.getSignature().getName(),
-        joinPoint.getSourceLocation().getWithinType().getName(),
-        Arrays.toString(joinPoint.getArgs()));
-  }
-
-  @AfterReturning(value = "methodExecuting()", returning = "returningValue")
-  public void recordSuccessfulExecution(JoinPoint joinPoint, Object returningValue) {
-    if (returningValue != null) {
-      log.debug("Успешно выполнен метод - {}, класса- {}, с результатом выполнения -{}\n",
-          joinPoint.getSignature().getName(),
-          joinPoint.getSourceLocation().getWithinType().getName(),
-          returningValue);
-    } else {
-      log.debug("Успешно выполнен метод - {}, класса- {}\n",
-          joinPoint.getSignature().getName(),
-          joinPoint.getSourceLocation().getWithinType().getName());
-    }
-  }*/
-
     @AfterThrowing(value = "methodExecuting()", throwing = "exception")
-    public void recordFailedExecution(JoinPoint joinPoint, Exception exception) throws Exception {
+    public void recordFailedExecution(JoinPoint joinPoint, Exception exception) {
         log.error("Метод - {}, класса- {}, был аварийно завершен с исключением - {}\n" +
                         "стек: {}",
                 joinPoint.getSignature().getName(),

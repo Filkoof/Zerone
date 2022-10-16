@@ -21,6 +21,7 @@ import ru.example.group.main.security.SocialNetUserRegisterService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -57,7 +58,7 @@ public class FriendsService {
             user = socialNetUserDetailsService.loadUserEntityByUsername(name);
         }
         PageRequest nextPage = PageRequest.of(offset / itemPerPage, itemPerPage);
-        List<UserEntity> userFriendsList = userRepository.getAllRelationsOfUser(user.getId(), FriendshipStatusType.getLongFromEnum(friendshipStatusType), nextPage);
+        List<UserEntity> userFriendsList = userRepository.getAllRelationsOfUser(user.getId(), friendshipStatusType.getValue(), nextPage);
         List<UserDataResponseDto> userFriendsDtoList = new ArrayList<>();
         for (UserEntity nextFriendToDto : userFriendsList) {
             userFriendsDtoList.add(userMapper.userEntityToDtoWithToken(nextFriendToDto, ""));
@@ -70,7 +71,7 @@ public class FriendsService {
         ResultMessageDto friendRequestResponse = new ResultMessageDto();
         friendRequestResponse.setError("");
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
-        if (id != user.getId()) {
+        if (!Objects.equals(id, user.getId())) {
             friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
             try {
                 FriendshipEntity userToIdFriendshipStatusCheck = getFriendshipAndCleanRelationsIfMistakenExist(user.getId(), id);
@@ -88,19 +89,19 @@ public class FriendsService {
 
     private String sendFriendRequestDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
         if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
-            Boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.SUBSCRIBED, new FriendshipEntity()) &&
+            boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.SUBSCRIBED, new FriendshipEntity()) &&
                     insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.REQUEST, new FriendshipEntity());
             if (!check) {
                 return "Ошибка отправки запроса, обратитесь в службу поддержки.";
             }
             return "Запрос на дружбу отправлен.";
         }
-        Long idToUserStatusCode = FriendshipStatusType.getLongFromEnum(idToUserFriendshipStatusCheck.getStatus().getCode());
+        int idToUserStatusCode = idToUserFriendshipStatusCheck.getStatus().getCode().getValue();
         if (userToIdFriendshipStatusCheck != null && (idToUserStatusCode == 3 || idToUserStatusCode == 4 || idToUserStatusCode == 7)) {
             return "Запрос на дружбу был отправлен ранее и находится в статусе - " + idToUserFriendshipStatusCheck.getStatus().getName();
         }
         if (idToUserStatusCode == 5) {
-            Boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND, userToIdFriendshipStatusCheck)
+            boolean check = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.FRIEND, userToIdFriendshipStatusCheck)
                     && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.FRIEND, idToUserFriendshipStatusCheck);
             if (!check) {
                 return "Ошибка отправки запроса, обратитесь в службу поддержки.";
@@ -112,12 +113,11 @@ public class FriendsService {
 
     private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, FriendshipStatusType userGetStatus, FriendshipEntity friendship) throws FriendsRequestException {
         try {
-            FriendshipEntity userToIdFriendshipStatusCheck = friendship;
-            userToIdFriendshipStatusCheck.setSrcPerson(user);
-            userToIdFriendshipStatusCheck.setDstPerson(requestedFriendId);
-            userToIdFriendshipStatusCheck.setStatus(friendshipStatusRepository.findByCode(userGetStatus));
-            userToIdFriendshipStatusCheck.setTime(LocalDateTime.now());
-            friendshipRepository.save(userToIdFriendshipStatusCheck);
+            friendship.setSrcPerson(user);
+            friendship.setDstPerson(requestedFriendId);
+            friendship.setStatus(friendshipStatusRepository.findByCode(userGetStatus));
+            friendship.setTime(LocalDateTime.now());
+            friendshipRepository.save(friendship);
             return true;
         } catch (Exception e) {
             throw new FriendsRequestException("Ошибка запроса.");
@@ -148,7 +148,7 @@ public class FriendsService {
     }
 
     private Boolean deleteOrBlockUserDoInRepository(int code, UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
-        Boolean statusUpdate = false;
+        boolean statusUpdate = false;
         if (code == 4) {
             statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DECLINED, userToIdFriendshipStatusCheck) &&
                     insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.SUBSCRIBED, idToUserFriendshipStatusCheck);
@@ -156,23 +156,21 @@ public class FriendsService {
         if (code == 3) {
             if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
                 statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, new FriendshipEntity()) &&
-                        insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, new FriendshipEntity());
+                        insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WAS_BLOCKED_BY, new FriendshipEntity());
             } else {
-                Integer idToUserStatusCode = FriendshipStatusType.getLongFromEnum(idToUserFriendshipStatusCheck.getStatus().getCode()).intValue();
-                switch (idToUserStatusCode) {
-                    case 1, 2, 5:
-                        statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
-                                && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, idToUserFriendshipStatusCheck);
-                        break;
-                    case 3:
-                        statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DEADLOCK, userToIdFriendshipStatusCheck)
-                                && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DEADLOCK, idToUserFriendshipStatusCheck);
-                        break;
-                    case 4:
-                        statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
-                                && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DECLINED, idToUserFriendshipStatusCheck);
-                        break;
-                }
+                int idToUserStatusCode = idToUserFriendshipStatusCheck.getStatus().getCode().getValue();
+                statusUpdate = switch (idToUserStatusCode) {
+                    case 1, 2, 5 ->
+                            insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
+                                    && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WAS_BLOCKED_BY, idToUserFriendshipStatusCheck);
+                    case 3 ->
+                            insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DEADLOCK, userToIdFriendshipStatusCheck)
+                                    && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DEADLOCK, idToUserFriendshipStatusCheck);
+                    case 4 ->
+                            insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
+                                    && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DECLINED, idToUserFriendshipStatusCheck);
+                    default -> statusUpdate;
+                };
             }
         }
         return statusUpdate;

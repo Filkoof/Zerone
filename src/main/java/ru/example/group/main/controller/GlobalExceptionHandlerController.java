@@ -13,7 +13,9 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.example.group.main.dto.response.*;
+import ru.example.group.main.dto.response.FriendsResponseDto;
+import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
+import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.exception.*;
 
 import javax.servlet.ServletException;
@@ -28,7 +30,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         commonResponseDto.setErrorDescription(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -37,7 +39,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         commonResponseDto.setErrorDescription(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ServletException.class)
@@ -46,7 +48,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setTimeStamp(LocalDateTime.now());
         commonResponseDto.setErrorDescription(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(EmailNotSentException.class)
@@ -56,7 +58,7 @@ public class GlobalExceptionHandlerController {
         commonResponseDto.setMessage("Письмо не отправлено");
         commonResponseDto.setErrorDescription("Письмо не отправлено");
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NewUserWasNotSavedToDBException.class)
@@ -65,16 +67,16 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserWithThatEmailAlreadyExistException.class)
-    public ResponseEntity<ResultMessageDto> handleUserWithThatEmailALreadyExistException(UserWithThatEmailAlreadyExistException e) {
+    public ResponseEntity<ResultMessageDto> handleUserWithThatEmailAlreadyExistException(UserWithThatEmailAlreadyExistException e) {
         log.info(e.getLocalizedMessage());
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -84,7 +86,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthLogoutException.class)
@@ -93,7 +95,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка выхода из системы");
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
@@ -102,7 +104,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserDeleteOrRecoveryException.class)
@@ -111,7 +113,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RecommendedFriendsLoadingFromDbToApiException.class)
@@ -119,7 +121,7 @@ public class GlobalExceptionHandlerController {
                                                                                                              RecommendedFriendsResponseDto recommendedFriendsResponseDto) {
         log.info(e.getMessage());
         recommendedFriendsResponseDto.setError("Ошибка загрузки рекомендуемых друзей");
-        return new ResponseEntity(recommendedFriendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(recommendedFriendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(GetUserFriendsException.class)
@@ -127,7 +129,7 @@ public class GlobalExceptionHandlerController {
                                                                             FriendsResponseDto friendsResponseDto) {
         log.info(e.getMessage());
         friendsResponseDto.setError("Ошибка загрузки друзей");
-        return new ResponseEntity(friendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(friendsResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(FriendsRequestException.class)
@@ -135,7 +137,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -143,7 +145,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -151,7 +153,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка, переданы неверные данные");
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -160,7 +162,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription("Ошибка в запросе");
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -169,7 +171,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(CloudinaryException.class)
@@ -177,7 +179,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IdUserException.class)
@@ -185,7 +187,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(CommentPostNotFoundException.class)
@@ -193,7 +195,7 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PostsException.class)
@@ -201,6 +203,6 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 }

@@ -8,8 +8,8 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.socket.*;
-import ru.example.group.main.dto.response.*;
 import ru.example.group.main.entity.*;
 import ru.example.group.main.entity.enumerated.ReadStatusType;
 import ru.example.group.main.mapper.MessageMapper;
@@ -67,7 +67,7 @@ public class SocketEvents {
     }
 
     @OnDisconnect
-    public void  disconnect(SocketIOClient client) {
+    public void disconnect(SocketIOClient client) {
         var session = client.getSessionId();
         var sessionEntity = sessionsRepository.findById(String.valueOf(session)).orElseThrow(EntityNotFoundException::new);
         var user = userRepository.findById(Long.valueOf(sessionEntity.getUserId())).orElseThrow(EntityNotFoundException::new);
@@ -132,7 +132,7 @@ public class SocketEvents {
 
     public void sentMessage(MessageEntity messageEntity, UserEntity recipient) {
         var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(recipient.getId()));
-        if(sessionEntity.isEmpty()){
+        if (sessionEntity.isEmpty()) {
             log.info("Отправка уведомления не требуется, юзер офлайн");
         } else {
             var session = sessionEntity.get().getSession();

@@ -1,7 +1,5 @@
 package ru.example.group.main.controller;
 
-import javax.persistence.EntityNotFoundException;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -13,6 +11,8 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.exception.PostsException;
 import ru.example.group.main.service.PostService;
+
+import javax.persistence.EntityNotFoundException;
 
 @RestController
 @AllArgsConstructor
@@ -44,7 +44,7 @@ public class PostController {
     @ApiOperation("Operation to get all post for user id (@PathVariable).")
     public CommonListResponseDto<PostResponseDto> getPosts(
             @PathVariable long id,
-            @RequestParam(name = "offset", defaultValue = "0") int offset) throws PostsException {
+            @RequestParam(name = "offset", defaultValue = "0") int offset) {
         return postService.getNewsUserId(id, offset);
     }
 

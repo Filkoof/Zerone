@@ -1,7 +1,5 @@
 package ru.example.group.main.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.example.group.main.dto.request.CommentRequestDto;
@@ -10,6 +8,8 @@ import ru.example.group.main.dto.response.FileResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.UserEntity;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface CommentMapper {

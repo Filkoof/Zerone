@@ -2,10 +2,11 @@ package ru.example.group.main.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.DialogRequestDto;
-import ru.example.group.main.dto.response.*;
+import ru.example.group.main.dto.response.CommonListResponseDto;
+import ru.example.group.main.dto.response.CommonResponseDto;
+import ru.example.group.main.dto.response.DialogResponseDto;
 import ru.example.group.main.entity.DialogEntity;
 import ru.example.group.main.entity.MessageEntity;
 import ru.example.group.main.entity.UserEntity;
@@ -15,6 +16,7 @@ import ru.example.group.main.repository.DialogRepository;
 import ru.example.group.main.repository.MessageRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+import ru.example.group.main.util.PaginationForm;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -50,9 +52,7 @@ public class DialogService {
 
     public CommonListResponseDto<DialogResponseDto> getDialogs(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, pageable);
+        var statePage = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, PaginationForm.getPagination(itemPerPage, offset));
 
         return CommonListResponseDto.<DialogResponseDto>builder()
                 .total((int) statePage.getTotalElements())

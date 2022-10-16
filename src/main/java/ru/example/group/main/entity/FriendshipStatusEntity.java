@@ -1,19 +1,20 @@
 package ru.example.group.main.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.Setter;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "friendship_statuses")
-public class FriendshipStatusEntity {
+public class FriendshipStatusEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

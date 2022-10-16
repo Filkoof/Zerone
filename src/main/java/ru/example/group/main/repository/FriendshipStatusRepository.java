@@ -8,7 +8,5 @@ import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 @Repository
 public interface FriendshipStatusRepository extends JpaRepository<FriendshipStatusEntity, Long> {
 
-    FriendshipStatusEntity findByName(String name);
-
     FriendshipStatusEntity findByCode(FriendshipStatusType code);
 }

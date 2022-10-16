@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.controller.GlobalExceptionHandlerController;
-
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.SocialNetUserRepository;
 
