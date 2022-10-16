@@ -40,7 +40,7 @@ liquibase:
     - prod
   script:
     - echo "Тут будет прописана логика миграции бд при деплое"
-    - liquibase --url=jdbc:postgresql://195.161.62.32:5432/postgres --username=zerone --password=7tsfft --changeLogFile=./db/changelog/master.yaml update
+    - liquibase --url=jdbc:postgresql://195.161.62.32:5432/postgres --username=zerone --password=7tsfft --changeLogFile=C:\Users\Артем\IdeaProjects\backend\src\main\resources\db\changelog\master.yaml update
 
 
 #sonar-scan:
