@@ -30,8 +30,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
-    private final CommentRepository commentRepository;
 
+    private final static String COMMENT_NOT_FOUND = "Комментарий не относиться к данному посту";
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
@@ -54,15 +55,15 @@ public class CommentService {
         return getCommonResponseDto(commentEntity);
     }
 
-    public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long comment_id)
+    public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long commentId)
             throws EntityNotFoundException, IdUserException, CommentPostNotFoundException {
         var user = socialNetUserRegisterService.getCurrentUser();
         var post = postRepository.findById(idPost).orElseThrow(EntityNotFoundException::new);
-        var comment = commentRepository.findById(comment_id).orElseThrow(EntityNotFoundException::new);
+        var comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
         if (!user.getId().equals(comment.getUser().getId())) {
             throw new IdUserException("Автор комментария и пользователь который хочет его удалить не совпадают");
         } else if (!post.getId().equals(comment.getPost().getId())) {
-            throw new CommentPostNotFoundException("Комментарий не относиться к данному посту");
+            throw new CommentPostNotFoundException(COMMENT_NOT_FOUND);
         } else {
             comment.setDeleted(true);
             commentRepository.save(comment);
@@ -78,7 +79,7 @@ public class CommentService {
         if (!user.getId().equals(comment.getUser().getId())) {
             throw new IdUserException("Автор комментария и пользователь который хочет его редактировать не совпадают");
         } else if (!post.getId().equals(comment.getPost().getId())) {
-            throw new CommentPostNotFoundException("Комментарий не относиться к данному посту");
+            throw new CommentPostNotFoundException(COMMENT_NOT_FOUND);
         } else {
             commentRepository.save(getCommentFromRequest(comment, requestDto));
         }
@@ -93,15 +94,15 @@ public class CommentService {
         return commentEntity;
     }
 
-    public ResponseEntity<CommonResponseDto<CommentDto>> recoverComment(long idPost, long comment_id)
+    public ResponseEntity<CommonResponseDto<CommentDto>> recoverComment(long idPost, long commentId)
             throws EntityNotFoundException, IdUserException, CommentPostNotFoundException {
         var user = socialNetUserRegisterService.getCurrentUser();
         var post = postRepository.findById(idPost).orElseThrow(EntityNotFoundException::new);
-        var comment = commentRepository.findById(comment_id).orElseThrow(EntityNotFoundException::new);
+        var comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
         if (!user.getId().equals(comment.getUser().getId())) {
             throw new IdUserException("Автор комментария и пользователь который хочет его восстановить не совпадают");
         } else if (!post.getId().equals(comment.getPost().getId())) {
-            throw new CommentPostNotFoundException("Комментарий не относиться к данному посту");
+            throw new CommentPostNotFoundException(COMMENT_NOT_FOUND);
         } else {
             comment.setDeleted(false);
             commentRepository.save(comment);

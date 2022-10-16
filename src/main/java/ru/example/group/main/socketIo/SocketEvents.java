@@ -1,4 +1,4 @@
-package ru.example.group.main.socketIO;
+package ru.example.group.main.socketIo;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
@@ -31,6 +31,7 @@ import java.util.UUID;
 @Slf4j
 public class SocketEvents {
 
+    private final static String USER_OFFLINE = "Отправка уведомления не требуется, юзер офлайн";
     private final SocketIOServer socketIOServer;
     private final JWTUtilService jwtUtilService;
     private final SocialNetUserDetailsService socialNetUserDetailsService;
@@ -133,7 +134,7 @@ public class SocketEvents {
     public void sentMessage(MessageEntity messageEntity, UserEntity recipient) {
         var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(recipient.getId()));
         if (sessionEntity.isEmpty()) {
-            log.info("Отправка уведомления не требуется, юзер офлайн");
+            log.info(USER_OFFLINE);
         } else {
             var session = sessionEntity.get().getSession();
             var client = socketIOServer.getClient(UUID.fromString(session));
@@ -148,7 +149,7 @@ public class SocketEvents {
     public void commentNotification(NotificationEntity notification, CommentEntity comment, UserEntity user) {
         var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(user.getId()));
         if (sessionEntity.isEmpty()) {
-            log.info("Отправка уведомления не требуется, юзер офлайн");
+            log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
             var responseDto = notificationMapper.commentNotificationEntityToSocketDto(notification, comment, author);
@@ -162,7 +163,7 @@ public class SocketEvents {
     public void friendNotification(NotificationEntity notification, UserEntity user) {
         var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(user.getId()));
         if (sessionEntity.isEmpty()) {
-            log.info("Отправка уведомления не требуется, юзер офлайн");
+            log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
             var responseDto = notificationMapper.friendRequestNotificationToSocketDto(notification, author);

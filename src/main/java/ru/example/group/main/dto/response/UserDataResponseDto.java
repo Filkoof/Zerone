@@ -10,6 +10,7 @@ import ru.example.group.main.entity.enumerated.MessagesPermission;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDataResponseDto {
+public class UserDataResponseDto implements Serializable {
 
     private final Long id;
 

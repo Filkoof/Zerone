@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class DialogResponseDto {
-    public Long id;
+    private Long id;
     @JsonProperty("recipient_id")
     public UserDataResponseDto recipientId;
     @JsonProperty("unread_count")

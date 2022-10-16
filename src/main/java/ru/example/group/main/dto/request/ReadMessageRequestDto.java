@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ReadMessageRequestDto {
-    public int dialog;
+    private int dialog;
 }

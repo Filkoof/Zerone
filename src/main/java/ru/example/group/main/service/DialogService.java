@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class DialogService {
 
-    final private SocialNetUserRegisterService socialNetUserRegisterService;
+    private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final DialogRepository dialogRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;

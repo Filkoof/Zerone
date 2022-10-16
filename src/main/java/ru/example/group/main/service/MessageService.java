@@ -1,7 +1,6 @@
 package ru.example.group.main.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.MessageRequestDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
@@ -11,7 +10,7 @@ import ru.example.group.main.mapper.MessageMapper;
 import ru.example.group.main.repository.DialogRepository;
 import ru.example.group.main.repository.MessageRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-import ru.example.group.main.socketIO.SocketEvents;
+import ru.example.group.main.socketIo.SocketEvents;
 import ru.example.group.main.util.PaginationForm;
 
 import javax.persistence.EntityNotFoundException;

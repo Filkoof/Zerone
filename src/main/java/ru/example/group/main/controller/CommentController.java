@@ -50,20 +50,20 @@ public class CommentController {
         return service.deleteComment(id, commentId);
     }
 
-    @PutMapping("/{id}/comments/{comment_id}")
+    @PutMapping("/{id}/comments/{commentId}")
     @ApiOperation("operation to edit comment for post id (@PathVariable) with comment_id (@PathVariable)")
     public ResponseEntity<CommonResponseDto<CommentDto>> editCommentForPostIdAndCommentId(
             @PathVariable @Min(1) long id,
-            @PathVariable @Min(1) long comment_id,
+            @PathVariable @Min(1) long commentId,
             @Valid @RequestBody CommentRequestDto request) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
-        return service.editComment(id, comment_id, request);
+        return service.editComment(id, commentId, request);
     }
 
-    @PutMapping("/{id}/comments/{comment_id}/recover")
+    @PutMapping("/{id}/comments/{commentId}/recover")
     @ApiOperation("operation to recover deleted comment for post id (@PathVariable) with comment_id (@PathVariable)")
     public ResponseEntity<CommonResponseDto<CommentDto>> recoverDeletedCommentForPostIdAndCommentId(
             @PathVariable @Min(1) long id,
-            @PathVariable @Min(1) long comment_id) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
-        return service.recoverComment(id, comment_id);
+            @PathVariable @Min(1) long commentId) throws CommentPostNotFoundException, IdUserException, EntityNotFoundException {
+        return service.recoverComment(id, commentId);
     }
 }
