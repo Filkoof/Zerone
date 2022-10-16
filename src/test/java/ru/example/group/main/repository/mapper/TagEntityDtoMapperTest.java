@@ -1,4 +1,4 @@
-package ru.example.group.main.mapper;
+package ru.example.group.main.repository.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,12 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.example.group.main.dto.response.TagResponseDto;
 import ru.example.group.main.entity.TagEntity;
+import ru.example.group.main.mapper.TagEntityDtoMapper;
 
-public class TagEntityDtoMapperTest {
+class TagEntityDtoMapperTest {
   private final TagEntityDtoMapper mapper = Mappers.getMapper(TagEntityDtoMapper.class);
 
   @Test
-  public void entityToDto(){
+  void entityToDto(){
     TagEntity entity=new TagEntity();
     entity.setTag("test");
     TagResponseDto dto = mapper.entityToDto(entity);

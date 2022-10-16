@@ -22,7 +22,7 @@ import java.util.Map;
 public class CloudinaryService {
 
     @Value("${cloudinary.default_avatar}")
-    private String default_avatar;
+    private String defaultAvatar;
 
     private final Cloudinary cloudinary;
     private final SocialNetUserRegisterService socialNetUserRegisterService;

@@ -21,7 +21,7 @@ public class JWTUtilService {
     @Value("${config.token-validity-hours}")
     private Integer hoursTokenValidity;
 
-    private final static int MILLIS_IN_HOUR = 1000 * 60 * 60;
+    private static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts

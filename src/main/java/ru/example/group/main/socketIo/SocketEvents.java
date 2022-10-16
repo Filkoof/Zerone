@@ -31,7 +31,7 @@ import java.util.UUID;
 @Slf4j
 public class SocketEvents {
 
-    private final static String USER_OFFLINE = "Отправка уведомления не требуется, юзер офлайн";
+    private static final String USER_OFFLINE = "Отправка уведомления не требуется, юзер офлайн";
     private final SocketIOServer socketIOServer;
     private final JWTUtilService jwtUtilService;
     private final SocialNetUserDetailsService socialNetUserDetailsService;

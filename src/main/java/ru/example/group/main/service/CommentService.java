@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 public class CommentService {
 
-    private final static String COMMENT_NOT_FOUND = "Комментарий не относиться к данному посту";
+    private static final String COMMENT_NOT_FOUND = "Комментарий не относиться к данному посту";
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final FileRepository fileRepository;

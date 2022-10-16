@@ -25,12 +25,11 @@ import java.util.Objects;
 public class PlatformService {
     private final VkApiClient vkApiClient;
     private final UserActor userActor;
-    private static Map<String, LanguageResponseDto> map;
+    private static final Map<String, LanguageResponseDto> map = new HashMap<>();
 
     public PlatformService(VkApiClient vkApiClient, UserActor userActor) {
         this.vkApiClient = vkApiClient;
         this.userActor = userActor;
-        map = new HashMap<>();
         map.put("ru", new LanguageResponseDto(0, "ru"));
         map.put("eng", new LanguageResponseDto(1, "eng"));
     }
