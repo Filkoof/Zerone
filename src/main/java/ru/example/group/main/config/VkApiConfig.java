@@ -21,7 +21,7 @@ public class VkApiConfig {
     private String accessToken;
 
     @Value("${vk.deactivated}")
-    private Boolean deactivated;
+    private boolean deactivated;
 
     @Bean
     public UserActor userActor() {

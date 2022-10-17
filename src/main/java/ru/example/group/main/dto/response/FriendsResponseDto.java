@@ -2,11 +2,12 @@ package ru.example.group.main.dto.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class FriendsResponseDto {
+public class FriendsResponseDto implements Serializable {
 
     private Integer total;
     private Integer itemPerPage;

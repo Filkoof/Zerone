@@ -10,8 +10,8 @@ import ru.example.group.main.mapper.NotificationMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-import ru.example.group.main.socketIo.SocketEvents;
-import ru.example.group.main.util.PaginationForm;
+import ru.example.group.main.socket.SocketEvents;
+import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ public class NotificationService {
 
     private CommonListResponseDto<NotificationResponseDto> putAllNotifications(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var allNotifications = notificationRepository.findAllNotifications(PaginationForm.getPagination(itemPerPage, offset), currentUser.getId());
+        var allNotifications = notificationRepository.findAllNotifications(UtilZerone.getPagination(itemPerPage, offset), currentUser.getId());
         allNotifications.forEach(notification -> notification.setStatus(true));
         notificationRepository.saveAll(allNotifications);
 
@@ -65,7 +65,7 @@ public class NotificationService {
 
     public CommonListResponseDto<NotificationResponseDto> getNotifications(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var notifications = notificationRepository.findAllNotifications(PaginationForm.getPagination(itemPerPage, offset), currentUser.getId());
+        var notifications = notificationRepository.findAllNotifications(UtilZerone.getPagination(itemPerPage, offset), currentUser.getId());
 
         return CommonListResponseDto.<NotificationResponseDto>builder()
                 .total(notifications.size())

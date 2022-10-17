@@ -98,7 +98,7 @@ public class JdbcRecommendedFriendsRepository {
                 SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
     }
 
-    private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
+    private static final String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
             """
                     SELECT friendsOfFriendsWithCount.dst_person_id FROM (
                             SELECT friendships_1.dst_person_id
@@ -112,17 +112,13 @@ public class JdbcRecommendedFriendsRepository {
                             SELECT users_1.id
                             FROM users AS users_1 INNER JOIN users ON users_1.city = users.city
                             GROUP BY users.id, users_1.id
-                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false))
-                    	
+                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
                     		UNION
                             (SELECT users.id
                     		FROM users WHERE users.id<>:user_id AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
                     		ORDER BY users.reg_date DESC limit 5)
-                    		
                     		UNION
-                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)
-                    	
-                            ) AS friendsOfFriendsWithCount
+                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)) AS friendsOfFriendsWithCount
                             WHERE EXISTS
                             (
                                     SELECT friendsOfFriendsWithCount.dst_person_id

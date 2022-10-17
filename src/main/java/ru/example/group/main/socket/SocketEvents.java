@@ -1,4 +1,4 @@
-package ru.example.group.main.socketIo;
+package ru.example.group.main.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;

@@ -37,15 +37,15 @@ import java.util.UUID;
 @Service
 public class UserRegisterService {
 
-    @Value("${config.frontend}")
-    private String mailHost;
-    @Value("${cloudinary.default_avatar}")
-    private String default_avatar;
     private final UserRepository userRepository;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final RecommendedFriendsService recommendedFriendsService;
     private final DatabaseReader databaseReader;
+    @Value("${config.frontend}")
+    private String mailHost;
+    @Value("${cloudinary.default_avatar}")
+    private String defaultAvatar;
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
@@ -55,7 +55,7 @@ public class UserRegisterService {
         String code = UUID.randomUUID().toString().substring(0, 24);
         if (newUserAddToDB(userRegisterRequestDto, code)) {
             String message =
-                    "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
+                    "Здравствуйте, "  + userRegisterRequestDto.getFirstName() + "\n\n" +
                             "Добро пожаловать в социальную сеть Зерон. " +
                             "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
                             "http://" + mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
@@ -78,7 +78,7 @@ public class UserRegisterService {
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
             user.setConfirmationCode(code);
-            user.setPhoto(default_avatar);
+            user.setPhoto(defaultAvatar);
             user.setCountry("");
             user.setCity("");
             user.setBirthDate(LocalDate.of(1970, 1, 1));
@@ -92,7 +92,7 @@ public class UserRegisterService {
     }
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
+                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException {
         List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();

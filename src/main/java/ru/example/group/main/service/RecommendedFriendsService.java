@@ -21,6 +21,7 @@ import java.util.*;
 @Service
 @Slf4j
 public class RecommendedFriendsService {
+    private static final String MILLIS_TEXT = " millis";
 
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
@@ -100,14 +101,14 @@ public class RecommendedFriendsService {
         Long start = System.currentTimeMillis();
         int deleteCount = jdbcRecommendedFriendsRepository.deleteInactive();
         Long finish = System.currentTimeMillis();
-        log.debug(deleteCount + " delete inactive users from recommendations: " + (finish - start) + " millis");
+        log.debug(deleteCount + " delete inactive users from recommendations: " + (finish - start) + MILLIS_TEXT);
     }
 
     private void runInsertNewToRecommendedFriends(Map<Long, Long[]> newTotalRecommendedFriendsMap) {
         Long start = System.currentTimeMillis();
         int insertCount = jdbcRecommendedFriendsRepository.insertBatchRecommendationsArray(newTotalRecommendedFriendsMap).length;
         Long finish = System.currentTimeMillis();
-        log.debug(insertCount + " new users recommendations insert: " + (finish - start) + " millis");
+        log.debug(insertCount + " new users recommendations insert: " + (finish - start) + MILLIS_TEXT);
     }
 
     private Map<Long, Long[]> getMapOfRecommendedFriendsTotal() {
@@ -124,7 +125,7 @@ public class RecommendedFriendsService {
         }
 
         finish = System.currentTimeMillis();
-        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + " millis");
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + MILLIS_TEXT);
         return recommendedFriendsMapArray;
     }
 
@@ -155,7 +156,7 @@ public class RecommendedFriendsService {
         List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(newUserId);
         recommendedFriendsMapArray.put(newUserId, friendsOfUserIds.toArray(Long[]::new));
         finish = System.currentTimeMillis();
-        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + " millis");
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + MILLIS_TEXT);
         return recommendedFriendsMapArray;
     }
 }

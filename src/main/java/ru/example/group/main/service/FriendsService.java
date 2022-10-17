@@ -26,6 +26,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 public class FriendsService {
+    private static final String ERROR_PROCESS_REQUEST = "Ошибка обработки запроса, обратитесь в службу поддержки";
+    private static final String ERROR_ADD_FRIEND = "Ошибка добавления в друзья";
     private final SocialNetUserDetailsService socialNetUserDetailsService;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final UserRepository userRepository;
@@ -79,7 +81,7 @@ public class FriendsService {
                 UserEntity requestedUser = userRepository.findById(id).orElseThrow();
                 friendRequestResponse.setMessage(sendFriendRequestDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck));
             } catch (Exception e) {
-                throw new FriendsRequestException("Ошибка добавления в друзья.");
+                throw new FriendsRequestException(ERROR_ADD_FRIEND);
             }
         } else {
             return new ResultMessageDto();
@@ -108,7 +110,7 @@ public class FriendsService {
             }
             return "Данный пользователь уже отправлял вам запрос и теперь вы друзья.";
         }
-        return "Ошибка добавления в друзья.";
+        return ERROR_ADD_FRIEND;
     }
 
     private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, FriendshipStatusType userGetStatus, FriendshipEntity friendship) throws FriendsRequestException {
@@ -134,15 +136,15 @@ public class FriendsService {
             deleteOrBlockFriendResponse.setError("");
             deleteOrBlockFriendResponse.setTimeStamp(LocalDateTime.now());
             deleteOrBlockFriendResponse.setMessage(code == 3 ? "Пользователь удален." : "Пользователь заблокирован.");
-            Boolean statusUpdate = deleteOrBlockUserDoInRepository(code, user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+            boolean statusUpdate = deleteOrBlockUserDoInRepository(code, user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
             if (!statusUpdate) {
-                deleteOrBlockFriendResponse.setMessage("Ошибка обработки запроса, обратитесь в службу поддержки");
-                deleteOrBlockFriendResponse.setError("Ошибка обработки запроса, обратитесь в службу поддержки");
-                throw new FriendsRequestException("Ошибка обработки запроса, обратитесь в службу поддержки");
+                deleteOrBlockFriendResponse.setMessage(ERROR_PROCESS_REQUEST);
+                deleteOrBlockFriendResponse.setError(ERROR_PROCESS_REQUEST);
+                throw new FriendsRequestException(ERROR_PROCESS_REQUEST);
             }
         } catch (Exception e) {
-            deleteOrBlockFriendResponse.setMessage("Ошибка добавления в друзья");
-            throw new FriendsRequestException("Ошибка добавления в друзья");
+            deleteOrBlockFriendResponse.setMessage(ERROR_ADD_FRIEND);
+            throw new FriendsRequestException(ERROR_ADD_FRIEND);
         }
         return deleteOrBlockFriendResponse;
     }

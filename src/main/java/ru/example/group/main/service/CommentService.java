@@ -19,7 +19,7 @@ import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.FileRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-import ru.example.group.main.util.PaginationForm;
+import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -116,7 +116,7 @@ public class CommentService {
     }
 
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
-        var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, PaginationForm.getPagination(itemPerPage, offset));
+        var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, UtilZerone.getPagination(itemPerPage, offset));
         return CommonListResponseDto.<CommentDto>builder()
                 .total((int) commentEntityPage.getTotalElements())
                 .perPage(itemPerPage)

@@ -22,7 +22,7 @@ import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-import ru.example.group.main.util.PaginationForm;
+import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -67,13 +67,13 @@ public class PostService {
     }
 
     public CommonListResponseDto<PostResponseDto> getNewsfeed(int offset, int itemPerPage) throws PostsException {
-        var statePage = postRepository.findAllPostsWithPagination(PaginationForm.getPagination(itemPerPage, offset));
+        var statePage = postRepository.findAllPostsWithPagination(UtilZerone.getPagination(itemPerPage, offset));
         return tryCatchPostsExceptionForCommonList(statePage, offset, itemPerPage);
     }
 
     public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
         var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
-        var statePage = postRepository.findAllPostsUserId(id, PaginationForm.getPagination(itemPerPage, offset));
+        var statePage = postRepository.findAllPostsUserId(id, UtilZerone.getPagination(itemPerPage, offset));
 
         return CommonListResponseDto.<PostResponseDto>builder()
                 .total((int) statePage.getTotalElements())

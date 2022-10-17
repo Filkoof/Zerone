@@ -9,7 +9,7 @@ import ru.example.group.main.service.RecommendedFriendsService;
 public class BeanInitMethod {
 
     @Value("${config.initRecommendations}")
-    private Boolean initRecommendations;
+    private boolean initRecommendations;
 
     @Autowired
     private RecommendedFriendsService recommendedFriendsService;

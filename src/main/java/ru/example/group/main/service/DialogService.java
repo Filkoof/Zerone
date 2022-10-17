@@ -16,7 +16,7 @@ import ru.example.group.main.repository.DialogRepository;
 import ru.example.group.main.repository.MessageRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
-import ru.example.group.main.util.PaginationForm;
+import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -52,7 +52,7 @@ public class DialogService {
 
     public CommonListResponseDto<DialogResponseDto> getDialogs(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var statePage = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, PaginationForm.getPagination(itemPerPage, offset));
+        var statePage = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, UtilZerone.getPagination(itemPerPage, offset));
 
         return CommonListResponseDto.<DialogResponseDto>builder()
                 .total((int) statePage.getTotalElements())
