@@ -68,7 +68,7 @@ package:
       - ./.m2
 
 migration:
-  stage: liquibase
+  stage: migration
   image: liquibase/liquibase
   only:
     - dev
