@@ -72,7 +72,7 @@ INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALU
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,49,48,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,50,51,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,51,50,'2022-08-25 19:54:00.971206');
-INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,52,53,'2022-08-25 19:54:00.971206');
+/*INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,52,53,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,53,52,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,54,55,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (2,55,54,'2022-08-25 19:54:00.971206');
@@ -95,5 +95,5 @@ INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALU
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,53,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,53,51,'2022-08-25 19:54:00.971206');
 INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (1,51,54,'2022-08-25 19:54:00.971206');
-INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,54,51,'2022-08-25 19:54:00.971206');
+INSERT INTO public.friendships (status_id,src_person_id,dst_person_id,time) VALUES (5,54,51,'2022-08-25 19:54:00.971206');*/
 

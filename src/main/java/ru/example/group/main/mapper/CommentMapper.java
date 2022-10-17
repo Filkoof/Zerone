@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import ru.example.group.main.dto.request.CommentRequestDto;
 import ru.example.group.main.dto.response.CommentDto;
+import ru.example.group.main.dto.response.FileResponseDto;
 import ru.example.group.main.entity.CommentEntity;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.UserEntity;
@@ -25,7 +26,6 @@ public interface CommentMapper {
     @Mapping(target = "parentId", source = "comment.parent.id")
     @Mapping(target = "time", source = "comment.time")
     @Mapping(target = "subComments", source = "subComments")
-    @Mapping(target = "likes", ignore = true)
     @Mapping(target = "author", source = "comment.user")
     CommentDto commentEntityToDto(CommentEntity comment,
                                   List<FileResponseDto> images,

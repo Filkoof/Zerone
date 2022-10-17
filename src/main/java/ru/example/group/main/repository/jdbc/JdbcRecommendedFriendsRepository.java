@@ -112,7 +112,7 @@ public class JdbcRecommendedFriendsRepository {
                             SELECT users_1.id
                             FROM users AS users_1 INNER JOIN users ON users_1.city = users.city
                             GROUP BY users.id, users_1.id
-                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
+                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false))
                     		UNION
                             (SELECT users.id
                     		FROM users WHERE users.id<>:user_id AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
