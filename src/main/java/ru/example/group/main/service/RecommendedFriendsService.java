@@ -153,7 +153,7 @@ public class RecommendedFriendsService {
         Long updateCount = 1L;
         start = System.currentTimeMillis();
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
-        List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(newUserId);
+        List<Long> friendsOfUserIds = friendsService.getRecommendedFriends(newUserId);
         recommendedFriendsMapArray.put(newUserId, friendsOfUserIds.toArray(Long[]::new));
         finish = System.currentTimeMillis();
         log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + MILLIS_TEXT);

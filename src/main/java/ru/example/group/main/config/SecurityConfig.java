@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests()
                 .antMatchers("/api/v1/friends/recommendations_run").hasRole("ADMIN")
-                .antMatchers("/api/v1/auth/*", "/api/v1/auth/logout", "/auth/api/logout", "/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm", "/admin").permitAll()
+                .antMatchers("/api/v1/auth/logout", "/api/v1/auth/*", "/auth/api/logout", "/api/v1/account/register", "/api/v1/account/recovery", "/api/v1/account/register/confirm", "/admin").permitAll()
                 .antMatchers("/api/v1/account/registration_complete/*", "/api/v1/account/recovery_complete", "/api/v1/support").permitAll()
                 .antMatchers("/api/v1/platform/languages", "/api/v1/account/email_change/confirm", "/api/v1/account/password_change/confirm", "/api/v1/account/password/set", "/api/v1/account/user_delete/confirm").permitAll()
                 .antMatchers("/api/v1/account/user_delete_recovery/confirm").permitAll()

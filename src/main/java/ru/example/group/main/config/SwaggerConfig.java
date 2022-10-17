@@ -28,9 +28,9 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String HTTP_STRING = "http://";
     @Value("${config.frontend}")
     private String frontend;
-
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -52,10 +52,10 @@ public class SwaggerConfig {
                                                 
                         """,
                 "1.0",
-                "http://" + frontend,
-                new Contact("API owner", "http://" + frontend, "ownerskiyman@ringmailering.rog"),
+                HTTP_STRING + frontend,
+                new Contact("API owner", HTTP_STRING + frontend, "ownerskiyman@ringmailering.rog"),
                 "Zerone_api_license",
-                "http://" + frontend,
+                HTTP_STRING + frontend,
                 new ArrayList<>()
         );
     }

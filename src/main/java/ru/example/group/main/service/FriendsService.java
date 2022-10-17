@@ -180,7 +180,7 @@ public class FriendsService {
 
     public FriendshipEntity getFriendshipAndCleanRelationsIfMistakenExist(Long userId, Long relationId) {
         List<FriendshipEntity> userToIdFriendshipStatusCheckList = friendshipRepository.findFriendshipEntitiesBySrcPersonAndDstPerson(userId, relationId);
-        if (userToIdFriendshipStatusCheckList != null && userToIdFriendshipStatusCheckList.size() > 0) {
+        if (userToIdFriendshipStatusCheckList != null && !userToIdFriendshipStatusCheckList.isEmpty()) {
             FriendshipEntity friendship = userToIdFriendshipStatusCheckList.get(0);
             if (userToIdFriendshipStatusCheckList.size() > 1) {
                 for (int i = 1; i < userToIdFriendshipStatusCheckList.size(); i++) {
@@ -192,7 +192,7 @@ public class FriendsService {
         return null;
     }
 
-    public List<Long> getReccomendedFriends(Long userId) {
+    public List<Long> getRecommendedFriends(Long userId) {
         return friendshipRepository.findRecommendedFriendsForUserId(userId);
     }
 }
