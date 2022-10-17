@@ -616,16 +616,10 @@ databaseChangeLog:
             path: src/main/resources/db/changelog/sql/users.sql
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/posts.sql
+            path: src/main/resources/db/changelog/sql/posts.sql
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/post_comments.sql
-#        - sqlFile:
-#            encoding: utf8
-#            path: db/changelog/sql/like_type.sql
-#        - sqlFile:
-#            encoding: utf8
-#            path: db/changelog/sql/likes.sql
+            path: src/main/resources/db/changelog/sql/post_comments.sql
 
   - changeSet:
       id: 4
@@ -679,10 +673,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/friendship_statuses_init.sql
+            path: src/main/resources/db/changelog/sql/friendship_statuses_init.sql
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/friendships_init.sql
+            path: src/main/resources/db/changelog/sql/friendships_init.sql
 
   - changeSet:
       id: 6
@@ -691,7 +685,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/indexing.sql
+            path: src/main/resources/db/changelog/sql/indexing.sql
 
   - changeSet:
       id: 7
@@ -700,7 +694,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/friends_recommendations_init.sql
+            path: src/main/resources/db/changelog/sql/friends_recommendations_init.sql
   - changeSet:
       id: 8
       author: Dmitry_Kochuev
@@ -708,7 +702,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/create_get_recommendations_stored_function.sql
+            path: src/main/resources/db/changelog/sql/create_get_recommendations_stored_function.sql
 
   - changeSet:
       id: 9
@@ -717,7 +711,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/roles.sql
+            path: src/main/resources/db/changelog/sql/roles.sql
 
       rollback:
         - delete:
