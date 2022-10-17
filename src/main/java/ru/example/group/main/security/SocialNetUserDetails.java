@@ -27,7 +27,7 @@ public class SocialNetUserDetails implements UserDetails {
         simpleGrantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
         List<UserRoleEntity> userRoleEntityList;
         try {
-            userRoleEntityList = user.getUserRoleEntities();
+            userRoleEntityList = new ArrayList<UserRoleEntity>(user.getUserRoleEntities());
         } catch (Exception e) {
             userRoleEntityList = null;
             log.info("ОШИБКА " + e.getMessage());

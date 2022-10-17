@@ -51,8 +51,6 @@ cloudinary:
   api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
   default_avatar: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
 
-
-
 post:
   time:
     Life:

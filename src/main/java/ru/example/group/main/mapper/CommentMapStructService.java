@@ -1,3 +1,4 @@
+/*
 package ru.example.group.main.mapper;
 
 import java.time.LocalDateTime;
@@ -19,3 +20,4 @@ public class CommentMapStructService {
         return LocalDateTime.now();
     }
 }
+*/

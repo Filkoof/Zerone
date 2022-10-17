@@ -17,6 +17,7 @@ import ru.example.group.main.dto.response.*;
 import ru.example.group.main.exception.*;
 
 import javax.servlet.ServletException;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
@@ -198,6 +199,15 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(PostsException.class)
     public ResponseEntity<ResultMessageDto> handlePostDeleteException(PostsException e) {
+        ResultMessageDto commonResponseDto = new ResultMessageDto();
+        commonResponseDto.setErrorDescription(e.getMessage());
+        log.info(e.getMessage());
+        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(SupportRequestException.class)
+    public ResponseEntity<ResultMessageDto> handleSupportRequestException(SupportRequestException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
