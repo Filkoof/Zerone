@@ -6,58 +6,48 @@ variables:
 stages:
   - build
   - test
-  - liquibase
   - sonar-scan
   - package
+  - migration
   - deploy
 
-#build:
-#  stage: build
-#  only:
-#    - dev
-#    - master
-#  tags:
-#    - prod
-#  script:
-#    - mvn compile
-#  cache:
-#    paths:
-#      - ./target
-#      - ./.m2
-#
-#test:
-#  stage: test
-#  tags:
-#    - prod
-#  script:
-#    - echo 'testing'
-#    - mvn test
-
-liquibase:
-  stage: liquibase
-  image: liquibase/liquibase
+build:
+  stage: build
+  only:
+    - dev
+    - master
   tags:
     - prod
   script:
-    - echo "Тут будет прописана логика миграции бд при деплое"
-    - liquibase update --url=jdbc:postgresql://195.161.62.32:5432/postgres --username=zerone --password=7tsfft --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml
+    - mvn compile
+  cache:
+    paths:
+      - ./target
+      - ./.m2
 
+test:
+  stage: test
+  tags:
+    - prod
+  script:
+    - echo 'testing'
+    - mvn test
 
-#sonar-scan:
-#  stage: sonar-scan
-#  image: maven:3.8.3-openjdk-17
-#  variables:
-#    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
-#    GIT_DEPTH: "0"
-#  cache:
-#    key: "${CI_JOB_NAME}"
-#    paths:
-#      - .sonar/cache
-#  tags:
-#    - prod
-#  script:
-#    - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYNt25KFdLkB2ItqvUE7
-#  allow_failure: true
+sonar-scan:
+  stage: sonar-scan
+  image: maven:3.8.3-openjdk-17
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  tags:
+    - prod
+  script:
+    - mvn verify sonar:sonar -Dsonar.projectKey=javapro_team26_backend_AYNt25KFdLkB2ItqvUE7
+  allow_failure: true
 
 package:
   stage: package
@@ -76,6 +66,17 @@ package:
     paths:
       - ./target
       - ./.m2
+
+migration:
+  stage: liquibase
+  image: liquibase/liquibase
+  only:
+    - dev
+    - master
+  tags:
+    - prod
+  script:
+    - liquibase update --url=jdbc:postgresql://195.161.62.32:5432/postgres --username=zerone --password=7tsfft --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml
 
 deploy:
   stage: deploy
