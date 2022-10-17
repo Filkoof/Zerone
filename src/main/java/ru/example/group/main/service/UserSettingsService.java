@@ -263,47 +263,6 @@ public class UserSettingsService {
         }
     }
 
-    public LocationResponseDto<Country> getCountries(String country) throws VkApiException {
-
-        try {
-            GetCountriesResponse countries = vkApiClient.database().getCountries(userActor)
-                    .lang(Lang.RU)
-                    .needAll(true)
-                    .count(235)
-                    .execute();
-            if (!Objects.equals(country, "")) {
-                countries.setItems(countries.getItems().stream().filter(s -> s.getTitle().contains(country)).toList());
-            }
-            LocationResponseDto<Country> locationResponseDto = new LocationResponseDto<>();
-            locationResponseDto.setData(countries.getItems());
-            locationResponseDto.setError("OK");
-            locationResponseDto.setTimestamp(LocalDateTime.now());
-            return locationResponseDto;
-        } catch (Exception e) {
-            throw new VkApiException("Ошибка получения VK API стран(ы) - " + e.getMessage());
-        }
-    }
-
-    public LocationResponseDto<City> getCities(Integer countryId, String city) throws VkApiException {
-        if (countryId != 0) {
-            try {
-                GetCitiesResponse getCitiesResponse = vkApiClient.database().getCities(userActor, countryId)
-                        .lang(Lang.RU)
-                        .q(city)
-                        .execute();
-                LocationResponseDto<City> locationResponseDto = new LocationResponseDto<>();
-                locationResponseDto.setData(getCitiesResponse.getItems());
-                locationResponseDto.setError("OK");
-                locationResponseDto.setTimestamp(LocalDateTime.now());
-                return locationResponseDto;
-            } catch (Exception e) {
-                throw new VkApiException("Ошибка получения VK API города(ов) - " + e.getMessage());
-            }
-        }
-        return new LocationResponseDto<>();
-    }
-
-
     public CommonResponseDto<UserDataResponseDto> getFriendProfile(Long friendId) {
         CommonResponseDto<UserDataResponseDto> friendDto = new CommonResponseDto<>();
         friendDto.setError("");

@@ -90,7 +90,7 @@ public class UserRegisterService {
     }
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
+                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException {
         List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
