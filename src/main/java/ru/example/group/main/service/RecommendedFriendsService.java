@@ -8,11 +8,10 @@ import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.RecommendedFriendsLoadingFromDbToApiException;
+import ru.example.group.main.helper.RecommendedFriendsUpdater;
 import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
-import ru.example.group.main.helper.RecommendedFriendsMultithreadUpdate;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
@@ -22,10 +21,11 @@ import java.util.*;
 @Service
 @Slf4j
 public class RecommendedFriendsService {
+    private static final String MILLIS_TEXT = " millis";
 
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
-    private final RecommendedFriendsMultithreadUpdate executePool;
+    private final RecommendedFriendsUpdater executePool;
     private final FriendsService friendsService;
     private final UserMapper userMapper;
 
@@ -55,8 +55,8 @@ public class RecommendedFriendsService {
         for (UserEntity nextPotentialFriend : friendsRecs) {
             FriendshipEntity userToIdFriendship = friendsService.getFriendshipAndCleanRelationsIfMistakenExist(userId, nextPotentialFriend.getId());
             FriendshipEntity idToUserFriendship = friendsService.getFriendshipAndCleanRelationsIfMistakenExist(nextPotentialFriend.getId(), userId);
-            Integer userToId = userToIdFriendship != null ? FriendshipStatusType.getLongFromEnum(userToIdFriendship.getStatus().getCode()).intValue() : 1;
-            Integer idToUser = idToUserFriendship != null ? FriendshipStatusType.getLongFromEnum(idToUserFriendship.getStatus().getCode()).intValue() : 1;
+            int userToId = userToIdFriendship != null ? userToIdFriendship.getStatus().getCode().getValue() : 1;
+            int idToUser = idToUserFriendship != null ? idToUserFriendship.getStatus().getCode().getValue() : 1;
             if (!(userToId == 5 || userToId == 2 || userToId == 6 || userToId == 7 || userToId == 3 || idToUser == 3 || idToUser == 4 || idToUser == 7)) {
                 potentialUserEntities.add(userMapper.userEntityToDtoWithToken(nextPotentialFriend, ""));
             }
@@ -101,19 +101,19 @@ public class RecommendedFriendsService {
         Long start = System.currentTimeMillis();
         int deleteCount = jdbcRecommendedFriendsRepository.deleteInactive();
         Long finish = System.currentTimeMillis();
-        log.debug(deleteCount + " delete inactive users from recommendations: " + Long.toString(finish - start) + " millis");
+        log.debug(deleteCount + " delete inactive users from recommendations: " + (finish - start) + MILLIS_TEXT);
     }
 
     private void runInsertNewToRecommendedFriends(Map<Long, Long[]> newTotalRecommendedFriendsMap) {
         Long start = System.currentTimeMillis();
         int insertCount = jdbcRecommendedFriendsRepository.insertBatchRecommendationsArray(newTotalRecommendedFriendsMap).length;
         Long finish = System.currentTimeMillis();
-        log.debug(insertCount + " new users recommendations insert: " + Long.toString(finish - start) + " millis");
+        log.debug(insertCount + " new users recommendations insert: " + (finish - start) + MILLIS_TEXT);
     }
 
     private Map<Long, Long[]> getMapOfRecommendedFriendsTotal() {
-        Long start;
-        Long finish;
+        long start;
+        long finish;
         Long updateCount = 1L;
         start = System.currentTimeMillis();
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
@@ -125,7 +125,7 @@ public class RecommendedFriendsService {
         }
 
         finish = System.currentTimeMillis();
-        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + Long.toString(finish - start) + " millis");
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + MILLIS_TEXT);
         return recommendedFriendsMapArray;
     }
 
@@ -148,15 +148,15 @@ public class RecommendedFriendsService {
     }
 
     private Map<Long, Long[]> getMapOfRecommendedFriendsForNewUser(Long newUserId) {
-        Long start;
-        Long finish;
+        long start;
+        long finish;
         Long updateCount = 1L;
         start = System.currentTimeMillis();
         Map<Long, Long[]> recommendedFriendsMapArray = new HashMap<>();
-        List<Long> friendsOfUserIds = friendsService.getReccomendedFriends(newUserId);
+        List<Long> friendsOfUserIds = friendsService.getRecommendedFriends(newUserId);
         recommendedFriendsMapArray.put(newUserId, friendsOfUserIds.toArray(Long[]::new));
         finish = System.currentTimeMillis();
-        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + Long.toString(finish - start) + " millis");
+        log.debug(updateCount + " пользователей проанализировано и по каждому проведен поиск рекомендуемых друзей, время: " + (finish - start) + MILLIS_TEXT);
         return recommendedFriendsMapArray;
     }
 }

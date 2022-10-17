@@ -21,7 +21,7 @@ public class JWTUtilService {
     @Value("${config.token-validity-hours}")
     private Integer hoursTokenValidity;
 
-    private final static int MILIS_IN_HOUR = 1000 * 60 * 60;
+    private static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts
@@ -29,7 +29,7 @@ public class JWTUtilService {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + MILIS_IN_HOUR * hoursTokenValidity))
+                .setExpiration(new Date(System.currentTimeMillis() + (long) MILLIS_IN_HOUR * hoursTokenValidity))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
@@ -55,11 +55,11 @@ public class JWTUtilService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public Boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

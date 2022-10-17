@@ -1,9 +1,12 @@
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:1234567890}
-
+    url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified
+    username: postgres
+    password: 1234567890
+  redis:
+    host: localhost
+    password: 1234567890
+    port: 6379
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -12,7 +15,7 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   liquibase:
     enabled: false
   servlet:
@@ -24,11 +27,10 @@ server:
   servlet:
     session:
       tracking-modes: cookie
-  port: ${PORT:8086}
-
+  port: 8086
 
 config:
-  frontend: "localhost:8082"
+  frontend: "localhost:80"
   backend: "localhost:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
@@ -36,18 +38,14 @@ config:
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
 
-logging:
-  file:
-    path: logs
-  level:
-    ru.example.group.main: debug
-
-cloudinary:
-  cloud_name: "permishin"
-  api_key: "957437892123721"
-  api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
-  default_avatar: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
-
-vk:
-  userId: 51412309
-  accessToken: "639a1a5d639a1a5d639a1a5dc8608a67086639a639a1a5d009194418ce14b4433e01161"
+socketio:
+  host: localhost
+  port: 1111
+  maxFramePayloadLength: 1048576
+  maxHttpContentLength: 1048576
+  bossCount: 1
+  workCount: 100
+  allowCustomRequests: true
+  upgradeTimeout: 1000000
+  pingTimeout: 6000000
+  pingInterval: 25000

@@ -3,6 +3,7 @@ package ru.example.group.main.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.example.group.main.dto.response.UserDataResponseDto;
+import ru.example.group.main.dto.socket.AuthorSocketDto;
 import ru.example.group.main.entity.UserEntity;
 
 @Mapper(componentModel = "spring")
@@ -22,4 +23,6 @@ public interface UserMapper {
     @Mapping(target = "messagePermissions",
             expression = "java(ru.example.group.main.entity.enumerated.MessagesPermission.getFromBoolean(userEntity.isMessagePermissions()))")
     UserDataResponseDto userEntityToDtoWithToken(UserEntity userEntity, String token);
+
+    AuthorSocketDto userEntityToSocketDto(UserEntity user);
 }

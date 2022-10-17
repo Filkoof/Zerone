@@ -1,9 +1,5 @@
 package ru.example.group.main.mapper;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.example.group.main.dto.request.PostRequestDto;
@@ -14,6 +10,10 @@ import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.PostType;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, CommentMapper.class})

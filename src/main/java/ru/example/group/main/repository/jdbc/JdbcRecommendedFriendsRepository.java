@@ -13,13 +13,13 @@ import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 @Repository
 public class JdbcRecommendedFriendsRepository {
 
+    private final JdbcTemplate jdbcTemplate;
 
-    private JdbcTemplate jdbcTemplate;
-
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public JdbcRecommendedFriendsRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -65,15 +65,20 @@ public class JdbcRecommendedFriendsRepository {
     }
 
     public int deleteInactive() {
-        return jdbcTemplate.update("DELETE FROM recommended_friends USING users\n" +
-                "WHERE recommended_friends.user_id = users.id and ((((users.is_approved)=False)) OR (((users.is_deleted)=True)) OR (((users.is_blocked)=True)))");
+        return jdbcTemplate.update("""
+                DELETE FROM recommended_friends USING users
+                WHERE recommended_friends.user_id = users.id AND ((((users.is_approved)=False)) 
+                OR (((users.is_deleted)=True)) OR (((users.is_blocked)=True)))
+                """);
     }
 
     public List<Long> getAllActiveUsersIds() {
         return jdbcTemplate.queryForList(
-                "SELECT users.id\n" +
-                        "FROM users\n" +
-                        "WHERE (users.is_approved=True AND users.is_deleted=False AND users.is_blocked=False)", Long.class);
+                """
+                        SELECT users.id FROM users
+                        WHERE (users.is_approved=True AND users.is_deleted=False AND users.is_blocked=False)
+                        """
+                , Long.class);
     }
 
     public List<UserEntity> getRecommendedFriendsForAPI(Long userId, Integer limit, Integer offset) {
@@ -93,42 +98,38 @@ public class JdbcRecommendedFriendsRepository {
                 SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
     }
 
-    private final static String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
+    private static final String SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID =
             """
-                    SELECT friendsOfFriendsWithCount.dst_person_id FROM ( \s
-                            SELECT friendships_1.dst_person_id \s
-                            FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.src_person_id = friendships_1.src_person_id \s
-                            WHERE (((friendships.dst_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.dst_person_id)<>:user_id) AND ((friendships_1.status_id)=2)) \s
-                            UNION \s
-                            SELECT friendships_1.src_person_id \s
-                            FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.dst_person_id = friendships_1.dst_person_id \s
-                            WHERE (((friendships.src_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.src_person_id)<>:user_id) AND ((friendships_1.status_id)=2)) \s
-                            UNION \s
-                            SELECT users_1.id \s
-                            FROM users AS users_1 INNER JOIN users ON users_1.city = users.city \s
-                            GROUP BY users.id, users_1.id \s
-                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)) \s
-                    	
+                    SELECT friendsOfFriendsWithCount.dst_person_id FROM (
+                            SELECT friendships_1.dst_person_id
+                            FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.src_person_id = friendships_1.src_person_id
+                            WHERE (((friendships.dst_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.dst_person_id)<>:user_id) AND ((friendships_1.status_id)=2))
+                            UNION
+                            SELECT friendships_1.src_person_id
+                            FROM friendships LEFT JOIN friendships AS friendships_1 ON friendships.dst_person_id = friendships_1.dst_person_id
+                            WHERE (((friendships.src_person_id)=:user_id) AND ((friendships.status_id)=2) AND ((friendships_1.src_person_id)<>:user_id) AND ((friendships_1.status_id)=2))
+                            UNION
+                            SELECT users_1.id
+                            FROM users AS users_1 INNER JOIN users ON users_1.city = users.city
+                            GROUP BY users.id, users_1.id
+                            HAVING (((users.id)<>users_1.id And (users.id)=:user_id) AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
                     		UNION
                             (SELECT users.id
                     		FROM users WHERE users.id<>:user_id AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
                     		ORDER BY users.reg_date DESC limit 5)
-                    		
                     		UNION
-                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)
-                    	
-                            ) AS friendsOfFriendsWithCount \s
-                            WHERE EXISTS \s
-                            ( \s
-                                    SELECT friendsOfFriendsWithCount.dst_person_id \s
-                                    EXCEPT\s
-                                    ( \s
-                                    SELECT friendships.dst_person_id \s
-                            		FROM friendships \s
-                            		WHERE ((friendships.src_person_id)=:user_id) and (friendships.status_id =2)  \s
-                                    UNION \s
-                                    SELECT users.id FROM users WHERE (users.id = friendsOfFriendsWithCount.dst_person_id) AND ((users.is_approved=false) OR (users.is_deleted=true) or (users.is_blocked=true)) \s
-                                    ) \s
+                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)) AS friendsOfFriendsWithCount
+                            WHERE EXISTS
+                            (
+                                    SELECT friendsOfFriendsWithCount.dst_person_id
+                                    EXCEPT
+                                    (
+                                    SELECT friendships.dst_person_id
+                            		FROM friendships
+                            		WHERE ((friendships.src_person_id)=:user_id) and (friendships.status_id =2)
+                                    UNION
+                                    SELECT users.id FROM users WHERE (users.id = friendsOfFriendsWithCount.dst_person_id) AND ((users.is_approved=false) OR (users.is_deleted=true) or (users.is_blocked=true))
+                                    )
                         	)
                     """;
 }

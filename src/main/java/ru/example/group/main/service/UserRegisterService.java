@@ -10,10 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
+import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.exception.EmailNotSentException;
 import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
 import ru.example.group.main.exception.NewUserWasNotSavedToDBException;
@@ -21,9 +21,9 @@ import ru.example.group.main.exception.UserWithThatEmailAlreadyExistException;
 import ru.example.group.main.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.*;
-import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,15 +35,16 @@ import java.util.UUID;
 @Service
 public class UserRegisterService {
 
-    @Value("${config.frontend}")
-    private String mailHost;
-    @Value("${cloudinary.default_avatar}")
-    private String default_avatar;
+    private static final String UNKNOWN = "unknown";
     private final UserRepository userRepository;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final RecommendedFriendsService recommendedFriendsService;
     private final DatabaseReader databaseReader;
+    @Value("${config.frontend}")
+    private String mailHost;
+    @Value("${cloudinary.default_avatar}")
+    private String defaultAvatar;
 
     private boolean addUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, EmailNotSentException {
         UserEntity userFromDB = userRepository.findByEmail(userRegisterRequestDto.getEmail());
@@ -53,7 +54,7 @@ public class UserRegisterService {
         String code = UUID.randomUUID().toString().substring(0, 24);
         if (newUserAddToDB(userRegisterRequestDto, code)) {
             String message =
-                    "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
+                    "Здравствуйте, "  + userRegisterRequestDto.getFirstName() + "\n\n" +
                             "Добро пожаловать в социальную сеть Зерон. " +
                             "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
                             "http://" + mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
@@ -76,7 +77,7 @@ public class UserRegisterService {
             user.setRegDate(LocalDateTime.now());
             user.setApproved(false);
             user.setConfirmationCode(code);
-            user.setPhoto(default_avatar);
+            user.setPhoto(defaultAvatar);
             user.setCountry("");
             user.setCity("");
             user.setBirthDate(LocalDate.of(1970, 1, 1));
@@ -90,7 +91,7 @@ public class UserRegisterService {
     }
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, GeoIp2Exception, NoSuchAlgorithmException, InterruptedException {
+                                                        HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException {
         List<String> cityResponse = getLocationFromUserIp(getClientIp(request));
         UserEntity user = userRepository.findByConfirmationCode(registerConfirmRequestDto.getToken());
         RegistrationCompleteResponseDto registrationCompleteResponseDto = new RegistrationCompleteResponseDto();
@@ -161,19 +162,19 @@ public class UserRegisterService {
 
     public String getClientIp(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
-        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || UNKNOWN.equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
         }
 
-        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || UNKNOWN.equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
 
-        if (ObjectUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ObjectUtils.isEmpty(ipAddress) || UNKNOWN.equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
-            String LOCALHOST_IPV4 = "127.0.0.1";
-            String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
-            if (LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
+            String localhostIPV4 = "127.0.0.1";
+            String localhostIPV6 = "0:0:0:0:0:0:0:1";
+            if (localhostIPV4.equals(ipAddress) || localhostIPV6.equals(ipAddress)) {
                 try {
                     InetAddress inetAddress = InetAddress.getLocalHost();
                     ipAddress = inetAddress.getHostAddress();

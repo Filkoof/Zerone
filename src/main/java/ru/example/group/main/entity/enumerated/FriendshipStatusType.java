@@ -1,36 +1,20 @@
 package ru.example.group.main.entity.enumerated;
 
+import lombok.Getter;
+
+@Getter
 public enum FriendshipStatusType {
-    REQUEST,
-    FRIEND,
-    BLOCKED,
-    DECLINED,
-    SUBSCRIBED,
-    WASBLOCKEDBY,
-    DEADLOCK;
+    REQUEST(1),
+    FRIEND(2),
+    BLOCKED(3),
+    DECLINED(4),
+    SUBSCRIBED(5),
+    WAS_BLOCKED_BY(6),
+    DEADLOCK(7);
 
-    public static Long getLongFromEnum(FriendshipStatusType friendshipStatusType) {
-        return switch (friendshipStatusType) {
-            case REQUEST -> 1L;
-            case FRIEND -> 2L;
-            case BLOCKED -> 3L;
-            case DECLINED -> 4L;
-            case SUBSCRIBED -> 5L;
-            case WASBLOCKEDBY -> 6L;
-            case DEADLOCK -> 7L;
-        };
-    }
+    private final int value;
 
-    public static FriendshipStatusType getFriendshipFromString(String code) {
-        return switch (code) {
-            case "REQUEST" -> REQUEST;
-            case "FRIEND" -> FRIEND;
-            case "BLOCKED" -> BLOCKED;
-            case "DECLINED" -> DECLINED;
-            case "SUBSCRIBED" -> SUBSCRIBED;
-            case "WASBLOCKEDBY" -> WASBLOCKEDBY;
-            case "DEADLOCK" -> DEADLOCK;
-            default -> null;
-        };
+    FriendshipStatusType(int value) {
+        this.value = value;
     }
 }

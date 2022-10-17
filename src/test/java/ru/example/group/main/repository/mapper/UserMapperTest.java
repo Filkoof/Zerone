@@ -1,4 +1,4 @@
-package ru.example.group.main.mapper;
+package ru.example.group.main.repository.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,8 +11,9 @@ import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.MessagesPermission;
+import ru.example.group.main.mapper.UserMapper;
 
-public class UserMapperTest extends AbstractAllTestH2ContextLoad {
+class UserMapperTest extends AbstractAllTestH2ContextLoad {
 
   @Qualifier("userMapperImpl")
   @Autowired
@@ -35,7 +36,7 @@ public class UserMapperTest extends AbstractAllTestH2ContextLoad {
     }
 
   @Test
-  public void userEntityToDto (){
+  void userEntityToDto (){
     setUser();
     UserDataResponseDto dto=mapper.userEntityToDto(entity);
 

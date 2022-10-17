@@ -24,5 +24,5 @@ public class ConfigProperties {
     @Value("${config.jwt-black-list-on}")
     private Boolean jwtBlackListOn;
     @Value("${config.initRecommendations}")
-    private Boolean initRecommendations;
+    private boolean initRecommendations;
 }
