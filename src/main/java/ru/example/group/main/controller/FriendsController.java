@@ -63,12 +63,12 @@ public class FriendsController {
     @DeleteMapping("/friends/{id}")
     @ApiOperation("Operation to set decline status from current authorized user for friend relation or request with id (@PathVariable) user.")
     public ResultMessageDto deleteFriend(@PathVariable Long id) throws FriendsRequestException {
-        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.DECLINED).intValue());
+        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.DECLINED.getValue()); //getLongFromEnum(FriendshipStatusType.DECLINED).intValue()
     }
 
     @PutMapping("/users/block/{id}")
     @ApiOperation("Operation to set blocked status from current authorized user to user with id (@PathVariable).")
     public ResultMessageDto blockUser(@PathVariable Long id) throws FriendsRequestException {
-        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.getLongFromEnum(FriendshipStatusType.BLOCKED).intValue());
+        return friendsService.deleteOrBlockFriend(id, FriendshipStatusType.BLOCKED.getValue());
     }
 }

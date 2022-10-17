@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import ru.example.group.main.service.RecommendedFriendsService;
 
 @Slf4j
-public class BeanInitMethodImpl {
+public class BeanInitMethod {
 
     @Value("${config.initRecommendations}")
-    private Boolean initRecommendations;
+    private boolean initRecommendations;
 
     @Autowired
     private RecommendedFriendsService recommendedFriendsService;

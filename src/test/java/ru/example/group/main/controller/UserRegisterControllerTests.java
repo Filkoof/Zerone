@@ -4,17 +4,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.repository.UserRepository;
-import ru.example.group.main.service.ZeroneMailSenderService;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -53,7 +51,7 @@ class UserRegisterControllerTests extends AbstractAllTestH2ContextLoad {
                 .andExpect(jsonPath("$.message").value("Пользователь создан"))
                 .andDo(print())
                 .andExpect(status().isOk());
-        assertTrue(userRepository.findByEmail(email) != null);
+        assertNotNull(userRepository.findByEmail(email));
     }
 
     @Test

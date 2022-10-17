@@ -5,8 +5,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ContactConfirmationResponseDto;
@@ -24,8 +22,6 @@ public class SocialNetUserRegisterService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtilService jwtUtilService;
     private final UserMapper userMapper;
-    private final HandlerExceptionResolver handlerExceptionResolver;
-
 
     public CommonResponseDto<UserDataResponseDto> jwtLogin(ContactConfirmationPayloadRequestDto payload) {
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto;

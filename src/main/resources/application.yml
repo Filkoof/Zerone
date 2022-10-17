@@ -1,13 +1,15 @@
-
 spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified}
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:root}
+  redis:
+    host: 195.161.62.32
+    password: 8FvUYL
+    port: 6379
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
   mail:
     host: smtp.mail.ru
     username: zerone.mail@mail.ru
@@ -51,8 +53,6 @@ cloudinary:
   api_secret: "MY6piT21gBB0yEsuZFpg-vzRE0Y"
   default_avatar: "https://res.cloudinary.com/permishin/image/upload/v1661419094/default_avatar_ygvgg2.svg"
 
-
-
 post:
   time:
     Life:
@@ -77,4 +77,14 @@ management:
       percentiles-histogram:
         "[http.server.requests]": true
 
-
+socketio:
+  host: localhost
+  port: 1111
+  maxFramePayloadLength: 1048576
+  maxHttpContentLength: 1048576
+  bossCount: 1
+  workCount: 100
+  allowCustomRequests: true
+  upgradeTimeout: 1000000
+  pingTimeout: 6000000
+  pingInterval: 25000

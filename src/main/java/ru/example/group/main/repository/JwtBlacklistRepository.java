@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.JwtBlacklistEntity;
 
 @Repository
-public interface JwtBlacklistRepository extends JpaRepository<JwtBlacklistEntity, Integer> {
+public interface JwtBlacklistRepository extends JpaRepository<JwtBlacklistEntity, Long> {
     JwtBlacklistEntity findJwtBlacklistEntityByJwtBlacklistedToken(String token);
 }

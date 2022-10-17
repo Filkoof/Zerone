@@ -2,7 +2,6 @@ package ru.example.group.main.helper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import ru.example.group.main.repository.jdbc.JdbcRecommendedFriendsRepository;
@@ -15,12 +14,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class RecommendedFriendsMultithreadUpdate {
+public class RecommendedFriendsUpdater {
 
     private final TaskExecutor taskExecutor;
     private final JdbcRecommendedFriendsRepository jdbcRecommendedFriendsRepository;
 
-    public void runTasks (List<Map<Long, Long[]>> listForThreading) {
+    public void runTasks(List<Map<Long, Long[]>> listForThreading) {
         int i = 1;
         for (Map<Long, Long[]> map : listForThreading) {
             taskExecutor.execute(getTask(map, i));
@@ -50,7 +49,6 @@ public class RecommendedFriendsMultithreadUpdate {
         }
         Long finish = System.currentTimeMillis();
         log.debug(userIdUpdateCount + " users, batch update: " + (finish - start) + " millis, batch amount: " + batchSize);
-        return () -> {
-            log.info(String.format("running update task %s. Thread: %s", i, Thread.currentThread().getName()));
-        };    }
+        return () -> log.info(String.format("running update task %s. Thread: %s", i, Thread.currentThread().getName()));
+    }
 }

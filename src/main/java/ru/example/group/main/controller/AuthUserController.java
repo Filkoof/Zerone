@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
@@ -15,7 +14,6 @@ import ru.example.group.main.exception.AuthLogoutException;
 import ru.example.group.main.service.AuthUserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor

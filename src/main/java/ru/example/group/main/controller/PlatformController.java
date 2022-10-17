@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.example.group.main.dto.response.LanguageResponseDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
+import ru.example.group.main.dto.response.LanguageResponseDto;
 import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.exception.VkApiException;
 import ru.example.group.main.service.PlatformService;
-import ru.example.group.main.service.UserSettingsService;
 
 import javax.validation.constraints.Min;
 

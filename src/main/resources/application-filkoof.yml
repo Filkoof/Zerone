@@ -15,9 +15,9 @@ spring:
     protocol: smtps
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
   liquibase:
-    enabled: true
+    enabled: false
   servlet:
     multipart:
       max-file-size: 10MB

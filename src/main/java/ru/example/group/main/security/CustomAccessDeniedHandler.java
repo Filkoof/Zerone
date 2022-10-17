@@ -1,6 +1,7 @@
 package ru.example.group.main.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -15,7 +16,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.setStatus(401);
+        response.setStatus(HttpStatus.SC_UNAUTHORIZED);
         response.setCharacterEncoding("utf-8");
         HashMap<String, String> map = new HashMap<>(2);
         map.put("uri", request.getRequestURI());

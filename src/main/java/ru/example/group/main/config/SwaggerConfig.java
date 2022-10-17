@@ -1,20 +1,12 @@
 package ru.example.group.main.config;
 
 import io.swagger.annotations.Api;
-
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
 import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
-import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
-import org.springframework.boot.actuate.endpoint.web.EndpointMapping;
-import org.springframework.boot.actuate.endpoint.web.EndpointMediaTypes;
-import org.springframework.boot.actuate.endpoint.web.ExposableWebEndpoint;
-import org.springframework.boot.actuate.endpoint.web.WebEndpointsSupplier;
+import org.springframework.boot.actuate.endpoint.web.*;
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
 import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
 import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
@@ -30,13 +22,15 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
+    private static final String HTTP_STRING = "http://";
     @Value("${config.frontend}")
     private String frontend;
-
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -58,17 +52,17 @@ public class SwaggerConfig {
                                                 
                         """,
                 "1.0",
-                "http://" + frontend,
-                new Contact("API owner", "http://" + frontend, "ownerskiyman@ringmailering.rog"),
+                HTTP_STRING + frontend,
+                new Contact("API owner", HTTP_STRING + frontend, "ownerskiyman@ringmailering.rog"),
                 "Zerone_api_license",
-                "http://" + frontend,
+                HTTP_STRING + frontend,
                 new ArrayList<>()
         );
     }
 
     @Bean
     public WebMvcEndpointHandlerMapping webEndpointServletHandlerMapping(WebEndpointsSupplier webEndpointsSupplier, ServletEndpointsSupplier servletEndpointsSupplier, ControllerEndpointsSupplier controllerEndpointsSupplier, EndpointMediaTypes endpointMediaTypes, CorsEndpointProperties corsProperties, WebEndpointProperties webEndpointProperties, Environment environment) {
-        List<ExposableEndpoint<?>> allEndpoints = new ArrayList();
+        List<ExposableEndpoint<?>> allEndpoints = new ArrayList<>();
         Collection<ExposableWebEndpoint> webEndpoints = webEndpointsSupplier.getEndpoints();
         allEndpoints.addAll(webEndpoints);
         allEndpoints.addAll(servletEndpointsSupplier.getEndpoints());

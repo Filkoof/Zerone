@@ -7,8 +7,7 @@ import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AuthUserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 
@@ -22,7 +21,7 @@ class AuthUserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
         confirmationPayload.setPassword("11111111");
         CommonResponseDto<UserDataResponseDto> authLoginResponseDto = authUserService.getAuthLoginResponse(confirmationPayload);
         assertNotNull(authLoginResponseDto);
-        assertTrue(authLoginResponseDto.getData().getEMail().equals("test@test.tu"));
+        assertEquals("test@test.tu", authLoginResponseDto.getData().getEMail());
     }
 
 

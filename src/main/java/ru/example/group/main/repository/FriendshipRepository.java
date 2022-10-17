@@ -10,11 +10,10 @@ import java.util.List;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<FriendshipEntity, Long> {
-    @Query(value = "select friendships.id FROM friendships where friendships.src_person_id = :src and friendships.dst_person_id = :dst", nativeQuery = true)
-    Long findBySrcAndDst(@Param("src")Long src, @Param("dst")Long dst);
-    @Query(value = "select friendships.* FROM friendships where friendships.src_person_id = :src and friendships.dst_person_id = :dst", nativeQuery = true)
-    List<FriendshipEntity> findFriendshipEntitiesBySrcPersonAndDstPerson(@Param("src")Long src, @Param("dst")Long dst);
 
-    @Query(value = "select get_recommended_friends_for_user_id(:user_id);", nativeQuery = true)
+    @Query("SELECT f FROM FriendshipEntity f WHERE f.srcPerson.id = :src AND f.dstPerson.id = :dst")
+    List<FriendshipEntity> findFriendshipEntitiesBySrcPersonAndDstPerson(Long src, Long dst);
+
+    @Query(value = "SELECT get_recommended_friends_for_user_id(:user_id);", nativeQuery = true)
     List<Long> findRecommendedFriendsForUserId(@Param("user_id") Long userId);
 }

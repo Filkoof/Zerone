@@ -7,7 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.UserRoleEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 public class SocialNetUserDetails implements UserDetails {
@@ -27,13 +30,13 @@ public class SocialNetUserDetails implements UserDetails {
         simpleGrantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
         List<UserRoleEntity> userRoleEntityList;
         try {
-            userRoleEntityList = user.getUserRoleEntities();
+            userRoleEntityList = new ArrayList<UserRoleEntity>(user.getUserRoleEntities());
         } catch (Exception e) {
             userRoleEntityList = null;
             log.info("ОШИБКА " + e.getMessage());
         }
         try {
-            if (userRoleEntityList != null && userRoleEntityList.size() != 0) {
+            if (userRoleEntityList != null && userRoleEntityList.isEmpty()) {
                 for (UserRoleEntity userRole : userRoleEntityList) {
                     simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(userRole.getUserRole()));
                 }

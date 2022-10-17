@@ -1,18 +1,9 @@
 package ru.example.group.main.service;
 
-import static java.util.stream.Collectors.toList;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,6 +14,7 @@ import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.PostResponseDto;
 import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.TagEntity;
+import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.exception.PostsException;
@@ -31,6 +23,16 @@ import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+import ru.example.group.main.util.UtilZerone;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CommentService commentService;
     private final PostMapper mapper;
+    private final LikesService likesService;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
             final PostRequestDto request,
@@ -66,32 +69,19 @@ public class PostService {
     }
 
     public CommonListResponseDto<PostResponseDto> getNewsfeed(int offset, int itemPerPage) throws PostsException {
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsWithPagination(pageable);
-
-        try {
-            return CommonListResponseDto.<PostResponseDto>builder()
-                    .total((int) statePage.getTotalElements())
-                    .perPage(itemPerPage)
-                    .offset(offset)
-                    .data(statePage.stream().map(this::tryCatchPostsException).toList())
-                    .error("")
-                    .timestamp(LocalDateTime.now())
-                    .build();
-        } catch (Exception e) {
-            throw new PostsException(e.getMessage());
-        }
+        var statePage = postRepository.findAllPostsWithPagination(UtilZerone.getPagination(itemPerPage, offset));
+        return tryCatchPostsExceptionForCommonList(statePage, offset, itemPerPage);
     }
 
     public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
         var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
-        var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        var statePage = postRepository.findAllPostsUserId(id, pageable);
+        var statePage = postRepository.findAllPostsUserId(id, UtilZerone.getPagination(itemPerPage, offset));
+
         return CommonListResponseDto.<PostResponseDto>builder()
                 .total((int) statePage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(statePage.stream().map(this::tryCatchPostsException)
+                .data(statePage.stream().map(this::tryCatchPostsExceptionForPostEntity)
                         .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
@@ -103,7 +93,6 @@ public class PostService {
         List<Object> postList = new ArrayList<>();
         for (Long postId : listPostId) {
             itemPerPage += postRepository.findAllByUserPost(postId) == 0 ? 5 : postRepository.findAllByUserPost(postId);
-            var pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
             postList.add(getPostDtoFromEntity(postRepository.findPostEntityById(postId)));
         }
         return CommonListResponseDto.builder()
@@ -163,7 +152,9 @@ public class PostService {
             var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
             var type = getType(postEntity);
             var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
-            return mapper.postEntityToDto(postEntity, tags, type, listComment);
+            Integer likesForPostCount = likesService.likesCountByPostIdAndType(postEntity.getId(), LikeType.POST);
+            Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(postEntity.getId(), LikeType.POST, registerService.getCurrentUser());
+            return mapper.postEntityToDto(postEntity, tags, type, listComment, isMyLike, likesForPostCount);
         } catch (Exception e) {
             throw new PostsException(e.getMessage());
         }
@@ -177,7 +168,22 @@ public class PostService {
         } else return PostType.POSTED;
     }
 
-    public PostResponseDto tryCatchPostsException(PostEntity entity) {
+    private CommonListResponseDto<PostResponseDto> tryCatchPostsExceptionForCommonList(Page<PostEntity> postPage, int offset, int itemPerPage) throws PostsException {
+        try {
+            return CommonListResponseDto.<PostResponseDto>builder()
+                    .total((int) postPage.getTotalElements())
+                    .perPage(itemPerPage)
+                    .offset(offset)
+                    .data(postPage.stream().map(this::tryCatchPostsExceptionForPostEntity).toList())
+                    .error("")
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        } catch (Exception e) {
+            throw new PostsException(e.getMessage());
+        }
+    }
+
+    private PostResponseDto tryCatchPostsExceptionForPostEntity(PostEntity entity) {
         try {
             return getPostDtoFromEntity(entity);
         } catch (PostsException e) {

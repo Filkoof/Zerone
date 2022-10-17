@@ -2,10 +2,9 @@ package ru.example.group.main.config;
 
 import com.maxmind.db.Reader;
 import com.maxmind.geoip2.DatabaseReader;
-import org.springframework.context.annotation.Configuration;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 

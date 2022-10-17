@@ -52,16 +52,15 @@ public class AuthUserService {
     }
 
     public ResultMessageDto logoutProcessing(String token) throws AuthLogoutException {
-        if (token != null) {
-            if (configProperties.getJwtBlackListOn()) {
-                try {
-                    setJwtBlackList(token);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new AuthLogoutException("Ошибка: " + e.getMessage());
-                }
+        if (token != null && configProperties.getJwtBlackListOn()) {
+            try {
+                setJwtBlackList(token);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new AuthLogoutException("Ошибка: " + e.getMessage());
             }
         }
+
         ResultMessageDto resultMessageDto = new ResultMessageDto();
         resultMessageDto.setError("");
         resultMessageDto.setTimeStamp(LocalDateTime.now());

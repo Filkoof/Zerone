@@ -16,12 +16,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.jooq.impl.DSL.*;
-import static org.jooq.impl.DSL.field;
 
 @Service
 @RequiredArgsConstructor
 public class SearchService {
 
+    private static final String FIRSTNAME_SQL = "u.first_name";
+    private static final String LASTNAME_SQL = "u.last_name";
     private final DSLContext dsl;
     private final PostService postService;
 
@@ -51,13 +52,13 @@ public class SearchService {
                 .build();
     }
 
-    public CommonListResponseDto<Object> postSearch(String text, Long date_from, Long date_to,
+    public CommonListResponseDto<Object> postSearch(String text, Long dateFrom, Long dateTo,
                                                     Integer offset, Integer itemPerPage, String author,
                                                     String tag) throws PostsException {
         LocalDateTime endDate =
-                Instant.ofEpochMilli(date_to).atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(1);
+                Instant.ofEpochMilli(dateTo).atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(1);
         LocalDateTime startDate =
-                Instant.ofEpochMilli(date_from).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                Instant.ofEpochMilli(dateFrom).atZone(ZoneId.systemDefault()).toLocalDateTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         String end = endDate.format(formatter);
@@ -68,11 +69,11 @@ public class SearchService {
                 .leftJoin(table("users").as("u")).on("p.author_id = u.id")
                 .leftJoin(table("posts_to_tags").as("ptt")).on("ptt.post_id = p.id")
                 .leftJoin(table("tags").as("t")).on("t.id = ptt.tag_id")
-                .where(!author.equals("") ? field("u.first_name").likeIgnoreCase('%' + author + '%')
-                        .or(field("u.last_name").likeIgnoreCase('%' + author + '%'))
-                        .or(field(concat(field("u.first_name"), val(" "), field("u.last_name"))
+                .where(!author.equals("") ? field(FIRSTNAME_SQL).likeIgnoreCase('%' + author + '%')
+                        .or(field(LASTNAME_SQL).likeIgnoreCase('%' + author + '%'))
+                        .or(field(concat(field(FIRSTNAME_SQL), val(" "), field(LASTNAME_SQL))
                                 .likeIgnoreCase('%' + author + '%')))
-                        .or(field(concat(field("u.last_name"), val(" "), field("u.first_name"))
+                        .or(field(concat(field(LASTNAME_SQL), val(" "), field(FIRSTNAME_SQL))
                                 .likeIgnoreCase('%' + author + '%')))
                         : noCondition())
                 .and(!text.equals("") ? field("p.post_text").likeIgnoreCase('%' + text + '%') : noCondition())

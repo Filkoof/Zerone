@@ -1,15 +1,12 @@
 package ru.example.group.main.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import ru.example.group.main.dto.response.FileResponseDto;
 
 import javax.validation.constraints.NotEmpty;
-
+import java.util.List;
 
 @Data
 public class CommentRequestDto {

@@ -21,13 +21,11 @@ import ru.example.group.main.security.SocialNetUserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
-    List<UserEntity> userEntityList;
     UserEntity user1;
     UserEntity user2;
 
@@ -123,7 +121,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void handleUserDelete() throws EmailNotSentException {
-        assertTrue(userSettingsService.handleUserDelete().getMessage().equals("User deleted."));
+        assertEquals("User deleted.", userSettingsService.handleUserDelete().getMessage());
     }
 
     @Test
@@ -137,7 +135,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Test
     void getMeData() {
-        assertTrue(userSettingsService.getMeData().getData().getEMail().equals(EMAIL));
+        assertEquals(EMAIL, userSettingsService.getMeData().getData().getEMail());
     }
 
     @Test

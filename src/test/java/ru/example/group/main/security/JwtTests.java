@@ -6,10 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class JwtTests extends AbstractAllTestH2ContextLoad {
+class JwtTests extends AbstractAllTestH2ContextLoad {
 
     private final static String EMAIL = "test@test.tu";
     @Autowired
@@ -49,7 +48,7 @@ public class JwtTests extends AbstractAllTestH2ContextLoad {
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
         assertTrue(jwtUtilService.validateToken(socialNetUserRegisterService.jwtLogin(payload).getData().getToken(), userDetails));
-        assertTrue(!jwtUtilService.isTokenExpired(socialNetUserRegisterService.jwtLogin(payload).getData().getToken()));
+        assertFalse(jwtUtilService.isTokenExpired(socialNetUserRegisterService.jwtLogin(payload).getData().getToken()));
     }
 
     @Test

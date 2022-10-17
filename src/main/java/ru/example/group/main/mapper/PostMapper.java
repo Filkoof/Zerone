@@ -1,9 +1,5 @@
 package ru.example.group.main.mapper;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.example.group.main.dto.request.PostRequestDto;
@@ -15,14 +11,18 @@ import ru.example.group.main.entity.TagEntity;
 import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.entity.enumerated.PostType;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, CommentMapper.class})
 public interface PostMapper {
 
     @Mapping(target = "type", source = "type")
     @Mapping(target = "tags", expression = "java(tags)")
-    @Mapping(target = "myLike", ignore = true)
-    @Mapping(target = "likes", ignore = true)
+    @Mapping(target = "myLike", source = "myLike")
+    @Mapping(target = "likes", source = "likesCount")
     @Mapping(target = "isBlocked", source = "post.blocked")
     @Mapping(target = "author", source = "post.user")
     @Mapping(target = "comments", expression = "java(comm)")
@@ -30,7 +30,9 @@ public interface PostMapper {
             PostEntity post,
             List<String> tags,
             PostType type,
-            CommonListResponseDto<CommentDto> comm);
+            CommonListResponseDto<CommentDto> comm,
+            Boolean myLike,
+            Integer likesCount);
 
     @Mapping(target = "user", expression = "java(user)")
     @Mapping(target = "updateDate", ignore = true)

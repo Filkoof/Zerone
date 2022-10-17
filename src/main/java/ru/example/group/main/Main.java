@@ -1,11 +1,10 @@
 package ru.example.group.main;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import ru.example.group.main.helper.BeanInitMethodImpl;
+import ru.example.group.main.helper.BeanInitMethod;
 
 @EnableScheduling
 @SpringBootApplication
@@ -16,8 +15,8 @@ public class Main {
     }
 
     @Bean(initMethod = "runFriendsRecommendationsUpdateAfterStartUp")
-    public BeanInitMethodImpl getFriendsRecommendationsUpdateAfterStartUpBean() {
-        return new BeanInitMethodImpl();
+    public BeanInitMethod getFriendsRecommendationsUpdateAfterStartUpBean() {
+        return new BeanInitMethod();
     }
 
 }
