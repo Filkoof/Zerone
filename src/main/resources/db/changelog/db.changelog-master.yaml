@@ -613,7 +613,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: db/changelog/sql/users.sql
+            path: src/main/resources/db/changelog/sql/users.sql
         - sqlFile:
             encoding: utf8
             path: db/changelog/sql/posts.sql
