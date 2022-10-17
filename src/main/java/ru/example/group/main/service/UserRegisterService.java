@@ -172,9 +172,9 @@ public class UserRegisterService {
 
         if (ObjectUtils.isEmpty(ipAddress) || UNKNOWN.equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
-            String LOCALHOST_IPV4 = "127.0.0.1";
-            String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
-            if (LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
+            String localhostIPV4 = "127.0.0.1";
+            String localhostIPV6 = "0:0:0:0:0:0:0:1";
+            if (localhostIPV4.equals(ipAddress) || localhostIPV6.equals(ipAddress)) {
                 try {
                     InetAddress inetAddress = InetAddress.getLocalHost();
                     ipAddress = inetAddress.getHostAddress();

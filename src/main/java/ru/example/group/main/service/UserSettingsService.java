@@ -35,6 +35,7 @@ public class UserSettingsService {
     private static final String HTTP_STRING = "http://";
     private static final String GRATITUDE = "\n\nСпасибо!";
     private static final String USER = "Пользователь: ";
+    private static final String DO_NOT_TRANSFER_IF = "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final ZeroneMailSenderService zeroneMailSenderService;
     private final UserRepository userRepository;
@@ -64,7 +65,7 @@ public class UserSettingsService {
                         "Мы получили от Вас запрос на изменение почты(логина) в сеть Зерон. " +
                         "Для активации вашего нового логина перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
                         HTTP_STRING + backend + "/api/v1/account/email_change/confirm?code=" + code + "&newEmail=" + newEmail + "\n" +
-                        "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
+                        DO_NOT_TRANSFER_IF;
         String title = "Изменение почты(логина) Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
@@ -110,7 +111,7 @@ public class UserSettingsService {
                         "Мы получили от Вас запрос на изменение пароля в сети Зерон. " +
                         "Для активации вашего нового нового пароля перейдите по ссылке (или скопируйте ее и вставьте в адресную строку браузера): \n\n" +
                         HTTP_STRING + backend + "/api/v1/account/password_change/confirm?code=" + code + "&code1=" + passwordEncoder.encode(password) + "\n" +
-                        "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
+                        DO_NOT_TRANSFER_IF;
         String title = "Изменение пароля Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
@@ -162,7 +163,7 @@ public class UserSettingsService {
                         "Мы получили от Вас запрос на удаление аккаунта в сети Зерон. " +
                         "Перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера) для подтверждения удаления: \n\n" +
                         HTTP_STRING + backend + "/api/v1/account/user_delete/confirm?code=" + code + "\n" +
-                        "\nНе переходите по этой ссылке, если вы непланируете ничего менять в сети Зерон. \n\nСпасибо!";
+                        DO_NOT_TRANSFER_IF;
         String title = "Удаление Вашего аккаунта Зерон";
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
