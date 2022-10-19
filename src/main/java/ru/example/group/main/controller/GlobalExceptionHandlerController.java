@@ -207,7 +207,6 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler(SupportRequestException.class)
     public ResponseEntity<ResultMessageDto> handleSupportRequestException(SupportRequestException e) {
         ResultMessageDto commonResponseDto = new ResultMessageDto();

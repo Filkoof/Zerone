@@ -118,7 +118,8 @@ public class JdbcRecommendedFriendsRepository {
                     		FROM users WHERE users.id<>:user_id AND (users.is_approved=true) AND (users.is_deleted=false) AND (users.is_blocked=false)
                     		ORDER BY users.reg_date DESC limit 5)
                     		UNION
-                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)) AS friendsOfFriendsWithCount
+                    		(SELECT posts.author_id FROM posts GROUP BY posts.author_id ORDER BY COUNT(posts.author_id) DESC LIMIT 5)
+                    		) AS friendsOfFriendsWithCount
                             WHERE EXISTS
                             (
                                     SELECT friendsOfFriendsWithCount.dst_person_id

@@ -3,6 +3,7 @@ package ru.example.group.main.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.example.group.main.dto.request.SupportRequestDto;
+import ru.example.group.main.dto.response.SupportRequestsDto;
 import ru.example.group.main.entity.SupportRequestEntity;
 
 @Mapper
@@ -12,4 +13,5 @@ public interface SupportRequestMapper {
     @Mapping(target = "time", source = "localDateTimeNow")
     SupportRequestEntity dtoToEntity(SupportRequestDto dto, String supportRequestStatus, String localDateTimeNow);
 
+    SupportRequestsDto entityToDto(SupportRequestEntity supportRequestEntity);
 }

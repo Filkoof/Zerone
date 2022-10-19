@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.SupportRequestDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
+import ru.example.group.main.dto.response.SupportRequestsDto;
 import ru.example.group.main.entity.SupportRequestEntity;
 import ru.example.group.main.entity.enumerated.SupportRequestStatus;
 import ru.example.group.main.exception.EmailNotSentException;
@@ -14,6 +15,8 @@ import ru.example.group.main.mapper.SupportRequestMapper;
 import ru.example.group.main.repository.SupportRequestRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class SupportService {
                     SupportRequestStatus.getStringFromSupportRequestStatus(SupportRequestStatus.NEW),
                     LocalDateTime.now().toString());
             supportRequestRepository.save(newSupportRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             emailConfirmation(false, supportRequestDto.getEmail());
             throw new SupportRequestException("Ошибка обработки запроса, попробуйте позднее.");
         }
@@ -39,7 +42,7 @@ public class SupportService {
     }
 
     private void emailConfirmation(Boolean successTrue, String email) throws EmailNotSentException {
-        if (successTrue){
+        if (successTrue) {
             zeroneMailSenderService.emailSend(email,
                     "Ваше обращение в поддержку ZERONE зарегистрировано.",
                     """
@@ -57,5 +60,28 @@ public class SupportService {
                         Ваш запрос не был принят по техническим причинам. Попробуйте позднее.
                         Приносим извинения за технические проблемы.
                         """);
+    }
+
+    public List<SupportRequestsDto> getAllSupportRequests() {
+        List<SupportRequestEntity> entityList = supportRequestRepository.findAll();
+        return entityList.stream().map(supportRequestMapper::entityToDto).toList();
+    }
+
+    public SupportRequestsDto getSupportRequestById(long id) {
+        return supportRequestMapper.entityToDto(supportRequestRepository.findById(id).get());
+    }
+
+    public SupportRequestsDto changeSupportRequestStatusById(long id, String status) throws SupportRequestException {
+        SupportRequestEntity entity = supportRequestRepository.findById(id).isPresent() ?
+                supportRequestRepository.findById(id).get() : null;
+        if (entity != null){
+            try {
+                entity.setStatus(SupportRequestStatus.getEnumFromString(status));
+                supportRequestRepository.save(entity);
+            } catch (Exception e){
+             throw new SupportRequestException("Ошибка обновления статуса запроса: " + e.getMessage());
+            }
+        }
+        return supportRequestMapper.entityToDto(entity);
     }
 }

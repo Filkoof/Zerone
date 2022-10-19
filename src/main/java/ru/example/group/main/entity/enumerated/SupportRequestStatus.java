@@ -15,4 +15,13 @@ public enum SupportRequestStatus {
             default -> null;
         };
     }
+
+    public static SupportRequestStatus getEnumFromString(String status) {
+        return switch (status) {
+            case "NEW" -> NEW;
+            case "IN_WORK" -> IN_WORK;
+            case "CLOSED" -> CLOSED;
+            default -> null;
+        };
+    }
 }

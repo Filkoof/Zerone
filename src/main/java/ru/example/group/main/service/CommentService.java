@@ -129,13 +129,6 @@ public class CommentService {
         return getCommonList(postId, itemPerPage, offset);
     }
 
-/*    private CommentEntity getCommentEntity(Long postId, CommentRequestDto request) {
-        var post = postRepository.getReferenceById(postId);
-        var user = socialNetUserRegisterService.getCurrentUser();
-        var parent = request.getParentId() != null ? commentRepository.getReferenceById(request.getParentId()) : null;
-        return commentMapper.commentRequestDtoToEntity(request, post, user, parent);
-    }*/
-
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, UtilZerone.getPagination(itemPerPage, offset));
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -177,10 +170,4 @@ public class CommentService {
         var files = fileRepository.findAllByComment(comment);
         return files.isEmpty() ? Collections.emptyList() : files.stream().map(fileMapper::fileEntityToDto).toList();
     }
-
-    /*private CommentDto getCommentDto(CommentEntity commentEntity) {
-        Integer likesForCommentCount = likesService.likesCountByPostIdAndType(commentEntity.getId(), LikeType.COMMENT);
-        Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(commentEntity.getId(), LikeType.COMMENT, socialNetUserRegisterService.getCurrentUser());
-        return commentMapper.commentEntityToDto(commentEntity, isMyLike, likesForCommentCount);
-    }*/
 }
