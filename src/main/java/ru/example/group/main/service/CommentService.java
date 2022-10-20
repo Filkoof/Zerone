@@ -7,7 +7,6 @@ import javax.persistence.EntityNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.CommentRequestDto;
@@ -28,10 +27,7 @@ import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.util.UtilZerone;
 
-import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,12 +42,6 @@ public class CommentService {
     private final LikesService likesService;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
-
-    public CommonListResponseDto<CommentDto> getCommentsForPostId(Long idPost, int offset, int itemPerPage) {
-        if (postRepository.existsById(idPost)) {
-            return getCommonList(idPost, itemPerPage, offset);
-        } else throw new EntityNotFoundException();
-    }
 
     public CommonResponseDto<CommentDto> postComment(Long postId, CommentRequestDto request) {
         Assert.notNull(postId, "id поста не может быть null");
@@ -128,14 +118,6 @@ public class CommentService {
         Assert.notNull(postId, "id поста не может быть null");
         return getCommonList(postId, itemPerPage, offset);
     }
-
-/*    private CommentEntity getCommentEntity(Long postId, CommentRequestDto request) {
-        var post = postRepository.getReferenceById(postId);
-        var user = socialNetUserRegisterService.getCurrentUser();
-        var parent = request.getParentId() != null ? commentRepository.getReferenceById(request.getParentId()) : null;
-        return commentMapper.commentRequestDtoToEntity(request, post, user, parent);
-    }*/
-
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, UtilZerone.getPagination(itemPerPage, offset));
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -177,10 +159,4 @@ public class CommentService {
         var files = fileRepository.findAllByComment(comment);
         return files.isEmpty() ? Collections.emptyList() : files.stream().map(fileMapper::fileEntityToDto).toList();
     }
-
-    /*private CommentDto getCommentDto(CommentEntity commentEntity) {
-        Integer likesForCommentCount = likesService.likesCountByPostIdAndType(commentEntity.getId(), LikeType.COMMENT);
-        Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(commentEntity.getId(), LikeType.COMMENT, socialNetUserRegisterService.getCurrentUser());
-        return commentMapper.commentEntityToDto(commentEntity, isMyLike, likesForCommentCount);
-    }*/
 }
