@@ -18,7 +18,7 @@ public class KafkaService {
     //private final ObjectMapper objectMapper;
 
     public void send(KafkaZeroneMailingDto dto) {
-        kafkaZeroneMailingTemplate.send("server.zeroneMailings", dto);
+        kafkaZeroneMailingTemplate.send("zeroneMailingTopic-1", dto);
     }
 
     /*@KafkaListener(id = "zeroneMailConsumer", topics = {"server.zeroneMailings"}, containerFactory = "singleFactory")

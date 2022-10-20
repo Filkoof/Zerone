@@ -21,16 +21,12 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServer;
 
-    @Value("${spring.kafka.producer.client-id}")
-    private String kafkaProducerId;
-
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, kafkaProducerId);
         return props;
     }
 
@@ -41,8 +37,6 @@ public class KafkaProducerConfig {
 
     @Bean
     public KafkaTemplate<Long, KafkaZeroneMailingDto> kafkaTemplate() {
-        KafkaTemplate<Long, KafkaZeroneMailingDto> template = new KafkaTemplate<>(producerMailingFactory());
-        template.setMessageConverter(new StringJsonMessageConverter());
-        return template;
+        return new KafkaTemplate<>(producerMailingFactory());
     }
 }

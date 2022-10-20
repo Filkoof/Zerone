@@ -27,8 +27,6 @@ spring:
       max-request-size: 10MB
   kafka:
     bootstrap-servers: "195.161.62.32:29092"
-    producer:
-      client-id: zeroneMailProducer
     consumer:
       client-id: zeroneMailConsumer
 
