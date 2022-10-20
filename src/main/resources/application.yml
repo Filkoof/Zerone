@@ -25,6 +25,12 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  kafka:
+    bootstrap-servers: "195.161.62.32:9092"
+    producer:
+      client-id: zeroneMailProducer
+    consumer:
+      client-id: zeroneMailConsumer
 
 server:
   port: ${PORT:8080}
