@@ -76,7 +76,7 @@ migration:
   tags:
     - prod
   script:
-    - liquibase update --url=jdbc:postgresql://195.161.62.32:5432/postgres --username=zerone --password=7tsfft --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml
+    - liquibase update --url=$DATABASE_URL --username=$DATABASE_NAME --password=$DATABASE_PASSWORD --changeLogFile=$CHANGELOG_PATH
 
 deploy:
   stage: deploy
