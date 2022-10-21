@@ -2,9 +2,6 @@ package ru.example.group.main.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import ru.example.group.main.dto.response.ResultMessageDto;
 
 @Data
 public class SupportRequestDto {

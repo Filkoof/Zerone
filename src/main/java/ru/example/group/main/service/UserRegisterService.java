@@ -54,7 +54,7 @@ public class UserRegisterService {
         String code = UUID.randomUUID().toString().substring(0, 24);
         if (newUserAddToDB(userRegisterRequestDto, code)) {
             String message =
-                    "Здравствуйте, "  + userRegisterRequestDto.getFirstName() + "\n\n" +
+                    "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
                             "Добро пожаловать в социальную сеть Зерон. " +
                             "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
                             "http://" + mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +

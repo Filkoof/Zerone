@@ -8,7 +8,7 @@ import ru.example.group.main.exception.EmailNotSentException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ZeroneMailSenderServiceTests extends AbstractAllTestH2ContextLoad{
+class ZeroneMailSenderServiceTests extends AbstractAllTestH2ContextLoad {
 
     @Value("${config.zeroneEmail}")
     private String email;

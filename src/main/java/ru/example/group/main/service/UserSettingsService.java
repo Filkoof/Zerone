@@ -1,12 +1,7 @@
 package ru.example.group.main.service;
 
-import com.vk.api.sdk.client.Lang;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.base.Country;
-import com.vk.api.sdk.objects.database.City;
-import com.vk.api.sdk.objects.database.responses.GetCitiesResponse;
-import com.vk.api.sdk.objects.database.responses.GetCountriesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,16 +10,17 @@ import ru.example.group.main.dto.request.PasswordChangeRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
-import ru.example.group.main.dto.vk.response.LocationResponseDto;
 import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.exception.*;
+import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.EmailOrPasswordChangeException;
+import ru.example.group.main.exception.UpdateUserMainSettingsException;
+import ru.example.group.main.exception.UserDeleteOrRecoveryException;
 import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -182,7 +178,7 @@ public class UserSettingsService {
                 throw new UserDeleteOrRecoveryException(USER + userToDelete.getEmail() + ", ошибка удаления: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException(USER + userToDelete.getEmail() + ", ошибка удаления, неверный код.");
+            throw new UserDeleteOrRecoveryException("Ошибка удаления, неверный код.");
         }
     }
 
@@ -220,7 +216,7 @@ public class UserSettingsService {
                 throw new UserDeleteOrRecoveryException(USER + userToDelete.getEmail() + ", ошибка восстановления аккаунта: " + e.getMessage());
             }
         } else {
-            throw new UserDeleteOrRecoveryException("User id: " + userToDelete.getEmail() + ", ошибка восстановления аккаунта, неверный код");
+            throw new UserDeleteOrRecoveryException("Ошибка восстановления аккаунта, неверный код");
         }
     }
 

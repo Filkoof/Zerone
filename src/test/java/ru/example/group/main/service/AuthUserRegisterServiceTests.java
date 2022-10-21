@@ -7,7 +7,8 @@ import ru.example.group.main.dto.request.ContactConfirmationPayloadRequestDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AuthUserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
 

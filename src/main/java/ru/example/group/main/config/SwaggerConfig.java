@@ -31,6 +31,7 @@ public class SwaggerConfig {
     private static final String HTTP_STRING = "http://";
     @Value("${config.frontend}")
     private String frontend;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)

@@ -4,15 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
@@ -20,11 +17,11 @@ import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetails;
 import ru.example.group.main.security.SocialNetUserDetailsService;
-import ru.example.group.main.security.SocialNetUserRegisterService;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     private static String EMAIL = "test@test.tu";
@@ -40,7 +37,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     private JWTUtilService jwtUtilService;
 
     @BeforeEach
-    void setUpAuthContext(){
+    void setUpAuthContext() {
         UserEntity user = userRepository.findByEmail(EMAIL);
         UserDetails userDetails = new SocialNetUserDetails(user);
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -50,7 +47,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
     }
 
     @AfterEach
-    void tearDownAuthContext(){
+    void tearDownAuthContext() {
         SecurityContextHolder.clearContext();
     }
 
@@ -73,6 +70,7 @@ class UserSettingsControllerTests extends AbstractAllTestH2ContextLoad {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
     @Test
     void emailChangeConfirmedAndRedirectToLogin() throws Exception {
         UserEntity user = userRepository.findByEmail(EMAIL);

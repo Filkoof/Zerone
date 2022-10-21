@@ -58,15 +58,14 @@ class JwtTests extends AbstractAllTestH2ContextLoad {
         payload.setEmail(EMAIL);
         SocialNetUserDetails userDetails =
                 (SocialNetUserDetails) socialNetUserDetailsService.loadUserByUsername(payload.getEmail());
-          assertTrue(jwtUtilService.validateToken(jwtUtilService.generateToken(userDetails), userDetails));
+        assertTrue(jwtUtilService.validateToken(jwtUtilService.generateToken(userDetails), userDetails));
     }
 
     @Test
-    void loadUserByUsernameDetailsService(){
+    void loadUserByUsernameDetailsService() {
         UserDetails user = socialNetUserDetailsService.loadUserByUsername(EMAIL);
         assertNotNull(user);
     }
-
 
 
 }

@@ -1,7 +1,5 @@
 package ru.example.group.main.entity.enumerated;
 
-import java.util.Locale;
-
 public enum SupportRequestStatus {
     NEW,
     IN_WORK,

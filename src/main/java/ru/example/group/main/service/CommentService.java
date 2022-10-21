@@ -1,13 +1,8 @@
 package ru.example.group.main.service;
 
 import io.jsonwebtoken.lang.Assert;
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.CommentRequestDto;
@@ -46,12 +41,6 @@ public class CommentService {
     private final LikesService likesService;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
-
-    public CommonListResponseDto<CommentDto> getCommentsForPostId(Long idPost, int offset, int itemPerPage) {
-        if (postRepository.existsById(idPost)) {
-            return getCommonList(idPost, itemPerPage, offset);
-        } else throw new EntityNotFoundException();
-    }
 
     public CommonResponseDto<CommentDto> postComment(Long postId, CommentRequestDto request) {
         Assert.notNull(postId, "id поста не может быть null");
@@ -138,9 +127,9 @@ public class CommentService {
                 .offset(offset)
                 .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream()
                         .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(),LikeType.COMMENT,user),
+                                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
                                 likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT)
-                                ))
+                        ))
                         .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
@@ -151,7 +140,7 @@ public class CommentService {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         return CommonResponseDto.<CommentDto>builder()
                 .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment), getSubComments(comment.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(),LikeType.COMMENT,user),
+                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(), LikeType.COMMENT, user),
                         likesService.likesCountByPostIdAndType(comment.getId(), LikeType.COMMENT)))
                 .error("")
                 .timeStamp(LocalDateTime.now())
@@ -162,7 +151,7 @@ public class CommentService {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         return commentEntities.stream()
                 .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(),LikeType.COMMENT, user),
+                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
                         likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT))).toList();
     }
 

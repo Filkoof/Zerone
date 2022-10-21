@@ -34,7 +34,7 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     @Value("${config.initRecommendations}")
     private Boolean initRecommendations;
 
-    UserRegisterRequestDto createUserRegisterDto(){
+    UserRegisterRequestDto createUserRegisterDto() {
         UserRegisterRequestDto userRegisterRequestDto = new UserRegisterRequestDto();
         userRegisterRequestDto.setEmail(email);
         userRegisterRequestDto.setPasswd1(passwordEncoder.encode("11111111"));
@@ -44,7 +44,7 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         UserEntity user = userRepository.findByEmail(email);
         if (user != null) {
             userRepository.delete(user);
@@ -52,7 +52,7 @@ class UserRegisterServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         UserEntity user = userRepository.findByEmail(email);
         if (user != null) {
             userRepository.delete(user);

@@ -15,16 +15,16 @@ import java.util.Optional;
 public interface LikesRepository extends JpaRepository<LikeEntity, Long> {
 
     Optional<List<LikeEntity>> findByEntityIdAndType(
-        long entityId,
-        LikeType type
+            long entityId,
+            LikeType type
     );
 
     @Modifying
     @Transactional
-    Optional<List<LikeEntity>>  deleteByEntityIdAndUserIdAndType(
-        long entityId,
-        long userId,
-        LikeType type
+    Optional<List<LikeEntity>> deleteByEntityIdAndUserIdAndType(
+            long entityId,
+            long userId,
+            LikeType type
     );
 
     boolean existsByEntityIdAndTypeAndUser(long entityId, LikeType type, UserEntity userId);
