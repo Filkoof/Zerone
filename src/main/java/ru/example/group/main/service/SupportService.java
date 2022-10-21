@@ -30,7 +30,7 @@ public class SupportService {
                     SupportRequestStatus.getStringFromSupportRequestStatus(SupportRequestStatus.NEW),
                     LocalDateTime.now().toString());
             supportRequestRepository.save(newSupportRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             emailConfirmation(false, supportRequestDto.getEmail());
             throw new SupportRequestException("Ошибка обработки запроса, попробуйте позднее.");
         }
@@ -39,7 +39,7 @@ public class SupportService {
     }
 
     private void emailConfirmation(Boolean successTrue, String email) throws EmailNotSentException {
-        if (successTrue){
+        if (successTrue) {
             zeroneMailSenderService.emailSend(email,
                     "Ваше обращение в поддержку ZERONE зарегистрировано.",
                     """

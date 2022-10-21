@@ -19,7 +19,6 @@ import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.exception.*;
 
 import javax.servlet.ServletException;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @ControllerAdvice

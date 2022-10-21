@@ -1,12 +1,12 @@
 package ru.example.group.main.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.example.group.main.AbstractAllTestH2ContextLoad;
 import ru.example.group.main.entity.UserEntity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
 
@@ -20,9 +20,6 @@ class SocialNetUserReposityTests extends AbstractAllTestH2ContextLoad {
         assertNotNull(user);
         assertEquals("Suzdal", user.getCity());
     }
-
-
-
 
 
 }

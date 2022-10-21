@@ -1,6 +1,9 @@
 package ru.example.group.main.service;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +25,8 @@ import ru.example.group.main.security.SocialNetUserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
@@ -52,7 +56,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
         user2.setFirstName("Andrey");
         user2.setEmail("andrey@andrey.ru");
 
-        }
+    }
 
     private final static String EMAIL = "test@test.tu";
     @Autowired
@@ -68,7 +72,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
 
 
     @BeforeEach
-     void setUpAuthContext(){
+    void setUpAuthContext() {
         UserEntity user = userRepository.findByEmail(EMAIL);
         UserDetails userDetails = new SocialNetUserDetails(user);
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -78,9 +82,10 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
     }
 
     @AfterEach
-    void tearDownAuthContext(){
+    void tearDownAuthContext() {
         SecurityContextHolder.clearContext();
     }
+
     @Test
     void changeEmailConfirmationSendTest() throws EmailNotSentException {
         assertTrue(userSettingsService.changeEmailConfirmationSend(EMAIL));
@@ -116,7 +121,7 @@ class UserSettingsServiceTests extends AbstractAllTestH2ContextLoad {
         String code1 = passwordEncoder.encode("11111111");
         user.setConfirmationCode(code);
         userRepository.save(user);
-        assertTrue(userSettingsService.confirmPasswordChange(code,code1));
+        assertTrue(userSettingsService.confirmPasswordChange(code, code1));
     }
 
     @Test

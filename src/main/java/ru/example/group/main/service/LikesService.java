@@ -44,7 +44,7 @@ public class LikesService {
         res.setData(
                 new LikesResponseDto(
                         List.of(user.getId()),
-                        deletedLikes.get().isEmpty() ? likesCount : likesCount - 1
+                        deletedLikes.isEmpty() ? likesCount : likesCount - 1
                 ));
         return res;
     }
@@ -62,7 +62,7 @@ public class LikesService {
             like.setTime(LocalDateTime.now());
             try {
                 likesRepository.save(like);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -74,11 +74,11 @@ public class LikesService {
         return res;
     }
 
-    public Integer likesCountByPostIdAndType(Long postOrCommentId, LikeType type){
+    public Integer likesCountByPostIdAndType(Long postOrCommentId, LikeType type) {
         return likesRepository.countByEntityIdAndType(postOrCommentId, type);
     }
 
-    public Boolean isMyLikeByPostOrCommentIdAndTypeAndUserId(Long postOrCommentId, LikeType type, UserEntity user){
+    public Boolean isMyLikeByPostOrCommentIdAndTypeAndUserId(Long postOrCommentId, LikeType type, UserEntity user) {
         return likesRepository.existsByEntityIdAndTypeAndUser(postOrCommentId, type, user);
     }
 }

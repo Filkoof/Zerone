@@ -1,10 +1,6 @@
 package ru.example.group.main.service;
 
 import io.jsonwebtoken.lang.Assert;
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +23,10 @@ import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.util.UtilZerone;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +117,7 @@ public class CommentService {
         Assert.notNull(postId, "id поста не может быть null");
         return getCommonList(postId, itemPerPage, offset);
     }
+
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, UtilZerone.getPagination(itemPerPage, offset));
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
@@ -127,9 +127,9 @@ public class CommentService {
                 .offset(offset)
                 .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream()
                         .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(),LikeType.COMMENT,user),
+                                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
                                 likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT)
-                                ))
+                        ))
                         .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
@@ -140,7 +140,7 @@ public class CommentService {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         return CommonResponseDto.<CommentDto>builder()
                 .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment), getSubComments(comment.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(),LikeType.COMMENT,user),
+                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(), LikeType.COMMENT, user),
                         likesService.likesCountByPostIdAndType(comment.getId(), LikeType.COMMENT)))
                 .error("")
                 .timeStamp(LocalDateTime.now())
@@ -151,7 +151,7 @@ public class CommentService {
         UserEntity user = socialNetUserRegisterService.getCurrentUser();
         return commentEntities.stream()
                 .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(),LikeType.COMMENT, user),
+                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
                         likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT))).toList();
     }
 
