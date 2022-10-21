@@ -3,14 +3,18 @@ package ru.example.group.main.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import ru.example.group.main.dto.kafka.KafkaZeroneMailingDto;
+import ru.example.group.main.exception.EmailNotSentException;
 
 @Service
 @Slf4j
@@ -18,13 +22,12 @@ import ru.example.group.main.dto.kafka.KafkaZeroneMailingDto;
 public class KafkaService {
 
     private final KafkaTemplate<Long, KafkaZeroneMailingDto> kafkaZeroneMailingTemplate;
-    private final ObjectMapper objectMapper;
 
     public void send(KafkaZeroneMailingDto dto) {
         kafkaZeroneMailingTemplate.send("zeroneMailingTopic-1", dto);
     }
 
-    void sendMessageWithCallback(KafkaZeroneMailingDto dto) {
+    public void sendMessageWithCallback(KafkaZeroneMailingDto dto) {
         ListenableFuture<SendResult<Long, KafkaZeroneMailingDto>> future =
                 kafkaZeroneMailingTemplate.send("zeroneMailingTopic-1", dto);
 
@@ -36,26 +39,15 @@ public class KafkaService {
                         result.getRecordMetadata().offset());
             }
 
+            @SneakyThrows
             @Override
             public void onFailure(Throwable ex) {
-                log.warn("Unable to deliver message [{}]. {}",
+                log.warn("Unable to deliver kafka message [{}]. {}",
                         dto,
                         ex.getMessage());
+                    throw new EmailNotSentException(String.format("Ошибка отправка сообщения: %s", ex.getMessage()));
             }
         });
     }
 
-   /* @KafkaListener(id = "zeroneMailConsumer", topics = {"server.zeroneMailings"}, containerFactory = "singleFactory")
-    public void consume(KafkaZeroneMailingDto dto) {
-        log.info("=> consumed {}", writeValueAsString(dto));
-    }
-
-    private String writeValueAsString(KafkaZeroneMailingDto dto) {
-        try {
-            return objectMapper.writeValueAsString(dto);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Writing value to JSON failed: " + dto.toString());
-        }
-    }*/
 }

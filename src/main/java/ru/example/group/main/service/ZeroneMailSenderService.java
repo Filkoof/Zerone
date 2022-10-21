@@ -7,6 +7,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.example.group.main.config.ConfigProperties;
+import ru.example.group.main.dto.kafka.KafkaZeroneMailingDto;
 import ru.example.group.main.exception.EmailNotSentException;
 
 @RequiredArgsConstructor
@@ -15,9 +17,23 @@ import ru.example.group.main.exception.EmailNotSentException;
 public class ZeroneMailSenderService {
 
     private final JavaMailSender mailSender;
+    private final KafkaService kafkaService;
+
+    private final ConfigProperties configProperties;
 
     @Value("${spring.mail.username}")
     private String username;
+
+    public boolean emailSendNoKafka(String emailTo, String subject, String message) throws EmailNotSentException {
+        try {
+            if (emailTo != null) {
+                return send(emailTo, subject, message);
+            }
+        } catch (Exception e) {
+            throw new EmailNotSentException(String.format("Ошибка отправка почты: %s", e.getMessage()));
+        }
+        return false;
+    }
 
     private boolean send(String emailTo, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -31,7 +47,15 @@ public class ZeroneMailSenderService {
 
     public Boolean emailSend(String email, String title, String message) throws EmailNotSentException {
         try {
-            if (!StringUtil.isEmpty(email)) {
+            if (email != null) {
+                if (configProperties.isKafkaMailingService()){
+                    KafkaZeroneMailingDto dto = new KafkaZeroneMailingDto();
+                    dto.setEmail(email);
+                    dto.setTopic(title);
+                    dto.setBody(message);
+                    kafkaService.sendMessageWithCallback(dto);
+                    return true;
+                }
                 return send(email, title, message);
             }
         } catch (Exception e) {

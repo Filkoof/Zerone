@@ -25,4 +25,6 @@ public class ConfigProperties {
     private Boolean jwtBlackListOn;
     @Value("${config.initRecommendations}")
     private boolean initRecommendations;
+    @Value("${config.kafkaMailingService}")
+    private boolean kafkaMailingService;
 }

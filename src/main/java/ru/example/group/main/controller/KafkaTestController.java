@@ -1,6 +1,7 @@
 package ru.example.group.main.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import ru.example.group.main.dto.kafka.KafkaZeroneMailingDto;
 import ru.example.group.main.service.KafkaService;
 
 @RequiredArgsConstructor
+@Slf4j
 @RestController
 public class KafkaTestController {
 
@@ -26,7 +28,8 @@ public class KafkaTestController {
                               client-id: producerId
                 """);
         kafkaZeroneMailingDto.setTopic("Test kafka producer send to bootstrap-servers: 195.161.62.32:9092");
-        kafkaService.send(kafkaZeroneMailingDto);
+        //kafkaService.send(kafkaZeroneMailingDto);
+        kafkaService.sendMessageWithCallback(kafkaZeroneMailingDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
