@@ -5,6 +5,7 @@ import org.springframework.boot.actuate.autoconfigure.mail.MailHealthContributor
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,9 +20,15 @@ import ru.example.group.main.service.KafkaService;
 public abstract class AbstractAllTestH2ContextLoad {
     @MockBean
     private JavaMailSender mailSender;
-
     @MockBean
     private MailHealthContributorAutoConfiguration mailHealthContributorAutoConfiguration;
+    @MockBean
+    private KafkaProducerConfig kafkaProducerConfig;
+    @MockBean
+    private KafkaService kafkaService;
+    @MockBean
+    private KafkaAdmin kafkaAdmin;
+
 
     @Autowired
     private MockMvc mockMvc;
