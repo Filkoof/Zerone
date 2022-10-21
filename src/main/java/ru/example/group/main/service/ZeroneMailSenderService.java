@@ -53,10 +53,13 @@ public class ZeroneMailSenderService {
                     dto.setEmail(email);
                     dto.setTopic(title);
                     dto.setBody(message);
-                    kafkaService.sendMessageWithCallback(dto);
+                    try {
+                        kafkaService.sendMessageWithCallback(dto);
+                    } catch (Exception e){
+                        return send(email, title, message);
+                    }
                     return true;
                 }
-                return send(email, title, message);
             }
         } catch (Exception e) {
             throw new EmailNotSentException("Ошибка отправки письма с темой: " + title + " Ошибка: " + e.getMessage());

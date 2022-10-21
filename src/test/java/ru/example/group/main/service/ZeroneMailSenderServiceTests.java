@@ -18,7 +18,6 @@ class ZeroneMailSenderServiceTests extends AbstractAllTestH2ContextLoad{
 
     @Test
     void send() throws EmailNotSentException {
-
-        assertTrue(zeroneMailSenderService.emailSend(email, "zerone test subject", "zerone test message"));
+        assertTrue(zeroneMailSenderService.emailSendNoKafka(email, "zerone test subject", "zerone test message"));
     }
 }

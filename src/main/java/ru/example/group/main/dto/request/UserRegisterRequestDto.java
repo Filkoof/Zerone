@@ -32,6 +32,7 @@ public class UserRegisterRequestDto {
 
     @ApiModelProperty(notes = "Email", required = true, example = "email@email.ru")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.+[a-zA-Z]{2,6}$")
+    @Size(max = 320)
     @NotEmpty(message = "Please provide correct email.")
     private String email;
 }

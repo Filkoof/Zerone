@@ -42,7 +42,7 @@ config:
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
   initRecommendations: true
-  kafkaMailingService: true
+  kafkaMailingService: false
 
 logging:
   charset:
