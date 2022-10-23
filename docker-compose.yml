@@ -4,6 +4,8 @@ services:
 
     zerone_backend:
       restart: always
+      depends_on:
+        - kafka
       image: azul/zulu-openjdk-alpine:17-jre
       volumes:
         - ./:/app
@@ -76,3 +78,5 @@ services:
       image: filkoof/zerone_mailing
       container_name: "zerone_mailing"
       restart: always
+      depends_on:
+        - kafka
