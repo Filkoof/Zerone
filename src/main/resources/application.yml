@@ -26,7 +26,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   kafka:
-    bootstrap-servers: "kafka:29092"
+    bootstrap-servers: "kafka:9092"
     consumer:
       client-id: zeroneMailConsumerMainBack
 
