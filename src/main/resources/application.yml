@@ -31,16 +31,10 @@ spring:
       client-id: zeroneMailConsumerMainBack
 
 server:
-  ssl:
-    key-store-type: PKCS12
-    key-store: classpath:ssl/zerone.p12
-    key-store-password: zerone
-    key-alias: zerone
-    enabled: true
   port: ${PORT:8080}
 
 config:
-  frontend: "zerone-network.ru"
+  frontend: "195.161.62.32"
   backend: "195.161.62.32:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"

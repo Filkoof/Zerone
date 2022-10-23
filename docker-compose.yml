@@ -31,7 +31,7 @@ services:
     zerone_frontend:
       container_name: zerone_frontend
       restart: always
-      image: permishin/frontend:new_url
+      image: ifomkin/zerone-fronted:http
       ports:
         - "80:80"
 
