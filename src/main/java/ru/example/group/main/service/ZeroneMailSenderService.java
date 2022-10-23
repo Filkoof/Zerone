@@ -60,6 +60,7 @@ public class ZeroneMailSenderService {
                     }
                     return true;
                 }
+                return send(email, title, message);
             }
         } catch (Exception e) {
             throw new EmailNotSentException("Ошибка отправки письма с темой: " + title + " Ошибка: " + e.getMessage());
