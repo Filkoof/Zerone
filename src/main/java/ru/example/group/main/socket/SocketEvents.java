@@ -74,7 +74,6 @@ public class SocketEvents {
         var user = userRepository.findById(Long.valueOf(sessionEntity.getUserId())).orElseThrow(EntityNotFoundException::new);
         setOnlineTime(user);
 
-        sessionsRepository.delete(sessionEntity);
         log.info("Клиент {} отключился", client.getSessionId());
     }
 
