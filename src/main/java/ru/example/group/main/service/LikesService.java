@@ -12,6 +12,7 @@ import ru.example.group.main.repository.LikesRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class LikesService {
     public CommonResponseDto<LikesResponseDto> getLikes(final long itemId, final LikeType type) {
         var likes = likesRepository.findByEntityIdAndType(itemId, type);
         var res = new CommonResponseDto<LikesResponseDto>();
-        var userIds = Collections.EMPTY_LIST;
+        List<Long> userIds;
         if (likes.isPresent()) {
             userIds = likes.get().stream()
                     .map(likeEntity -> likeEntity.getUser().getId())

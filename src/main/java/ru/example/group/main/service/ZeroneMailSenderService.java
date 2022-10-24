@@ -52,12 +52,7 @@ public class ZeroneMailSenderService {
                     dto.setEmail(email);
                     dto.setTopic(title);
                     dto.setBody(message);
-                    try {
-                        kafkaService.sendMessageWithCallback(dto);
-                    } catch (Exception e){
-                        return send(email, title, message);
-                    }
-                    return true;
+                    return sendKafkaOrElseThisMailService(dto);
                 }
                 return send(email, title, message);
             }
@@ -65,5 +60,14 @@ public class ZeroneMailSenderService {
             throw new EmailNotSentException("Ошибка отправки письма с темой: " + title + " Ошибка: " + e.getMessage());
         }
         return false;
+    }
+
+    private boolean sendKafkaOrElseThisMailService(KafkaZeroneMailingDto dto){
+        try {
+            kafkaService.sendMessageWithCallback(dto);
+        } catch (Exception e){
+            return send(dto.getEmail(), dto.getTopic(), dto.getBody());
+        }
+        return true;
     }
 }

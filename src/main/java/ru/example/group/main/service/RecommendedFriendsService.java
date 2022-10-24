@@ -74,9 +74,9 @@ public class RecommendedFriendsService {
         int splitSize = recommendedFriendsMap.size() / cores;
         int count = 0;
 
-        for (Long userId : recommendedFriendsMap.keySet()) {
+        for (Map.Entry<Long, Long[]> entry : recommendedFriendsMap.entrySet()) {
             count++;
-            splitForThread.put(userId, recommendedFriendsMap.get(userId));
+            splitForThread.put(entry.getKey(), entry.getValue());
             if (count == splitSize) {
                 listOfRecsForThreading.add(splitForThread);
                 splitForThread = new HashMap<>();

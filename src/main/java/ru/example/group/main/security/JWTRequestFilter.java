@@ -44,7 +44,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         String username = null;
         try {
             token = httpServletRequest.getHeader(authHeader);
-            if (!token.equals("") && token != null) {
+            if (!token.equals("")) {
                 username = checkToken(token);
             }
             if (username != null) {

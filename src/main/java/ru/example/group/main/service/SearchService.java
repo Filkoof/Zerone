@@ -53,7 +53,7 @@ public class SearchService {
     }
 
     public CommonListResponseDto<Object> postSearch(String text, Long dateFrom, Long dateTo,
-                                                    Integer offset, Integer itemPerPage, String author,
+                                                    Integer offset, String author,
                                                     String tag) throws PostsException {
         LocalDateTime endDate =
                 Instant.ofEpochMilli(dateTo).atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(1);

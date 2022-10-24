@@ -51,18 +51,16 @@ public class UserRegisterService {
             return false;
         }
         String code = UUID.randomUUID().toString().substring(0, 24);
-        if (newUserAddToDB(userRegisterRequestDto, code)) {
-            String message =
-                    "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
-                            "Добро пожаловать в социальную сеть Зерон. " +
-                            "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                            mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
-                            "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
-            String title = "Код активации аккаунта Зерон";
-            zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);
-            return true;
-        }
-        return false;
+        newUserAddToDB(userRegisterRequestDto, code);
+        String message =
+                "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
+                        "Добро пожаловать в социальную сеть Зерон. " +
+                        "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
+                        mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
+                        "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
+        String title = "Код активации аккаунта Зерон";
+        zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);
+        return true;
     }
 
     private boolean newUserAddToDB(UserRegisterRequestDto userRegisterRequestDto, String code) throws NewUserWasNotSavedToDBException {
@@ -83,10 +81,10 @@ public class UserRegisterService {
             user.setAbout("");
             user.setPhone("");
             userRepository.save(user);
+            return true;
         } catch (Exception e) {
             throw new NewUserWasNotSavedToDBException("Ошибка создания нового пользователя: " + e.getMessage());
         }
-        return true;
     }
 
     public RegistrationCompleteResponseDto activateUser(RegisterConfirmRequestDto registerConfirmRequestDto,
@@ -132,9 +130,8 @@ public class UserRegisterService {
             apiResponseDto.setMessage("Пользователь с такой почтой уже существует");
             throw new UserWithThatEmailAlreadyExistException("Пользователь с такой почтой уже существует", apiResponseDto);
         } else {
-            if (addUser(userRegisterRequestDto)) {
-                apiResponseDto.setMessage("Пользователь создан");
-            }
+            addUser(userRegisterRequestDto);
+            apiResponseDto.setMessage("Пользователь создан");
             return apiResponseDto;
         }
     }

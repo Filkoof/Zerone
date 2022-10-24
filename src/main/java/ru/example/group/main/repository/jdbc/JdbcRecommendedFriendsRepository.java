@@ -17,6 +17,7 @@ import java.util.Map;
 @Repository
 public class JdbcRecommendedFriendsRepository {
 
+    private static final String USER_ID = "user_id";
     private final JdbcTemplate jdbcTemplate;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -31,7 +32,7 @@ public class JdbcRecommendedFriendsRepository {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
             batchValues.add(
-                    new MapSqlParameterSource("user_id", user_id)
+                    new MapSqlParameterSource(USER_ID, user_id)
                             .addValue("recommended_friends",
                                     jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(),
                                             recommendedFriendsMapInt.get(user_id)))).getValues()
@@ -48,7 +49,7 @@ public class JdbcRecommendedFriendsRepository {
     public int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
         for (Long user_id : recommendedFriendsMapInt.keySet()) {
-            batchValues.add(new MapSqlParameterSource("user_id", user_id)
+            batchValues.add(new MapSqlParameterSource(USER_ID, user_id)
                     .addValue("recommended_friends", jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(), recommendedFriendsMapInt.get(user_id)))).getValues()
             );
         }
@@ -93,7 +94,7 @@ public class JdbcRecommendedFriendsRepository {
 
     public List<Long> getRecommendedFriendsForUser(Long userId) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-        mapSqlParameterSource.addValue("user_id", userId);
+        mapSqlParameterSource.addValue(USER_ID, userId);
         return namedParameterJdbcTemplate.queryForList(
                 SQL_GET_RECOMMENDED_FRIENDS_FOR_USER_ID, mapSqlParameterSource, Long.class);
     }

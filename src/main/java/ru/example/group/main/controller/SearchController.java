@@ -43,6 +43,6 @@ public class SearchController {
             @RequestParam(defaultValue = "") String tag
     ) throws PostsException {
         return new ResponseEntity<>(searchService.postSearch(text, dateFrom, dateTo,
-                offset, itemPerPage, author, tag), HttpStatus.OK);
+                offset, author, tag), HttpStatus.OK);
     }
 }
