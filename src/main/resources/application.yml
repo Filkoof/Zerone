@@ -83,7 +83,7 @@ management:
         "[http.server.requests]": true
 
 socketio:
-  host: localhost
+  host: 195.161.62.32
   port: 1111
   maxFramePayloadLength: 1048576
   maxHttpContentLength: 1048576
