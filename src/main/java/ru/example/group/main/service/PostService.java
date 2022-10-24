@@ -27,8 +27,10 @@ import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -133,6 +135,22 @@ public class PostService {
         } catch (EntityNotFoundException | IdUserException e) {
             throw new PostsException(e.getMessage());
         }
+    }
+
+    public CommonResponseDto<PostResponseDto> editPost(long id, long publishDate, PostRequestDto request) throws PostsException {
+        var date = new Date(publishDate);
+        var tags = request.getTags() != null ? new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()) : null;
+        var post = postRepository.findPostEntityById(id);
+        post.setTitle(request.getTitle());
+        post.setPostText(request.getText());
+        post.setTagEntities(tags);
+        postRepository.save(post);
+
+        return CommonResponseDto.<PostResponseDto>builder()
+                .data(getPostDtoFromEntity(post))
+                .error("")
+                .timeStamp(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                .build();
     }
 
     public ResponseEntity<PostResponseDto> recoverPost(Long id) throws PostsException {
