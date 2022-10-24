@@ -3,7 +3,6 @@ package ru.example.group.main.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.group.main.dto.request.PostRequestDto;
@@ -46,7 +45,7 @@ public class PostController {
         return postService.recoverPost(id);
     }
 
-    @GetMapping("/api/v1/post/{id}")
+    @GetMapping("/post/{id}")
     public CommonResponseDto<PostResponseDto> getPostById(@PathVariable Long id) throws PostsException {
         return postService.getPostById(id);
     }
@@ -58,8 +57,13 @@ public class PostController {
         return postService.deletePost(id);
     }
 
-//  put /api/v1/post/{id}
-
+    @PutMapping("/post/{id}")
+    public CommonResponseDto<PostResponseDto> editPost(
+            @PathVariable long id,
+            @RequestParam(name = "publish_date", defaultValue = "0") long publishDate,
+            @RequestBody PostRequestDto request) throws PostsException {
+        return postService.editPost(id, publishDate, request);
+    }
     @GetMapping("/feeds")
     @ApiOperation("Operation to get News(posts) feed.")
     public CommonListResponseDto<PostResponseDto> getNewsfeed(
