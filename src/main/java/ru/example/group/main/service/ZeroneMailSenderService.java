@@ -1,6 +1,5 @@
 package ru.example.group.main.service;
 
-import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -45,7 +44,7 @@ public class ZeroneMailSenderService {
         return true;
     }
 
-    public Boolean emailSend(String email, String title, String message) throws EmailNotSentException {
+    public boolean emailSend(String email, String title, String message) throws EmailNotSentException {
         try {
             if (email != null) {
                 if (configProperties.isKafkaMailingService()){

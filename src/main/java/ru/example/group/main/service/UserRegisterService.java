@@ -122,7 +122,7 @@ public class UserRegisterService {
         zeroneMailSenderService.emailSend(user.getEmail(), title, message);
     }
 
-    public ResultMessageDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+    public ResultMessageDto createUser(UserRegisterRequestDto userRegisterRequestDto) throws NewUserWasNotSavedToDBException, UserWithThatEmailAlreadyExistException, EmailNotSentException {
         ResultMessageDto apiResponseDto = new ResultMessageDto();
         if (userRegisterRequestDto.getEmail() == null || userRegisterRequestDto.getFirstName() == null || userRegisterRequestDto.getLastName() == null || userRegisterRequestDto.getPasswd1() == null) {
             throw new NewUserWasNotSavedToDBException("Не удается создать пользователя");

@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByEmail(String eMail);
 
-    Boolean existsByEmail(String eMail);
+    boolean existsByEmail(String eMail);
 
     UserEntity findByConfirmationCode(String code);
 

@@ -14,9 +14,9 @@ import ru.example.group.main.exception.SupportRequestException;
 import ru.example.group.main.mapper.SupportRequestMapper;
 import ru.example.group.main.repository.SupportRequestRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +41,7 @@ public class SupportService {
         return new ResponseEntity<>(resultMessageDto, HttpStatus.OK);
     }
 
-    private void emailConfirmation(Boolean successTrue, String email) throws EmailNotSentException {
+    private void emailConfirmation(boolean successTrue, String email) throws EmailNotSentException {
         if (successTrue) {
             zeroneMailSenderService.emailSend(email,
                     "Ваше обращение в поддержку ZERONE зарегистрировано.",
@@ -68,7 +68,7 @@ public class SupportService {
     }
 
     public SupportRequestsDto getSupportRequestById(long id) {
-        return supportRequestMapper.entityToDto(supportRequestRepository.findById(id).get());
+        return supportRequestMapper.entityToDto(supportRequestRepository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
     public SupportRequestsDto changeSupportRequestStatusById(long id, String status) throws SupportRequestException {
