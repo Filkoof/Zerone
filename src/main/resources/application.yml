@@ -26,7 +26,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   kafka:
-    bootstrap-servers: "195.161.62.32:29092"
+    bootstrap-servers: "kafka:9092"
     consumer:
       client-id: zeroneMailConsumerMainBack
 
@@ -34,8 +34,8 @@ server:
   port: ${PORT:8080}
 
 config:
-  frontend: "195.161.62.32"
-  backend: "195.161.62.32:8086"
+  frontend: "http://zerone-network.ru"
+  backend: "http://zerone-network.ru:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
   secret: SocialNetwork26
