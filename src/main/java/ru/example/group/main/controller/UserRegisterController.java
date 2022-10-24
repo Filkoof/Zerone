@@ -39,10 +39,10 @@ import java.security.NoSuchAlgorithmException;
 @Api("User registration operations api")
 public class UserRegisterController {
 
-    private static final String HTTP_STRING = "http://";
-    private static final String LOGIN = "/login";
+
     @Value("${config.frontend}")
     private String frontCorsHttpAddress;
+    private final String login = frontCorsHttpAddress + "/login";
     private final UserRegisterService userRegisterService;
     private final UserSettingsService userSettingsService;
 
@@ -75,7 +75,7 @@ public class UserRegisterController {
                                                                @NotEmpty(message = "Please provide correct email.")
                                                                String newEmail) throws EmailOrPasswordChangeException {
         userSettingsService.confirmEmailChange(code, newEmail);
-        return new RedirectView(HTTP_STRING + frontCorsHttpAddress + LOGIN);
+        return new RedirectView(login);
     }
 
     @PutMapping("/password/set")
@@ -91,20 +91,20 @@ public class UserRegisterController {
     @ApiOperation("Operation to confirm password change via email confirmation link.")
     public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code, @RequestParam @Min(139) String code1) throws EmailOrPasswordChangeException {
         userSettingsService.confirmPasswordChange(code, code1);
-        return new RedirectView(HTTP_STRING + frontCorsHttpAddress + LOGIN);
+        return new RedirectView(login);
     }
 
     @GetMapping("/user_delete/confirm")
     @ApiOperation("Operation to confirm user delete via email confirmation link.")
     public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.confirmUserDelete(code);
-        return new RedirectView(HTTP_STRING + frontCorsHttpAddress + LOGIN);
+        return new RedirectView(login);
     }
 
     @GetMapping("/user_delete_recovery/confirm")
     @ApiOperation("Operation to recover deleted user via email recovery link.")
     public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.recoveryUserDelete(code);
-        return new RedirectView(HTTP_STRING + frontCorsHttpAddress + LOGIN);
+        return new RedirectView(login);
     }
 }

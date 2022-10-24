@@ -57,7 +57,7 @@ public class UserRegisterService {
                     "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +
                             "Добро пожаловать в социальную сеть Зерон. " +
                             "Для активации вашего аккаунта перейдите по ссылке (или скопируйте ее и вставьте в даресную строку браузера): \n\n" +
-                            "http://" + mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
+                            mailHost + "/registration/complete?token=" + code + "&userId=" + userRegisterRequestDto.getEmail() + "\n" +
                             "\nНе переходите по этой ссылке, если вы не регистрировались в сети Зерон. \n\nСпасибо!";
             String title = "Код активации аккаунта Зерон";
             zeroneMailSenderService.emailSend(userRegisterRequestDto.getEmail(), title, message);

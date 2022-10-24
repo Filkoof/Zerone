@@ -77,7 +77,7 @@ services:
         - "22181:2181"
 
     zerone_mailing:
-      image: filkoof/zerone_mailing
+      image: filkoof/zerone_mailing:latest
       container_name: "zerone_mailing"
       restart: always
       depends_on:

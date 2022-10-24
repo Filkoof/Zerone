@@ -11,9 +11,10 @@ server:
   port: 8086
 
 config:
+  kafkaMailingService: false
   frontend: "195.161.62.32:8082"
   backend: "localhost:8086"
-  kafkaMailingService: false
+
 
 logging:
   file:
