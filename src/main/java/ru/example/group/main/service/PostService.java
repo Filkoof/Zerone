@@ -39,15 +39,15 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class PostService {
 
-    @Value("${post.time.Life.Auto-Delete}")
-    private int postLife;
     private final SocialNetUserRegisterService registerService;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CommentService commentService;
-    private final PostMapper mapper;
     private final LikesService likesService;
+    private final PostMapper postMapper;
+    @Value("${post.time.Life.Auto-Delete}")
+    private int postLife;
 
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
             final PostRequestDto request,
@@ -61,7 +61,7 @@ public class PostService {
         var publishDateTime = requestedDateTime.isBefore(dateTimeNow) ? dateTimeNow : requestedDateTime;
 
         var tags = request.getTags() != null ? new HashSet<>(request.getTags().stream().map(tagRepository::findByTag).toList()) : null;
-        var postE = mapper.postRequestToEntity(request, publishDateTime, tags, userEntity);
+        var postE = postMapper.postRequestToEntity(request, publishDateTime, tags, userEntity);
         postRepository.save(postE);
 
         response.setData(getPostDtoFromEntity(postE));
@@ -85,6 +85,15 @@ public class PostService {
                         .toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    public CommonResponseDto<PostResponseDto> getPostById(Long id) throws PostsException {
+        var data = getPostDtoFromEntity(postRepository.findPostEntityById(id));
+        return CommonResponseDto.builder()
+                .data(data)
+                .error("")
+                .timeStamp(LocalDateTime.now())
                 .build();
     }
 
@@ -147,19 +156,6 @@ public class PostService {
         postRepository.deletePostEntity(LocalDateTime.now().minusDays(postLife));
     }
 
-    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) throws PostsException {
-        try {
-            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
-            var type = getType(postEntity);
-            var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
-            Integer likesForPostCount = likesService.likesCountByPostIdAndType(postEntity.getId(), LikeType.POST);
-            Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(postEntity.getId(), LikeType.POST, registerService.getCurrentUser());
-            return mapper.postEntityToDto(postEntity, tags, type, listComment, isMyLike, likesForPostCount);
-        } catch (Exception e) {
-            throw new PostsException(e.getMessage());
-        }
-    }
-
     private PostType getType(PostEntity post) {
         if (post.isDeleted()) {
             return PostType.DELETED;
@@ -188,6 +184,19 @@ public class PostService {
             return getPostDtoFromEntity(entity);
         } catch (PostsException e) {
             return null;
+        }
+    }
+
+    private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) throws PostsException {
+        try {
+            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
+            var type = getType(postEntity);
+            var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
+            Integer likesForPostCount = likesService.likesCountByPostIdAndType(postEntity.getId(), LikeType.POST);
+            Boolean isMyLike = likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(postEntity.getId(), LikeType.POST, registerService.getCurrentUser());
+            return postMapper.postEntityToDto(postEntity, tags, type, listComment, isMyLike, likesForPostCount);
+        } catch (Exception e) {
+            throw new PostsException(e.getMessage());
         }
     }
 }

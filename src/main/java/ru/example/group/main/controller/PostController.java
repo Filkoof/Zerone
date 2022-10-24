@@ -22,15 +22,6 @@ import javax.persistence.EntityNotFoundException;
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/feeds")
-    @ApiOperation("Operation to get News(posts) feed.")
-    public CommonListResponseDto<PostResponseDto> getNewsfeed(
-            @RequestParam(name = "offset", defaultValue = "0") int offset,
-            @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage
-    ) throws PostsException {
-        return postService.getNewsfeed(offset, itemPerPage);
-    }
-
     @PostMapping("/users/{id}/wall")
     @ApiOperation("Operation to add new post for user id (@PathVariable).")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addNewPost(
@@ -49,12 +40,15 @@ public class PostController {
         return postService.getNewsUserId(id, offset);
     }
 
-    @GetMapping("/post/{id}")
-    @ApiOperation("Operation to get post by post_id (@PathVariable).")
-    public ResponseEntity<CommonResponseDto<PostResponseDto>> getPostById(@PathVariable long id)
-            throws EntityNotFoundException, PostsException {
-        //return postService.getPost(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/post/{id}/recover")
+    @ApiOperation("Operation to recover post with id (@PathVariable).")
+    public ResponseEntity<PostResponseDto> postRecover(@PathVariable Long id) throws PostsException {
+        return postService.recoverPost(id);
+    }
+
+    @GetMapping("/api/v1/post/{id}")
+    public CommonResponseDto<PostResponseDto> getPostById(@PathVariable Long id) throws PostsException {
+        return postService.getPostById(id);
     }
 
     @DeleteMapping("/post/{id}")
@@ -64,9 +58,14 @@ public class PostController {
         return postService.deletePost(id);
     }
 
-    @PutMapping("/post/{id}/recover")
-    @ApiOperation("Operation to recover post with id (@PathVariable).")
-    public ResponseEntity<PostResponseDto> postRecover(@PathVariable Long id) throws PostsException {
-        return postService.recoverPost(id);
+//  put /api/v1/post/{id}
+
+    @GetMapping("/feeds")
+    @ApiOperation("Operation to get News(posts) feed.")
+    public CommonListResponseDto<PostResponseDto> getNewsfeed(
+            @RequestParam(name = "offset", defaultValue = "0") int offset,
+            @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage
+    ) throws PostsException {
+        return postService.getNewsfeed(offset, itemPerPage);
     }
 }
