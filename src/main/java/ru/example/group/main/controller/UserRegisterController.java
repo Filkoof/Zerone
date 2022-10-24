@@ -1,7 +1,6 @@
 package ru.example.group.main.controller;
 
 
-import com.maxmind.geoip2.exception.GeoIp2Exception;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
 @RestController
@@ -54,7 +50,7 @@ public class UserRegisterController {
     @PostMapping("/register/confirm")
     @ApiOperation("Operation to confirm registration of the user via email confirmation link.")
     public RegistrationCompleteResponseDto activate(@RequestBody RegisterConfirmRequestDto registerConfirmRequestDto,
-                                                    HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException, IOException, URISyntaxException, NoSuchAlgorithmException, InterruptedException, GeoIp2Exception {
+                                                    HttpServletRequest request) throws NewUserConfirmationViaEmailFailedException {
         return userRegisterService.activateUser(registerConfirmRequestDto, request);
     }
 
