@@ -3,6 +3,7 @@ package ru.example.group.main.controller;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,6 +14,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.view.RedirectView;
 import ru.example.group.main.dto.response.FriendsResponseDto;
 import ru.example.group.main.dto.response.RecommendedFriendsResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
@@ -24,6 +26,10 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandlerController {
+
+    @Value("${config.frontend}")
+    private String domenName;
+
     @ExceptionHandler({LockedException.class, BadCredentialsException.class, MalformedJwtException.class, AccessDeniedException.class, AuthenticationException.class})
     public ResponseEntity<ResultMessageDto> handleAuthenticationsException(Exception e) {
         log.info(e.getLocalizedMessage());
@@ -99,12 +105,9 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(EmailOrPasswordChangeException.class)
-    public ResponseEntity<ResultMessageDto> handleEmailChangeException(EmailOrPasswordChangeException e) {
+    public RedirectView handleEmailChangeException(EmailOrPasswordChangeException e) {
         log.info(e.getLocalizedMessage());
-        ResultMessageDto commonResponseDto = new ResultMessageDto();
-        commonResponseDto.setErrorDescription(e.getMessage());
-        commonResponseDto.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new RedirectView(domenName + "/login");
     }
 
     @ExceptionHandler(UserDeleteOrRecoveryException.class)

@@ -29,7 +29,7 @@ public class KafkaService {
             @Override
             public void onSuccess(SendResult<Long, KafkaZeroneMailingDto> result) {
                 log.info("Message [{}] delivered with offset {}",
-                        dto,
+                        dto.getTopic(),
                         result.getRecordMetadata().offset());
             }
 

@@ -41,8 +41,7 @@ public class UserRegisterController {
 
 
     @Value("${config.frontend}")
-    private String frontCorsHttpAddress;
-    private final String login = frontCorsHttpAddress + "/login";
+    private String domenName;
     private final UserRegisterService userRegisterService;
     private final UserSettingsService userSettingsService;
 
@@ -75,7 +74,7 @@ public class UserRegisterController {
                                                                @NotEmpty(message = "Please provide correct email.")
                                                                String newEmail) throws EmailOrPasswordChangeException {
         userSettingsService.confirmEmailChange(code, newEmail);
-        return new RedirectView(login);
+        return new RedirectView(domenName + "/login");
     }
 
     @PutMapping("/password/set")
@@ -91,20 +90,20 @@ public class UserRegisterController {
     @ApiOperation("Operation to confirm password change via email confirmation link.")
     public RedirectView passwordChangeConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code, @RequestParam @Min(139) String code1) throws EmailOrPasswordChangeException {
         userSettingsService.confirmPasswordChange(code, code1);
-        return new RedirectView(login);
+        return new RedirectView(domenName + "/login");
     }
 
     @GetMapping("/user_delete/confirm")
     @ApiOperation("Operation to confirm user delete via email confirmation link.")
     public RedirectView userDeleteConfirmedAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.confirmUserDelete(code);
-        return new RedirectView(login);
+        return new RedirectView(domenName + "/login");
     }
 
     @GetMapping("/user_delete_recovery/confirm")
     @ApiOperation("Operation to recover deleted user via email recovery link.")
     public RedirectView userDeleteRecoveryConfirmAndRedirectToLogin(@RequestParam @Min(24) String code) throws UserDeleteOrRecoveryException {
         userSettingsService.recoveryUserDelete(code);
-        return new RedirectView(login);
+        return new RedirectView(domenName + "/login");
     }
 }
