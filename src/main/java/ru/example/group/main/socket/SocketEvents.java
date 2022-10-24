@@ -45,7 +45,7 @@ public class SocketEvents {
 
     @OnConnect
     public void connect(SocketIOClient client) {
-        log.info("Клиент {} отключился", client.getSessionId());
+        log.info("Клиент {} подключился", client.getSessionId());
     }
 
     @OnEvent("auth")
@@ -74,6 +74,7 @@ public class SocketEvents {
         var user = userRepository.findById(Long.valueOf(sessionEntity.getUserId())).orElseThrow(EntityNotFoundException::new);
         setOnlineTime(user);
 
+        sessionsRepository.delete(sessionEntity);
         log.info("Клиент {} отключился", client.getSessionId());
     }
 
