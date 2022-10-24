@@ -34,7 +34,7 @@ server:
   port: ${PORT:8080}
 
 config:
-  frontend: "http://zerone-network.ru/"
+  frontend: "http://zerone-network.ru"
   backend: "http://zerone-network.ru:8086"
   token-validity-hours: 72
   authorization: "AUTHORIZATION"
