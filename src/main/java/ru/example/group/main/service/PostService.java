@@ -90,7 +90,7 @@ public class PostService {
 
     public CommonResponseDto<PostResponseDto> getPostById(Long id) throws PostsException {
         var data = getPostDtoFromEntity(postRepository.findPostEntityById(id));
-        return CommonResponseDto.builder()
+        return CommonResponseDto.<PostResponseDto>builder()
                 .data(data)
                 .error("")
                 .timeStamp(LocalDateTime.now())
