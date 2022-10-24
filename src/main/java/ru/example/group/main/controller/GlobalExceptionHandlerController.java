@@ -211,6 +211,6 @@ public class GlobalExceptionHandlerController {
         ResultMessageDto commonResponseDto = new ResultMessageDto();
         commonResponseDto.setErrorDescription(e.getMessage());
         log.info(e.getMessage());
-        return new ResponseEntity(commonResponseDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
 }

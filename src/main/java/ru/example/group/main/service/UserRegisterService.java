@@ -1,7 +1,6 @@
 package ru.example.group.main.service;
 
 import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import lombok.RequiredArgsConstructor;
@@ -151,8 +150,6 @@ public class UserRegisterService {
                 location.set(0, locationResponse.getCountry().getNames().get("ru"));
                 location.set(1, locationResponse.getCity().getNames().get("ru"));
                 return location;
-            } catch (AddressNotFoundException | UnknownHostException e) {
-                e.getMessage();
             } catch (IOException | GeoIp2Exception e) {
                 e.printStackTrace();
             }
