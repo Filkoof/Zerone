@@ -17,6 +17,7 @@ services:
         DATABASE_PASSWORD: 7tsfft
       ports:
         - "8086:8080"
+        - "1111:1111"
 
     db:
       image: postgres:14.5

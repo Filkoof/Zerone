@@ -33,7 +33,8 @@ public class MessageService {
         var messageEntity = messageMapper.messageRequestToEntity(request, dialog, currentUser);
         messageRepository.save(messageEntity);
 
-        socketEvents.sentMessage(messageEntity, dialog.getRecipient());
+        var recipient = dialog.getRecipient().getId().equals(currentUser.getId()) ? dialog.getSender() : dialog.getRecipient();
+        socketEvents.sentMessage(messageEntity, recipient);
 
         return CommonResponseDto.<MessageDto>builder()
                 .data(messageMapper.messageEntityToDto(messageEntity, currentUser))
