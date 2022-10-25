@@ -30,27 +30,28 @@ public class JdbcRecommendedFriendsRepository {
     @Transactional
     public int[] updateBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
-        for (Long user_id : recommendedFriendsMapInt.keySet()) {
+        for (Map.Entry<Long, Long[]> entry : recommendedFriendsMapInt.entrySet()) {
             batchValues.add(
-                    new MapSqlParameterSource(USER_ID, user_id)
+                    new MapSqlParameterSource(USER_ID, entry.getKey())
                             .addValue("recommended_friends",
                                     jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(),
-                                            recommendedFriendsMapInt.get(user_id)))).getValues()
+                                            entry.getValue()))).getValues()
             );
         }
         int[] updateCount = namedParameterJdbcTemplate.batchUpdate(
                 "UPDATE recommended_friends SET recommended_friends = :recommended_friends WHERE user_id=:user_id"
                 , batchValues.toArray(new Map[recommendedFriendsMapInt.size()]));
-
         return updateCount;
     }
 
     @Transactional
     public int[] insertBatchRecommendationsArray(Map<Long, Long[]> recommendedFriendsMapInt) {
         List<Map<String, Object>> batchValues = new ArrayList<>(recommendedFriendsMapInt.size());
-        for (Long user_id : recommendedFriendsMapInt.keySet()) {
-            batchValues.add(new MapSqlParameterSource(USER_ID, user_id)
-                    .addValue("recommended_friends", jdbcTemplate.execute((Connection c) -> c.createArrayOf(JDBCType.BIGINT.getName(), recommendedFriendsMapInt.get(user_id)))).getValues()
+        for (Map.Entry<Long, Long[]> entry : recommendedFriendsMapInt.entrySet()) {
+            batchValues.add(new MapSqlParameterSource(USER_ID, entry.getKey())
+                    .addValue("recommended_friends", jdbcTemplate.execute((Connection c) ->
+                            c.createArrayOf(JDBCType.BIGINT.getName(),
+                                    entry.getValue()))).getValues()
             );
         }
         jdbcTemplate.execute("CREATE UNIQUE INDEX unique_user_id ON recommended_friends (user_id)");

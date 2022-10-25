@@ -9,7 +9,7 @@ public enum FriendshipStatusType {
     BLOCKED(3),
     DECLINED(4),
     SUBSCRIBED(5),
-    WAS_BLOCKED_BY(6),
+    WASBLOCKEDBY(6),
     DEADLOCK(7);
 
     private final int value;
