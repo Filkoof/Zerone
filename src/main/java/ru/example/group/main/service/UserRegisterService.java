@@ -50,7 +50,7 @@ public class UserRegisterService {
         if (userFromDB != null) {
             return false;
         }
-        String code = UUID.randomUUID().toString().substring(0, 24);
+        String code = UUID.randomUUID().toString();
         newUserAddToDB(userRegisterRequestDto, code);
         String message =
                 "Здравствуйте, " + userRegisterRequestDto.getFirstName() + "\n\n" +

@@ -49,7 +49,7 @@ public class UserSettingsService {
     }
 
     private void sendEmailChangeConfirmation(String newEmail, UserEntity user) throws EmailNotSentException {
-        String code = UUID.randomUUID().toString().substring(0, 24);
+        String code = UUID.randomUUID().toString();
         user.setConfirmationCode(code);
         userRepository.save(user);
         String message =
@@ -95,7 +95,7 @@ public class UserSettingsService {
     }
 
     private void sendPasswordChangeConfirmation(String password, UserEntity user) throws EmailNotSentException {
-        String code = UUID.randomUUID().toString().substring(0, 24);
+        String code = UUID.randomUUID().toString();
         user.setConfirmationCode(code);
         userRepository.save(user);
         String message =
@@ -147,7 +147,7 @@ public class UserSettingsService {
     }
 
     private void sendUserDeleteConfirmation(UserEntity user) throws EmailNotSentException {
-        String code = UUID.randomUUID().toString().substring(0, 24);
+        String code = UUID.randomUUID().toString();
         user.setConfirmationCode(code);
         userRepository.save(user);
         String message =
@@ -165,7 +165,7 @@ public class UserSettingsService {
         if (userToDelete != null) {
             userToDelete.setDeleted(true);
             try {
-                code = UUID.randomUUID().toString().substring(0, 24);
+                code = UUID.randomUUID().toString();
                 userToDelete.setConfirmationCode(code);
                 userRepository.save(userToDelete);
                 userDeletedNotice(userToDelete.getEmail(), code);
