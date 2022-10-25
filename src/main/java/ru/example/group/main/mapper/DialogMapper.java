@@ -17,8 +17,8 @@ public interface DialogMapper {
     DialogEntity dialogRequestToEntity(UserEntity sender, UserEntity recipient);
 
     @Mapping(target = "id", source = "entity.id")
-    @Mapping(target = "recipientId", source = "entity.recipient")
+    @Mapping(target = "recipientId", source = "recipient")
     @Mapping(target = "unreadCount", source = "unreadCount")
     @Mapping(target = "lastMessage", source = "lastMessage")
-    DialogResponseDto dialogEntityToDto(DialogEntity entity, Integer unreadCount, MessageDto lastMessage);
+    DialogResponseDto dialogEntityToDto(DialogEntity entity, UserEntity recipient , Integer unreadCount, MessageDto lastMessage);
 }

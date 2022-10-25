@@ -52,13 +52,13 @@ public class DialogService {
 
     public CommonListResponseDto<DialogResponseDto> getDialogs(Integer offset, Integer itemPerPage) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var statePage = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, UtilZerone.getPagination(itemPerPage, offset));
+        var dialogs = dialogRepository.findAllDialogsByCurrentUserWithPagination(currentUser, UtilZerone.getPagination(itemPerPage, offset));
 
         return CommonListResponseDto.<DialogResponseDto>builder()
-                .total((int) statePage.getTotalElements())
+                .total((int) dialogs.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(statePage.stream().map(dialog -> getDialogDto(dialog, currentUser)).toList())
+                .data(dialogs.stream().map(dialog -> getDialogDto(dialog, currentUser)).toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -68,8 +68,10 @@ public class DialogService {
         var lastMessage = messageRepository.existsByDialogId(dialog.getId()) ?
                 messageRepository.findLastMessage(dialog.getId()) : getStartMessage(dialog, currentUser);
 
+
         return dialogMapper.dialogEntityToDto(
                 dialog,
+                dialog.getRecipient().getId().equals(currentUser.getId()) ? dialog.getSender() : dialog.getRecipient(),
                 messageRepository.countUnreadMessagesInDialog(dialog, currentUser),
                 messageMapper.messageEntityToDto(lastMessage, currentUser));
     }

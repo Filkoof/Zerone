@@ -24,7 +24,6 @@ import ru.example.group.main.security.SocialNetUserDetailsService;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -53,25 +52,24 @@ public class SocketEvents {
         var username = jwtUtilService.extractUsername(authRequest.getToken());
         var userDetails = socialNetUserDetailsService.loadUserByUsername(username);
         var user = socialNetUserDetailsService.loadUserEntityByUsername(userDetails.getUsername());
+        setOnlineTime(user);
 
         var userId = user.getId();
         var session = client.getSessionId();
 
-        setOnlineTime(user);
-
         SessionEntity sessionEntity = new SessionEntity();
-        sessionEntity.setUserId(String.valueOf(userId));
-        sessionEntity.setSession(String.valueOf(session));
+        sessionEntity.setUserId(userId);
+        sessionEntity.setSession(session);
         sessionsRepository.save(sessionEntity);
 
-        client.sendEvent("auth-response", sessionsRepository.existsById(String.valueOf(session)) ? "ok" : "not");
+        client.sendEvent("auth-response", sessionsRepository.existsById(session) ? "ok" : "not");
     }
 
     @OnDisconnect
     public void disconnect(SocketIOClient client) {
         var session = client.getSessionId();
-        var sessionEntity = sessionsRepository.findById(String.valueOf(session)).orElseThrow(EntityNotFoundException::new);
-        var user = userRepository.findById(Long.valueOf(sessionEntity.getUserId())).orElseThrow(EntityNotFoundException::new);
+        var sessionEntity = sessionsRepository.findById(session).orElseThrow(EntityNotFoundException::new);
+        var user = userRepository.findById(sessionEntity.getUserId()).orElseThrow(EntityNotFoundException::new);
         setOnlineTime(user);
 
         sessionsRepository.delete(sessionEntity);
@@ -86,7 +84,7 @@ public class SocketEvents {
     @OnEvent("newListener")
     public void newListener(SocketIOClient client) {
         var session = client.getSessionId();
-        var isExist = sessionsRepository.findById(String.valueOf(session)).isEmpty();
+        var isExist = sessionsRepository.findById(session).isEmpty();
         client.sendEvent("auth-response", isExist ? "ok" : "not");
     }
 
@@ -119,8 +117,8 @@ public class SocketEvents {
     @OnEvent("read-messages")
     public void readMessages(SocketIOClient client, ReadMessagesSocketDto readMessages) {
         var dialog = dialogRepository.findById(readMessages.getDialog()).orElseThrow(EntityNotFoundException::new);
-        var session = sessionsRepository.findById(String.valueOf(client.getSessionId())).orElseThrow(EntityNotFoundException::new);
-        var user = userRepository.findById(Long.valueOf(session.getUserId())).orElseThrow(EntityNotFoundException::new);
+        var session = sessionsRepository.findById(client.getSessionId()).orElseThrow(EntityNotFoundException::new);
+        var user = userRepository.findById(session.getUserId()).orElseThrow(EntityNotFoundException::new);
 
         var unreadMessages = messageRepository.findAllUnreadMessagesByDialogIdAndUserId(dialog.getId(), user.getId());
         unreadMessages.forEach(message -> message.setReadStatus(ReadStatusType.READ));
@@ -132,14 +130,15 @@ public class SocketEvents {
     }
 
     public void sentMessage(MessageEntity messageEntity, UserEntity recipient) {
-        var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(recipient.getId()));
-        if (sessionEntity.isEmpty()) {
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(recipient.getId());
+        if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
-            var session = sessionEntity.get().getSession();
-            var client = socketIOServer.getClient(UUID.fromString(session));
-            client.sendEvent("message", CommonResponseDto.<MessageSocketDto>builder()
-                    .data(messageMapper.messageEntityToSocketDto(messageEntity, recipient))
+            var session = sessionEntity.getSession();
+            var client = socketIOServer.getClient(session);
+
+            if(client != null) client.sendEvent("message", CommonResponseDto.<MessageSocketDto>builder()
+                    .data(messageMapper.messageEntityToSocketDto(messageEntity))
                     .error("")
                     .timeStamp(LocalDateTime.now())
                     .build());
@@ -147,29 +146,29 @@ public class SocketEvents {
     }
 
     public void commentNotification(NotificationEntity notification, CommentEntity comment, UserEntity user) {
-        var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(user.getId()));
-        if (sessionEntity.isEmpty()) {
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
+        if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
             var responseDto = notificationMapper.commentNotificationEntityToSocketDto(notification, comment, author);
 
-            var session = sessionEntity.get().getSession();
-            var client = socketIOServer.getClient(UUID.fromString(session));
+            var session = sessionEntity.getSession();
+            var client = socketIOServer.getClient(session);
             client.sendEvent("comment-notification-response", responseDto);
         }
     }
 
     public void friendNotification(NotificationEntity notification, UserEntity user) {
-        var sessionEntity = sessionsRepository.findSessionEntitiesByUserId(String.valueOf(user.getId()));
-        if (sessionEntity.isEmpty()) {
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
+        if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
             var responseDto = notificationMapper.friendRequestNotificationToSocketDto(notification, author);
 
-            var session = sessionEntity.get().getSession();
-            var client = socketIOServer.getClient(UUID.fromString(session));
+            var session = sessionEntity.getSession();
+            var client = socketIOServer.getClient(session);
             client.sendEvent("friend-notification-response", responseDto);
         }
     }

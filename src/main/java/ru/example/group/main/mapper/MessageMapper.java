@@ -20,13 +20,13 @@ public interface MessageMapper {
     @Mapping(target = "dialogId", source = "entity.dialog.id")
     MessageDto messageEntityToDto(MessageEntity entity, UserEntity currentUser);
 
-    @Mapping(target = "id", source = "entity.id")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "time", expression = "java(entity.getSentTime().toInstant(java.time.ZoneOffset.UTC))")
-    @Mapping(target = "authorId", source = "entity.user.id")
+    @Mapping(target = "authorId", source = "user.id")
     @Mapping(target = "readStatus", expression = "java(entity.getReadStatus().name())")
-    @Mapping(target = "isSendByMe", expression = "java(entity.getUser().getId().equals(currentUser.getId()))")
-    @Mapping(target = "dialogId", source = "entity.dialog.id")
-    MessageSocketDto messageEntityToSocketDto(MessageEntity entity, UserEntity currentUser);
+    @Mapping(target = "sendByMe", expression = "java(true)")
+    @Mapping(target = "dialogId", source = "dialog.id")
+    MessageSocketDto messageEntityToSocketDto(MessageEntity entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sentTime", expression = "java(java.time.LocalDateTime.now())")
