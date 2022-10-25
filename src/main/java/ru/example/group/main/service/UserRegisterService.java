@@ -4,6 +4,7 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserRegisterService {
 
     private static final String UNKNOWN = "unknown";
@@ -148,7 +150,7 @@ public class UserRegisterService {
                 location.set(1, locationResponse.getCity().getNames().get("ru"));
                 return location;
             } catch (IOException | GeoIp2Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
             }
         }
         return location;
@@ -173,7 +175,7 @@ public class UserRegisterService {
                     InetAddress inetAddress = InetAddress.getLocalHost();
                     ipAddress = inetAddress.getHostAddress();
                 } catch (UnknownHostException e) {
-                    e.printStackTrace();
+                    log.info(e.getMessage());
                 }
             }
         }

@@ -17,7 +17,7 @@ spring:
     hibernate:
       ddl-auto: update
   liquibase:
-    enabled: true
+    enabled: false
   servlet:
     multipart:
       max-file-size: 10MB
@@ -44,11 +44,9 @@ config:
   zeroneEmail: zerone.mail@mail.ru
   jwt-black-list-on: false
 
-socketio:
+socket:
   host: localhost
   port: 1111
-  maxFramePayloadLength: 1048576
-  maxHttpContentLength: 1048576
   bossCount: 1
   workCount: 100
   allowCustomRequests: true

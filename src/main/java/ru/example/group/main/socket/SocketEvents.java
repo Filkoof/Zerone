@@ -45,7 +45,7 @@ public class SocketEvents {
 
     @OnConnect
     public void connect(SocketIOClient client) {
-        log.info("Клиент {} отключился", client.getSessionId());
+        log.info("Клиент {} подключился", client.getSessionId());
     }
 
     @OnEvent("auth")

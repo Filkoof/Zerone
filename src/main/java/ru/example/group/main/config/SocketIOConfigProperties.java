@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "socketio")
+@ConfigurationProperties(prefix = "socket")
 @Configuration
 @Data
 public class SocketIOConfigProperties {

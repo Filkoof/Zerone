@@ -82,11 +82,9 @@ management:
       percentiles-histogram:
         "[http.server.requests]": true
 
-socketio:
-  host: localhost
+socket:
+  host: 0.0.0.0
   port: 1111
-  maxFramePayloadLength: 1048576
-  maxHttpContentLength: 1048576
   bossCount: 1
   workCount: 100
   allowCustomRequests: true
