@@ -4,10 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.example.group.main.entity.SessionEntity;
 
-import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface SessionsRepository extends CrudRepository<SessionEntity, String> {
+public interface SessionsRepository extends CrudRepository<SessionEntity, UUID> {
 
-    Optional<SessionEntity> findSessionEntitiesByUserId(String userId);
+    SessionEntity findSessionEntityByUserId(long userId);
 }

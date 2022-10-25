@@ -21,7 +21,7 @@ public class MessageSocketDto {
     private String messageText;
     @JsonProperty("read_status")
     private String readStatus;
-    private boolean IsSendByMe;
+    private boolean sendByMe;
     @JsonProperty("dialog_id")
     private int dialogId;
 }
