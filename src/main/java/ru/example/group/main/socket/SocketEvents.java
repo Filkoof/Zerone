@@ -147,7 +147,7 @@ public class SocketEvents {
 
     public void commentNotification(NotificationEntity notification, CommentEntity comment, UserEntity user) {
         var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
-        if (sessionEntity.getSession() == null) {
+        if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
@@ -161,7 +161,7 @@ public class SocketEvents {
 
     public void friendNotification(NotificationEntity notification, UserEntity user) {
         var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
-        if (sessionEntity.getSession() == null) {
+        if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
             var author = userMapper.userEntityToSocketDto(user);
