@@ -72,16 +72,13 @@ public class SupportService {
     }
 
     public SupportRequestsDto changeSupportRequestStatusById(long id, String status) throws SupportRequestException {
-        SupportRequestEntity entity = supportRequestRepository.findById(id).isPresent() ?
-                supportRequestRepository.findById(id).get() : null;
-        if (entity != null){
+        SupportRequestEntity entity = supportRequestRepository.findById(id).orElseThrow();
             try {
                 entity.setStatus(SupportRequestStatus.getEnumFromString(status));
                 supportRequestRepository.save(entity);
             } catch (Exception e){
              throw new SupportRequestException("Ошибка обновления статуса запроса: " + e.getMessage());
             }
-        }
         return supportRequestMapper.entityToDto(entity);
     }
 }

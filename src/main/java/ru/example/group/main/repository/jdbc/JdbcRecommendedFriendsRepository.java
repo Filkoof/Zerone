@@ -38,10 +38,9 @@ public class JdbcRecommendedFriendsRepository {
                                             entry.getValue()))).getValues()
             );
         }
-        int[] updateCount = namedParameterJdbcTemplate.batchUpdate(
+        return namedParameterJdbcTemplate.batchUpdate(
                 "UPDATE recommended_friends SET recommended_friends = :recommended_friends WHERE user_id=:user_id"
                 , batchValues.toArray(new Map[recommendedFriendsMapInt.size()]));
-        return updateCount;
     }
 
     @Transactional
