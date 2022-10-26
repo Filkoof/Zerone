@@ -17,7 +17,7 @@ public class AdminSettingsController {
     private final AdminService adminService;
 
     @GetMapping("/admin/set/blacklist_on")
-    public ResponseEntity<CommonResponseDto<?>> setBlacklistOnOff(@RequestParam Boolean changeTo) {
+    public ResponseEntity<CommonResponseDto<ResultMessageDto>> setBlacklistOnOff(@RequestParam Boolean changeTo) {
         Boolean setJwtBlacklist = adminService.setBlacklistOnOf(changeTo);
         CommonResponseDto<ResultMessageDto> jwtBlacklistSet = new CommonResponseDto<>();
         jwtBlacklistSet.setMessage("Jwt blacklist is on: " + setJwtBlacklist.toString());

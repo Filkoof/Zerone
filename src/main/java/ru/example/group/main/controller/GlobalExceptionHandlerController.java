@@ -216,4 +216,10 @@ public class GlobalExceptionHandlerController {
         log.info(e.getMessage());
         return new ResponseEntity<>(commonResponseDto, HttpStatus.BAD_REQUEST);
     }
+
+
+    @ExceptionHandler(SendToKafkaException.class)
+    public void handleSendToKafkaException(SendToKafkaException e) {
+        log.info("Письмо не было отправлено на кафку, отправлено через внутренний сервис. Ошибка: {}", e.getMessage());
+    }
 }

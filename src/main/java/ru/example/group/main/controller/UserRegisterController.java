@@ -16,10 +16,7 @@ import ru.example.group.main.dto.request.RegisterConfirmRequestDto;
 import ru.example.group.main.dto.request.UserRegisterRequestDto;
 import ru.example.group.main.dto.response.RegistrationCompleteResponseDto;
 import ru.example.group.main.dto.response.ResultMessageDto;
-import ru.example.group.main.exception.EmailNotSentException;
-import ru.example.group.main.exception.EmailOrPasswordChangeException;
-import ru.example.group.main.exception.NewUserConfirmationViaEmailFailedException;
-import ru.example.group.main.exception.UserDeleteOrRecoveryException;
+import ru.example.group.main.exception.*;
 import ru.example.group.main.service.UserRegisterService;
 import ru.example.group.main.service.UserSettingsService;
 
@@ -35,15 +32,15 @@ import javax.validation.constraints.Pattern;
 @Api("User registration operations api")
 public class UserRegisterController {
 
-
     @Value("${config.frontend}")
     private String domenName;
+
     private final UserRegisterService userRegisterService;
     private final UserSettingsService userSettingsService;
 
     @PostMapping("/register")
     @ApiOperation("Operation to register new user with provided data.")
-    public ResponseEntity<ResultMessageDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws Exception {
+    public ResponseEntity<ResultMessageDto> createUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) throws EmailNotSentException, NewUserWasNotSavedToDBException, UserWithThatEmailAlreadyExistException {
         return new ResponseEntity<>(userRegisterService.createUser(userRegisterRequestDto), HttpStatus.OK);
     }
 

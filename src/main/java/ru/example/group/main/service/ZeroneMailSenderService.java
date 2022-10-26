@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.example.group.main.config.ConfigProperties;
 import ru.example.group.main.dto.kafka.KafkaZeroneMailingDto;
 import ru.example.group.main.exception.EmailNotSentException;
+import ru.example.group.main.exception.SendToKafkaException;
 
 @RequiredArgsConstructor
 @Service
@@ -62,11 +63,12 @@ public class ZeroneMailSenderService {
         return false;
     }
 
-    private boolean sendKafkaOrElseThisMailService(KafkaZeroneMailingDto dto){
+    private boolean sendKafkaOrElseThisMailService(KafkaZeroneMailingDto dto) throws SendToKafkaException {
         try {
             kafkaService.sendMessageWithCallback(dto);
         } catch (Exception e){
-            return send(dto.getEmail(), dto.getTopic(), dto.getBody());
+            send(dto.getEmail(), dto.getTopic(), dto.getBody());
+            throw new SendToKafkaException(e.getMessage());
         }
         return true;
     }
