@@ -203,7 +203,7 @@ public class SocketEvents {
         }
     }
 
-    private void checkToken(AuthRequest request) {
-        return authRequest != null && authRequest.getToken() != null && !authRequest.getToken().isEmpty();
+    private boolean checkToken(AuthSocketRequestDto request) {
+        return request != null && request.getToken() != null && !request.getToken().isEmpty();
     }
 }
