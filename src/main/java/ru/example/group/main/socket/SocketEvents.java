@@ -49,7 +49,7 @@ public class SocketEvents {
 
     @OnEvent("auth")
     public void authentication(SocketIOClient client, AuthSocketRequestDto authRequest) {
-        if (!authRequest.getToken().isEmpty()) {
+        if (checkToken(authRequest)) {
             var username = jwtUtilService.extractUsername(authRequest.getToken());
             var userDetails = socialNetUserDetailsService.loadUserByUsername(username);
             var user = socialNetUserDetailsService.loadUserEntityByUsername(userDetails.getUsername());
@@ -201,5 +201,9 @@ public class SocketEvents {
             var client = socketIOServer.getClient(session);
             client.sendEvent("friend-notification-response", responseDto);
         }
+    }
+
+    private void checkToken(AuthRequest request) {
+        return authRequest != null && authRequest.getToken() != null && !authRequest.getToken().isEmpty();
     }
 }

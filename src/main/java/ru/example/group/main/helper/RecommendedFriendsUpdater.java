@@ -34,9 +34,9 @@ public class RecommendedFriendsUpdater {
         int segmentLimit = recommendedFriendsMapInt.size() / 100 > 0 ? recommendedFriendsMapInt.size() / 100 : 10;
         Long userIdUpdateCount = 0L;
         int batchSize = 0;
-        for (Long userId : recommendedFriendsMapInt.keySet()) {
+        for (Map.Entry<Long, Long[]> entry : recommendedFriendsMapInt.entrySet()) {
             userIdUpdateCount++;
-            recommendedFriendsMapIntSplit.put(userId, recommendedFriendsMapInt.get(userId));
+            recommendedFriendsMapIntSplit.put(entry.getKey(), entry.getValue());
             if (count == segmentLimit) {
                 batchSize = +jdbcRecommendedFriendsRepository.updateBatchRecommendationsArray(recommendedFriendsMapIntSplit).length;
                 recommendedFriendsMapIntSplit = new HashMap<>();

@@ -170,22 +170,22 @@ public class FriendsService {
         if (code == 3) {
             if (userToIdFriendshipStatusCheck == null && idToUserFriendshipStatusCheck == null) {
                 if(insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, new FriendshipEntity()) != null &&
-                        insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WAS_BLOCKED_BY, new FriendshipEntity()) != null) {
+                        insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, new FriendshipEntity()) != null) {
                     statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, new FriendshipEntity()) &&
-                            insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WAS_BLOCKED_BY, new FriendshipEntity());
+                            insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, new FriendshipEntity());
                 }
             } else {
-                int idToUserStatusCode = idToUserFriendshipStatusCheck.getStatus().getCode().getValue();
+                int idToUserStatusCode = idToUserFriendshipStatusCheck == null ? 0 : idToUserFriendshipStatusCheck.getStatus().getCode().getValue();
                 try {
                     statusUpdate = switch (idToUserStatusCode) {
                         case 1, 2, 5 -> insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
-                                && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WAS_BLOCKED_BY, idToUserFriendshipStatusCheck);
+                                && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, idToUserFriendshipStatusCheck);
                         case 3 -> insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DEADLOCK, userToIdFriendshipStatusCheck)
                                 && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DEADLOCK, idToUserFriendshipStatusCheck);
                         case 4 -> insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, userToIdFriendshipStatusCheck)
                                 && insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.DECLINED, idToUserFriendshipStatusCheck);
+                        case 0 -> false;
                         default -> statusUpdate;
-
                     };
                 }catch (Exception e){
                     throw new FriendsRequestException("Ошибка добавления друзей: " + e.getMessage());
