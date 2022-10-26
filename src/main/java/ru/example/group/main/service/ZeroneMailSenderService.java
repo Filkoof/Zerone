@@ -67,7 +67,6 @@ public class ZeroneMailSenderService {
         try {
             kafkaService.sendMessageWithCallback(dto);
         } catch (Exception e){
-            send(dto.getEmail(), dto.getTopic(), dto.getBody());
             throw new SendToKafkaException(e.getMessage());
         }
         return true;
