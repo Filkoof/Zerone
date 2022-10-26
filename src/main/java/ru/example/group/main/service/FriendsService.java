@@ -120,7 +120,7 @@ public class FriendsService {
         return ERROR_ADD_FRIEND;
     }
 
-    private Boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, FriendshipStatusType userGetStatus, FriendshipEntity friendship) throws FriendsRequestException {
+    private boolean insertOrUpdateFriendship(UserEntity user, UserEntity requestedFriendId, FriendshipStatusType userGetStatus, FriendshipEntity friendship) throws FriendsRequestException {
         try {
             friendship.setSrcPerson(user);
             friendship.setDstPerson(requestedFriendId);
@@ -156,7 +156,7 @@ public class FriendsService {
         return deleteOrBlockFriendResponse;
     }
 
-    private Boolean deleteOrBlockUserDoInRepository(int code, UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
+    private boolean deleteOrBlockUserDoInRepository(int code, UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
         boolean statusUpdate = false;
         if (code == 4) {
                  statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.DECLINED, userToIdFriendshipStatusCheck) &&
@@ -167,13 +167,13 @@ public class FriendsService {
                      statusUpdate = insertOrUpdateFriendship(user, requestedUser, FriendshipStatusType.BLOCKED, new FriendshipEntity()) &&
                             insertOrUpdateFriendship(requestedUser, user, FriendshipStatusType.WASBLOCKEDBY, new FriendshipEntity());
             } else {
-                statusUpdate = switchCheckFordeleteOrBlockUserDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
+                statusUpdate = switchCheckForDeleteOrBlockUserDoInRepository(user, requestedUser, userToIdFriendshipStatusCheck, idToUserFriendshipStatusCheck);
             }
         }
         return statusUpdate;
     }
 
-    private Boolean switchCheckFordeleteOrBlockUserDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
+    private boolean switchCheckForDeleteOrBlockUserDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
         boolean statusUpdate = false;
         int idToUserStatusCode = idToUserFriendshipStatusCheck == null ? 0 : idToUserFriendshipStatusCheck.getStatus().getCode().getValue();
         try {
