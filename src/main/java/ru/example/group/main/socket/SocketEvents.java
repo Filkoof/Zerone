@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class SocketEvents {
 
-    private static final String USER_OFFLINE = "Отправка уведомления не требуется, юзер офлайн";
+    private static final String USER_OFFLINE = "Отправка ивента не требуется, юзер офлайн";
     private final SocketIOServer socketIOServer;
     private final JWTUtilService jwtUtilService;
     private final SocialNetUserDetailsService socialNetUserDetailsService;
@@ -49,20 +49,22 @@ public class SocketEvents {
 
     @OnEvent("auth")
     public void authentication(SocketIOClient client, AuthSocketRequestDto authRequest) {
-        var username = jwtUtilService.extractUsername(authRequest.getToken());
-        var userDetails = socialNetUserDetailsService.loadUserByUsername(username);
-        var user = socialNetUserDetailsService.loadUserEntityByUsername(userDetails.getUsername());
-        setOnlineTime(user);
+        if (checkToken(authRequest)) {
+            var username = jwtUtilService.extractUsername(authRequest.getToken());
+            var userDetails = socialNetUserDetailsService.loadUserByUsername(username);
+            var user = socialNetUserDetailsService.loadUserEntityByUsername(userDetails.getUsername());
+            setOnlineTime(user);
 
-        var userId = user.getId();
-        var session = client.getSessionId();
+            var userId = user.getId();
+            var session = client.getSessionId();
 
-        SessionEntity sessionEntity = new SessionEntity();
-        sessionEntity.setUserId(userId);
-        sessionEntity.setSession(session);
-        sessionsRepository.save(sessionEntity);
+            SessionEntity sessionEntity = new SessionEntity();
+            sessionEntity.setUserId(userId);
+            sessionEntity.setSession(session);
+            sessionsRepository.save(sessionEntity);
 
-        client.sendEvent("auth-response", sessionsRepository.existsById(session) ? "ok" : "not");
+            client.sendEvent("auth-response", sessionsRepository.existsById(session) ? "ok" : "not");
+        }
     }
 
     @OnDisconnect
@@ -90,6 +92,17 @@ public class SocketEvents {
 
     @OnEvent("start-typing")
     public void startTyping(SocketIOClient client, TypingSocketRequestDto typing) {
+        var sessionEntity = getSessionEntityFromTypingRequest(typing);
+
+        if (sessionEntity == null) {
+            log.info(USER_OFFLINE);
+        } else {
+            var session = sessionEntity.getSession();
+            var clientRecipient = socketIOServer.getClient(session);
+
+            if(clientRecipient != null) clientRecipient.sendEvent("start-typing-response", startTyping(typing));
+        }
+
         client.sendEvent("start-typing-response", startTyping(typing));
     }
 
@@ -103,6 +116,17 @@ public class SocketEvents {
 
     @OnEvent("stop-typing")
     public void stopTyping(SocketIOClient client, TypingSocketRequestDto typing) {
+        var sessionEntity = getSessionEntityFromTypingRequest(typing);
+
+        if (sessionEntity == null) {
+            log.info(USER_OFFLINE);
+        } else {
+            var session = sessionEntity.getSession();
+            var clientRecipient = socketIOServer.getClient(session);
+
+            if(clientRecipient != null) clientRecipient.sendEvent("stop-typing-response", stopTyping(typing));
+        }
+
         client.sendEvent("stop-typing-response", stopTyping(typing));
     }
 
@@ -112,6 +136,12 @@ public class SocketEvents {
                 .author(userRepository.findById(typingRequest.getAuthor()).orElseThrow(EntityNotFoundException::new).getFirstName())
                 .dialog(typingRequest.getDialog())
                 .build();
+    }
+
+    private SessionEntity getSessionEntityFromTypingRequest(TypingSocketRequestDto typing) {
+        var dialog = dialogRepository.findById(typing.getDialog()).orElseThrow(EntityNotFoundException::new);
+        var recipient = dialog.getSender().getId().equals(typing.getAuthor()) ? dialog.getRecipient() : dialog.getSender();
+        return sessionsRepository.findSessionEntityByUserId(recipient.getId());
     }
 
     @OnEvent("read-messages")
@@ -171,5 +201,9 @@ public class SocketEvents {
             var client = socketIOServer.getClient(session);
             client.sendEvent("friend-notification-response", responseDto);
         }
+    }
+
+    private boolean checkToken(AuthSocketRequestDto request) {
+        return request != null && request.getToken() != null && !request.getToken().isEmpty();
     }
 }
