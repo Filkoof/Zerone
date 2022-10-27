@@ -52,6 +52,7 @@
             <path>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>2.7.3</version>
             </path>
             <dependency>
               <groupId>org.projectlombok</groupId>
