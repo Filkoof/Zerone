@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import lombok.Data;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.EventType;
+import ru.example.group.main.dto.response.UserDataResponseDto;
+import ru.example.group.main.entity.enumerated.NotificationType;
 
 import java.time.Instant;
 
@@ -15,7 +15,7 @@ import java.time.Instant;
 public class NotificationSocketResponseDto {
     private Long id;
     @JsonProperty("event_type")
-    private EventType eventType;
+    private NotificationType eventType;
     @JsonSerialize(using = InstantSerializer.class)
     @JsonDeserialize(using = InstantDeserializer.class)
     @JsonProperty("sent_time")
@@ -25,7 +25,7 @@ public class NotificationSocketResponseDto {
     @JsonProperty("parent_entity_id")
     private Integer parentEntityId;
     @JsonProperty("entity_author")
-    private UserEntity entityAuthor;
+    private UserDataResponseDto entityAuthor;
     @JsonProperty("current_entity_id")
     private int currentEntityId;
 }

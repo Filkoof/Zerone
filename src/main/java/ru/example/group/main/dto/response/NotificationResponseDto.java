@@ -7,8 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Builder;
 import lombok.Data;
-import ru.example.group.main.entity.UserEntity;
-import ru.example.group.main.entity.enumerated.EventType;
+import ru.example.group.main.entity.enumerated.NotificationType;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 public class NotificationResponseDto {
     private int id;
     @JsonProperty("event_type")
-    private EventType eventType;
+    private NotificationType eventType;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonProperty("sent_time")
@@ -25,7 +24,7 @@ public class NotificationResponseDto {
     @JsonProperty("entity_id")
     private Integer entityId;
     @JsonProperty("entity_author")
-    private UserEntity entityAuthor;
+    private UserDataResponseDto entityAuthor;
     @JsonProperty("parent_entity_id")
     private Integer parentId;
     @JsonProperty("current_entity_id")

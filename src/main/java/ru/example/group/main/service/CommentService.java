@@ -11,14 +11,18 @@ import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.FileResponseDto;
 import ru.example.group.main.entity.CommentEntity;
+import ru.example.group.main.entity.PostEntity;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.NotificationType;
 import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.exception.CommentPostNotFoundException;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.mapper.CommentMapper;
 import ru.example.group.main.mapper.FileMapper;
+import ru.example.group.main.mapper.NotificationMapper;
 import ru.example.group.main.repository.CommentRepository;
 import ru.example.group.main.repository.FileRepository;
+import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
 import ru.example.group.main.util.UtilZerone;
@@ -41,6 +45,8 @@ public class CommentService {
     private final LikesService likesService;
     private final CommentMapper commentMapper;
     private final FileMapper fileMapper;
+    private final NotificationMapper notificationMapper;
+    private final NotificationRepository notificationRepository;
 
     public CommonResponseDto<CommentDto> postComment(Long postId, CommentRequestDto request) {
         Assert.notNull(postId, "id поста не может быть null");
@@ -52,10 +58,19 @@ public class CommentService {
         var commentEntity = commentMapper.commentRequestDtoToEntity(request, postEntity, currentUser, parentComment);
         commentRepository.save(commentEntity);
 
+        addCommentNotification(postEntity, parentComment, commentEntity, currentUser);
+
         if (!request.getImageDtoList().isEmpty()) fileRepository.saveAll(request.getImageDtoList().stream()
                 .map(file -> fileMapper.commentFileRequestToEntity(file, postEntity, commentEntity)).toList());
 
         return getCommonResponseDto(commentEntity);
+    }
+
+    private void addCommentNotification(PostEntity post, CommentEntity parentComment, CommentEntity comment, UserEntity currentUser) {
+        var eventType = parentComment == null ? NotificationType.POST_COMMENT : NotificationType.COMMENT_COMMENT;
+        var recipientId = eventType.equals(NotificationType.COMMENT_COMMENT) ? comment.getParent().getUser().getId() : post.getUser().getId();
+        var postNotification = notificationMapper.notificationEntity(eventType, currentUser, post.getId(), comment.getId(), recipientId);
+        notificationRepository.save(postNotification);
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long commentId)

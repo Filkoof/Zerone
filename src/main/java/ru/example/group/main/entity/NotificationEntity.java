@@ -16,13 +16,13 @@ public class NotificationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private NotificationTypeEntity type;
+    private Long typeId;
     private LocalDateTime sentTime;
     @ManyToOne
     @JoinColumn(name = "person_id")
     private UserEntity user;
     private Long entityId;
+    private Long currentEntityId;
+    private Long recipientId;
     private boolean status;
 }

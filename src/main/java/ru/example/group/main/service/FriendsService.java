@@ -8,12 +8,15 @@ import ru.example.group.main.dto.response.ResultMessageDto;
 import ru.example.group.main.dto.response.UserDataResponseDto;
 import ru.example.group.main.entity.FriendshipEntity;
 import ru.example.group.main.entity.UserEntity;
+import ru.example.group.main.entity.enumerated.NotificationType;
 import ru.example.group.main.entity.enumerated.FriendshipStatusType;
 import ru.example.group.main.exception.FriendsRequestException;
 import ru.example.group.main.exception.GetUserFriendsException;
+import ru.example.group.main.mapper.NotificationMapper;
 import ru.example.group.main.mapper.UserMapper;
 import ru.example.group.main.repository.FriendshipRepository;
 import ru.example.group.main.repository.FriendshipStatusRepository;
+import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
@@ -22,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +37,8 @@ public class FriendsService {
     private final FriendshipRepository friendshipRepository;
     private final FriendshipStatusRepository friendshipStatusRepository;
     private final UserMapper userMapper;
+    private final NotificationMapper notificationMapper;
+    private final NotificationRepository notificationRepository;
 
     public FriendsResponseDto getUserFriends(String name, Integer offset, Integer itemPerPage, FriendshipStatusType friendshipStatusType) throws GetUserFriendsException {
         FriendsResponseDto friendsResponseDto = new FriendsResponseDto();
@@ -74,6 +78,9 @@ public class FriendsService {
         ResultMessageDto friendRequestResponse = new ResultMessageDto();
         friendRequestResponse.setError("");
         friendRequestResponse.setTimeStamp(LocalDateTime.now());
+
+        addFriendRequestNotification(user, id);
+
         if (!Objects.equals(id, user.getId())) {
             friendRequestResponse.setMessage("Запрос на дружбу отправлен.");
             try {
@@ -88,6 +95,11 @@ public class FriendsService {
             return new ResultMessageDto();
         }
         return friendRequestResponse;
+    }
+
+    private void addFriendRequestNotification(UserEntity sender, Long recipientId) {
+        var postNotification = notificationMapper.notificationEntity(NotificationType.FRIEND_REQUEST, sender, recipientId, sender.getId(), recipientId);
+        notificationRepository.save(postNotification);
     }
 
     private String sendFriendRequestDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {
