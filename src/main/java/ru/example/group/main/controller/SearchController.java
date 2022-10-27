@@ -17,12 +17,12 @@ public class SearchController {
 
     @GetMapping("/api/v1/users/search")
     public ResponseEntity<CommonListResponseDto<Object>> usersSearch(
-            @RequestParam(defaultValue = "") String firstName,
-            @RequestParam(defaultValue = "") String lastName,
-            @RequestParam(defaultValue = "-1") Long ageFrom,
-            @RequestParam(defaultValue = "-1") Long ageTo,
-            @RequestParam(defaultValue = "") String country,
-            @RequestParam(defaultValue = "") String city,
+            @RequestParam(value = "first_name", defaultValue = "") String firstName,
+            @RequestParam(value = "last_name", defaultValue = "") String lastName,
+            @RequestParam(value = "age_from", defaultValue = "-1") Long ageFrom,
+            @RequestParam(value = "age_to", defaultValue = "-1") Long ageTo,
+            @RequestParam(value = "country", defaultValue = "") String country,
+            @RequestParam(value = "city", defaultValue = "") String city,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "20") Integer itemPerPage
     ) {
@@ -35,8 +35,8 @@ public class SearchController {
     @GetMapping("/api/v1/post")
     public ResponseEntity<CommonListResponseDto<Object>> postSearch(
             @RequestParam(defaultValue = "") String text,
-            @RequestParam(defaultValue = "-1") Long dateFrom,
-            @RequestParam(defaultValue = "-1") Long dateTo,
+            @RequestParam(value = "date_from", defaultValue = "-1") Long dateFrom,
+            @RequestParam(value = "date_to", defaultValue = "-1") Long dateTo,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "20") Integer itemPerPage,
             @RequestParam(defaultValue = "") String author,

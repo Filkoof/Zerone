@@ -10,9 +10,36 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.example.group.main.entity.PostEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
+
+    Page<PostEntity> findAll(Pageable pageable);
+
+    @Query("""
+            SELECT p FROM PostEntity p WHERE LOWER(p.user.firstName) LIKE CONCAT('%', LOWER(:filter), '%')
+            OR UPPER(p.user.firstName) LIKE CONCAT('%', UPPER(:filter), '%')
+            OR LOWER(p.user.lastName) LIKE CONCAT('%', LOWER(:filter), '%')
+            OR UPPER(p.user.lastName) LIKE CONCAT('%', UPPER(:filter), '%')
+            OR LOWER(p.title) LIKE CONCAT('%', LOWER(:filter), '%')
+            OR UPPER(p.title) LIKE CONCAT('%', UPPER(:filter), '%')
+            OR UPPER(p.postText) LIKE CONCAT('%', UPPER(:filter), '%')
+            OR LOWER(p.postText) LIKE CONCAT('%', LOWER(:filter), '%')
+            """)
+    Page<PostEntity> findAllByFilter(Pageable pageable, String filter);
+
+    @Query("""
+            SELECT p from PostEntity p
+            WHERE p.isDeleted = true
+            """)
+    List<PostEntity> findAllByDeleted();
+
+    @Query("""
+            SELECT p from PostEntity p
+            WHERE p.isBlocked = true
+            """)
+    List<PostEntity> findAllByBlocked();
 
     @Query("""
             SELECT pe FROM PostEntity pe
