@@ -81,7 +81,15 @@ public class NotificationService {
 
     private NotificationSettingEntity createAndSaveSettingsEntity(UserEntity currentUser) {
         NotificationSettingEntity notificationSettingEntity = new NotificationSettingEntity();
-        notificationSettingEntity.setUser(currentUser);
+        notificationSettingEntity
+                .setUser(currentUser)
+                .setPostEnabled(true)
+                .setPostCommentEnabled(true)
+                .setCommentCommentEnabled(true)
+                .setFriendRequestEnabled(true)
+                .setMessagesEnabled(true)
+                .setFriendBirthdayEnabled(true);
+
         return notificationSettingsRepository.save(notificationSettingEntity);
     }
 
