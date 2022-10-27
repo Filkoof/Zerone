@@ -3,7 +3,6 @@ package ru.example.group.main.service;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +59,7 @@ public class AdminDashboardService {
         try {
             jsonObject.put("months", jsonArray);
             jsonObject.put("values", getMonthDataForAccountRetensionData());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return jsonObject;
@@ -87,7 +86,7 @@ public class AdminDashboardService {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 count += Integer.parseInt(jsonArray.getString(i));
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -141,7 +140,7 @@ public class AdminDashboardService {
             jsonObject.put("days", getPublicationsMonthStats());
             jsonObject.put("current", getPublicationCurrentMonthInDay(2, 1));
             jsonObject.put("last", getPublicationCurrentMonthInDay(3, 2));
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return jsonObject;
@@ -182,7 +181,7 @@ public class AdminDashboardService {
         JSONObject object = new JSONObject();
         try {
             object.put("oldStats", oldStats());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return object;
@@ -235,7 +234,7 @@ public class AdminDashboardService {
                 jsonObject.put("y", map.getValue());
                 jsonObject.put("z", map.getValue() >= 3 ? 110 : 60);
                 jsonArray.put(jsonObject);
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -294,7 +293,7 @@ public class AdminDashboardService {
                     jsonObject.put("y", user.getCountComments());
                     jsonUserCommentsList.put(jsonObject);
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
 
             }
@@ -347,7 +346,7 @@ public class AdminDashboardService {
         return jsonArray;
     }
 
-    public Integer getCountLikes(){
+    public Integer getCountLikes() {
         return commentRepository.findAll().size();
     }
 
