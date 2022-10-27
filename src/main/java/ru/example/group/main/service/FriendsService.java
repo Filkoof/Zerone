@@ -20,6 +20,7 @@ import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.repository.UserRepository;
 import ru.example.group.main.security.SocialNetUserDetailsService;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+import ru.example.group.main.socket.SocketEvents;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class FriendsService {
     private final FriendshipRepository friendshipRepository;
     private final FriendshipStatusRepository friendshipStatusRepository;
     private final UserMapper userMapper;
+    private final SocketEvents socketEvents;
     private final NotificationMapper notificationMapper;
     private final NotificationRepository notificationRepository;
 
@@ -100,6 +102,7 @@ public class FriendsService {
     private void addFriendRequestNotification(UserEntity sender, Long recipientId) {
         var postNotification = notificationMapper.notificationEntity(NotificationType.FRIEND_REQUEST, sender, recipientId, sender.getId(), recipientId);
         notificationRepository.save(postNotification);
+        socketEvents.friendNotification(postNotification);
     }
 
     private String sendFriendRequestDoInRepository(UserEntity user, UserEntity requestedUser, FriendshipEntity userToIdFriendshipStatusCheck, FriendshipEntity idToUserFriendshipStatusCheck) throws FriendsRequestException {

@@ -25,6 +25,7 @@ import ru.example.group.main.repository.FileRepository;
 import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.security.SocialNetUserRegisterService;
+import ru.example.group.main.socket.SocketEvents;
 import ru.example.group.main.util.UtilZerone;
 
 import javax.persistence.EntityNotFoundException;
@@ -44,6 +45,7 @@ public class CommentService {
     private final SocialNetUserRegisterService socialNetUserRegisterService;
     private final LikesService likesService;
     private final CommentMapper commentMapper;
+    private final SocketEvents socketEvents;
     private final FileMapper fileMapper;
     private final NotificationMapper notificationMapper;
     private final NotificationRepository notificationRepository;
@@ -71,6 +73,11 @@ public class CommentService {
         var recipientId = eventType.equals(NotificationType.COMMENT_COMMENT) ? comment.getParent().getUser().getId() : post.getUser().getId();
         var postNotification = notificationMapper.notificationEntity(eventType, currentUser, post.getId(), comment.getId(), recipientId);
         notificationRepository.save(postNotification);
+        if (eventType == NotificationType.POST_COMMENT) {
+            socketEvents.postCommentNotification(postNotification);
+        } else {
+            socketEvents.commentCommentNotification(postNotification, comment);
+        }
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long commentId)
