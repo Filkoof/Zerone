@@ -2,84 +2,84 @@ version: '3.1'
 
 services:
 
-    zerone_backend:
-      restart: always
-      depends_on:
-        - kafka
-      image: azul/zulu-openjdk-alpine:17-jre
-      volumes:
-        - ./:/app
-      working_dir: /app
-      command: java -jar app.jar
-      environment:
-        DATABASE_URL: jdbc:postgresql://db:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
-        DATABASE_USERNAME: zerone
-        DATABASE_PASSWORD: 7tsfft
-      ports:
-        - "8086:8080"
-        - "1111:1111"
+  zerone_backend:
+    restart: always
+    depends_on:
+      - kafka
+    image: azul/zulu-openjdk-alpine:17-jre
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: java -jar app.jar
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
+      DATABASE_USERNAME: zerone
+      DATABASE_PASSWORD: 7tsfft
+    ports:
+      - "8086:8080"
+      - "1111:1111"
 
-    db:
-      image: postgres:14.5
-      container_name: "postgres"
-      restart: always
-      environment:
-        POSTGRES_USER: zerone
-        POSTGRES_PASSWORD: 7tsfft
-      ports:
-        - "5432:5432"
-      volumes:
-        - ./postgres/data:/var/lib/postgres/data
+  db:
+    image: postgres:14.5
+    container_name: "postgres"
+    restart: always
+    environment:
+      POSTGRES_USER: zerone
+      POSTGRES_PASSWORD: 7tsfft
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/data:/var/lib/postgres/data
 
-    zerone_frontend:
-      container_name: zerone_frontend
-      restart: always
-      image: ifomkin/zerone-fronted:http
-      ports:
-        - "80:80"
+  zerone_frontend:
+    container_name: zerone_frontend
+    restart: always
+    image: ifomkin/zerone-fronted:http
+    ports:
+      - "80:80"
 
-    redis:
-      image: redis:6.2.7-alpine
-      container_name: "redis"
-      restart: always
-      environment:
-        REDIS_PASSWORD: 8FvUYL
-      ports:
-        - "6379:6379"
-      volumes:
-        - ./redis/data:/var/lib/redis/data
+  redis:
+    image: redis:6.2.7-alpine
+    container_name: "redis"
+    restart: always
+    environment:
+      REDIS_PASSWORD: 8FvUYL
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/var/lib/redis/data
 
-    kafka:
-      image: confluentinc/cp-kafka
-      container_name: "kafka"
-      restart: always
-      depends_on:
-        - zookeeper
-      hostname: kafka
-      environment:
-        KAFKA_BROKER_ID: 1
-        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-        KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:29092
-        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-        KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        KAFKA_ADVERTISED_HOST_NAME: kafka
-      ports:
-        - "9092:29092"
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: "kafka"
+    restart: always
+    depends_on:
+      - zookeeper
+    hostname: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+    ports:
+      - "9092:29092"
 
-    zookeeper:
-      image: confluentinc/cp-zookeeper
-      container_name: "zookeeper"
-      restart: always
-      environment:
-        ZOOKEEPER_CLIENT_PORT: 2181
-        ZOOKEEPER_TICK_TIME: 2000
-      ports:
-        - "22181:2181"
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: "zookeeper"
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
 
-    zerone_mailing:
-      image: filkoof/zerone_mailing:latest
-      container_name: "zerone_mailing"
-      restart: always
-      depends_on:
-        - kafka
+  zerone_mailing:
+    image: filkoof/zerone_mailing:latest
+    container_name: "zerone_mailing"
+    restart: always
+    depends_on:
+      - kafka

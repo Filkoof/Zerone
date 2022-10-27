@@ -15,10 +15,7 @@ import ru.example.group.main.entity.enumerated.ReadStatusType;
 import ru.example.group.main.mapper.MessageMapper;
 import ru.example.group.main.mapper.NotificationMapper;
 import ru.example.group.main.mapper.UserMapper;
-import ru.example.group.main.repository.DialogRepository;
-import ru.example.group.main.repository.MessageRepository;
-import ru.example.group.main.repository.SessionsRepository;
-import ru.example.group.main.repository.UserRepository;
+import ru.example.group.main.repository.*;
 import ru.example.group.main.security.JWTUtilService;
 import ru.example.group.main.security.SocialNetUserDetailsService;
 
@@ -37,6 +34,7 @@ public class SocketEvents {
     private final SessionsRepository sessionsRepository;
     private final MessageRepository messageRepository;
     private final DialogRepository dialogRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final NotificationMapper notificationMapper;
     private final MessageMapper messageMapper;
@@ -95,7 +93,7 @@ public class SocketEvents {
         var sessionEntity = getSessionEntityFromTypingRequest(typing);
 
         if (sessionEntity == null) {
-            log.info(USER_OFFLINE);
+            log.debug(USER_OFFLINE);
         } else {
             var session = sessionEntity.getSession();
             var clientRecipient = socketIOServer.getClient(session);
@@ -119,7 +117,7 @@ public class SocketEvents {
         var sessionEntity = getSessionEntityFromTypingRequest(typing);
 
         if (sessionEntity == null) {
-            log.info(USER_OFFLINE);
+            log.debug(USER_OFFLINE);
         } else {
             var session = sessionEntity.getSession();
             var clientRecipient = socketIOServer.getClient(session);
@@ -162,7 +160,7 @@ public class SocketEvents {
     public void sentMessage(MessageEntity messageEntity, UserEntity recipient) {
         var sessionEntity = sessionsRepository.findSessionEntityByUserId(recipient.getId());
         if (sessionEntity == null) {
-            log.info(USER_OFFLINE);
+            log.debug(USER_OFFLINE);
         } else {
             var session = sessionEntity.getSession();
             var client = socketIOServer.getClient(session);
@@ -175,31 +173,58 @@ public class SocketEvents {
         }
     }
 
-    public void commentNotification(NotificationEntity notification, CommentEntity comment, UserEntity user) {
-        var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
+    public void commentCommentNotification(NotificationEntity notification, CommentEntity comment) {
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(notification.getRecipientId());
         if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
-            var author = userMapper.userEntityToSocketDto(user);
-            var responseDto = notificationMapper.commentNotificationEntityToSocketDto(notification, comment, author);
+            var author = userMapper.userEntityToSocketDto(notification.getUser());
+            var responseDto = notificationMapper.commentCommentNotificationEntityToSocketDto(notification, comment, author);
 
             var session = sessionEntity.getSession();
             var client = socketIOServer.getClient(session);
-            client.sendEvent("comment-notification-response", responseDto);
+            if(client != null) client.sendEvent("comment-notification-response", CommonResponseDto.<NotificationSocketResponseDto>builder()
+                    .data(responseDto)
+                    .error("")
+                    .timeStamp(LocalDateTime.now())
+                    .build());
         }
     }
 
-    public void friendNotification(NotificationEntity notification, UserEntity user) {
-        var sessionEntity = sessionsRepository.findSessionEntityByUserId(user.getId());
+    public void postCommentNotification(NotificationEntity notification) {
+        var post = postRepository.findPostEntityById(notification.getEntityId());
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(notification.getRecipientId());
         if (sessionEntity == null) {
             log.info(USER_OFFLINE);
         } else {
-            var author = userMapper.userEntityToSocketDto(user);
+            var author = userMapper.userEntityToSocketDto(notification.getUser());
+            var responseDto = notificationMapper.postCommentNotificationEntityToSocketDto(notification, post, author);
+
+            var session = sessionEntity.getSession();
+            var client = socketIOServer.getClient(session);
+            if(client != null) client.sendEvent("comment-notification-response", CommonResponseDto.<NotificationSocketResponseDto>builder()
+                    .data(responseDto)
+                    .error("")
+                    .timeStamp(LocalDateTime.now())
+                    .build());
+        }
+    }
+
+    public void friendNotification(NotificationEntity notification) {
+        var sessionEntity = sessionsRepository.findSessionEntityByUserId(notification.getRecipientId());
+        if (sessionEntity == null) {
+            log.info(USER_OFFLINE);
+        } else {
+            var author = userMapper.userEntityToSocketDto(notification.getUser());
             var responseDto = notificationMapper.friendRequestNotificationToSocketDto(notification, author);
 
             var session = sessionEntity.getSession();
             var client = socketIOServer.getClient(session);
-            client.sendEvent("friend-notification-response", responseDto);
+            if(client != null) client.sendEvent("friend-notification-response", CommonResponseDto.<NotificationSocketResponseDto>builder()
+                    .data(responseDto)
+                    .error("")
+                    .timeStamp(LocalDateTime.now())
+                    .build());
         }
     }
 
