@@ -59,7 +59,7 @@ public class MessageService {
 
     public CommonResponseDto<Map<String, String>> getUnreadMessage() {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
-        var unreadMessages = messageRepository.countUnreadMessagesInDialogsByCurrentUser(currentUser);
+        var unreadMessages = messageRepository.countUnreadMessagesInDialogs(currentUser);
 
         return CommonResponseDto.<Map<String, String>>builder()
                 .data(Map.of("count", String.valueOf(unreadMessages)))

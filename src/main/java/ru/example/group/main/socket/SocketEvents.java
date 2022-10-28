@@ -152,7 +152,7 @@ public class SocketEvents {
         unreadMessages.forEach(message -> message.setReadStatus(ReadStatusType.READ));
         messageRepository.saveAll(unreadMessages);
 
-        var unreadCount = messageRepository.countUnreadMessagesInDialogsByCurrentUser(user);
+        var unreadCount = messageRepository.countUnreadMessagesInDialogs(user);
 
         client.sendEvent("unread-response", String.valueOf(unreadCount));
     }
@@ -165,11 +165,14 @@ public class SocketEvents {
             var session = sessionEntity.getSession();
             var client = socketIOServer.getClient(session);
 
-            if(client != null) client.sendEvent("message", CommonResponseDto.<MessageSocketDto>builder()
-                    .data(messageMapper.messageEntityToSocketDto(messageEntity))
-                    .error("")
-                    .timeStamp(LocalDateTime.now())
-                    .build());
+            if(client != null) {
+                client.sendEvent("message", CommonResponseDto.<MessageSocketDto>builder()
+                        .data(messageMapper.messageEntityToSocketDto(messageEntity))
+                        .error("")
+                        .timeStamp(LocalDateTime.now())
+                        .build());
+                client.sendEvent("unread-response", String.valueOf(messageRepository.countUnreadMessagesInDialogs(recipient)));
+            }
         }
     }
 

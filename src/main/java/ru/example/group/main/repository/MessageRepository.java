@@ -24,10 +24,10 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     @Query("""
             SELECT COUNT(m.readStatus) FROM MessageEntity m
             WHERE m.readStatus = 'SENT'
-            AND (m.dialog.recipient = :currentUser OR m.dialog.sender = :currentUser)
-            AND m.user <> :currentUser
+            AND (m.dialog.recipient = :user OR m.dialog.sender = :user)
+            AND m.user <> :user
             """)
-    Integer countUnreadMessagesInDialogsByCurrentUser(UserEntity currentUser);
+    Integer countUnreadMessagesInDialogs(UserEntity user);
 
     @Query("""
             SELECT COUNT(m.readStatus) FROM MessageEntity m
