@@ -72,7 +72,7 @@ public class CommentService {
         var eventType = parentComment == null ? NotificationType.POST_COMMENT : NotificationType.COMMENT_COMMENT;
         var recipientId = eventType.equals(NotificationType.COMMENT_COMMENT) ? comment.getParent().getUser().getId() : post.getUser().getId();
         var postNotification = notificationMapper.notificationEntity(eventType, currentUser, post.getId(), comment.getId(), recipientId);
-        notificationRepository.save(postNotification);
+        if(!currentUser.getId().equals(recipientId)) notificationRepository.save(postNotification);
         if (eventType == NotificationType.POST_COMMENT) {
             socketEvents.postCommentNotification(postNotification);
         } else {

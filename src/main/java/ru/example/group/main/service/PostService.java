@@ -18,9 +18,7 @@ import ru.example.group.main.entity.enumerated.LikeType;
 import ru.example.group.main.entity.enumerated.PostType;
 import ru.example.group.main.exception.IdUserException;
 import ru.example.group.main.exception.PostsException;
-import ru.example.group.main.mapper.NotificationMapper;
 import ru.example.group.main.mapper.PostMapper;
-import ru.example.group.main.repository.NotificationRepository;
 import ru.example.group.main.repository.PostRepository;
 import ru.example.group.main.repository.TagRepository;
 import ru.example.group.main.repository.UserRepository;
@@ -35,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -209,7 +205,7 @@ public class PostService {
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) throws PostsException {
         try {
-            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).collect(toList());
+            var tags = postEntity.getTagEntities().stream().map(TagEntity::getTag).toList();
             var type = getType(postEntity);
             var listComment = commentService.getCommonList(postEntity.getId(), 5, 0);
             Integer likesForPostCount = likesService.likesCountByPostIdAndType(postEntity.getId(), LikeType.POST);

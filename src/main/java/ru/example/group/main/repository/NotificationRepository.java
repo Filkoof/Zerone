@@ -13,7 +13,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     @Query("""
             SELECT n FROM NotificationEntity n
             JOIN NotificationSettingEntity  s ON n.recipientId = s.user.id
-            WHERE n.recipientId = :userId
+            WHERE n.recipientId = :userId AND n.status = false
             AND (n.typeId = 1 and s.postCommentEnabled = true
             OR n.typeId = 2 and s.commentCommentEnabled = true
             OR n.typeId = 3 and s.friendRequestEnabled = true)

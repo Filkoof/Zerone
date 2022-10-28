@@ -31,7 +31,6 @@ public class NotificationService {
     private final CommentRepository commentRepository;
     private final NotificationMapper notificationMapper;
     private final SocialNetUserRegisterService socialNetUserRegisterService;
-    private final SocketEvents socketEvents;
 
     public CommonResponseDto<Map<String, String>> putNotificationSettings(NotificationSettingsDto request) {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
@@ -145,26 +144,14 @@ public class NotificationService {
 
     private NotificationResponseDto getNotificationDtoFromEntity(NotificationEntity notification) {
         return switch (NotificationType.getTypeFromValue(notification.getTypeId())) {
-            case POST, MESSAGE, FRIEND_BIRTHDAY -> notificationMapper.notificationEntityToDto(notification);
-            case COMMENT_COMMENT -> getCommentCommentNotificationDtoAndSendEvent(notification);
-            case POST_COMMENT -> getPostCommentNotificationDtoAndSendEvent(notification);
-            case FRIEND_REQUEST -> getFriendNotificationDtoAndSendEvent(notification);
+            case POST, MESSAGE, FRIEND_BIRTHDAY, FRIEND_REQUEST -> notificationMapper.notificationEntityToDto(notification);
+            case POST_COMMENT -> notificationMapper.postCommentNotificationEntityToDto(notification);
+            case COMMENT_COMMENT -> getCommentCommentNotificationDto(notification);
         };
     }
 
-    private NotificationResponseDto getCommentCommentNotificationDtoAndSendEvent(NotificationEntity notification) {
+    private NotificationResponseDto getCommentCommentNotificationDto(NotificationEntity notification) {
         var comment = commentRepository.findById(notification.getCurrentEntityId()).orElseThrow(EntityNotFoundException::new);
-//        socketEvents.commentCommentNotification(notification, comment);
         return notificationMapper.commentCommentNotificationEntityToDto(notification, comment);
-    }
-
-    private NotificationResponseDto getPostCommentNotificationDtoAndSendEvent(NotificationEntity notification) {
-//        socketEvents.postCommentNotification(notification);
-        return notificationMapper.postCommentNotificationEntityToDto(notification);
-    }
-
-    private NotificationResponseDto getFriendNotificationDtoAndSendEvent(NotificationEntity notification) {
-//        socketEvents.friendNotification(notification);
-        return notificationMapper.notificationEntityToDto(notification);
     }
 }
