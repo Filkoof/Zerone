@@ -79,3 +79,6 @@
 ## Сертификат о прохождении курса
  ![Alt-текст](https://sun9-west.userapi.com/sun9-64/s/v1/ig2/E7rRSemG12T1tPoYpBB7bv5_eOYp3W_NTMdKSSdXzg9QQNDtXhtnyk_zCcopnpjFP2cSyNLz37AjkKwgLLaHK8xb.jpg?size=1007x1426&quality=96&type=album "Сертификат")
     
+<div id="header" align="center">
+  <img src="https://media.giphy.com/media/scZPhLqaVOM1qG4lT9/giphy.gif" width="500"/>
+</div>
