@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 @Getter
 public class UtilZerone {
 
-    private static final String GREETINGS = "Здравствуйте, ";
-
     public static PageRequest getPagination(int itemPerPage, int offset) {
         return PageRequest.of(offset / itemPerPage, itemPerPage);
     }

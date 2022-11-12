@@ -73,6 +73,21 @@ public class PostService {
         return tryCatchPostsExceptionForCommonList(statePage, offset, itemPerPage);
     }
 
+    private CommonListResponseDto<PostResponseDto> tryCatchPostsExceptionForCommonList(Page<PostEntity> postPage, int offset, int itemPerPage) throws PostsException {
+        try {
+            return CommonListResponseDto.<PostResponseDto>builder()
+                    .total((int) postPage.getTotalElements())
+                    .perPage(itemPerPage)
+                    .offset(offset)
+                    .data(postPage.stream().map(this::tryCatchPostsExceptionForPostEntity).toList())
+                    .error("")
+                    .timestamp(LocalDateTime.now())
+                    .build();
+        } catch (Exception e) {
+            throw new PostsException(e.getMessage());
+        }
+    }
+
     public CommonListResponseDto<PostResponseDto> getNewsUserId(Long id, int offset) {
         var itemPerPage = postRepository.findAllByUserPost(id) == 0 ? 5 : postRepository.findAllByUserPost(id);
         var statePage = postRepository.findAllPostsUserId(id, UtilZerone.getPagination(itemPerPage, offset));
@@ -81,11 +96,18 @@ public class PostService {
                 .total((int) statePage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(statePage.stream().map(this::tryCatchPostsExceptionForPostEntity)
-                        .toList())
+                .data(statePage.stream().map(this::tryCatchPostsExceptionForPostEntity).toList())
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();
+    }
+
+    private PostResponseDto tryCatchPostsExceptionForPostEntity(PostEntity entity) {
+        try {
+            return getPostDtoFromEntity(entity);
+        } catch (PostsException e) {
+            return null;
+        }
     }
 
     public CommonResponseDto<PostResponseDto> getPostById(Long id) throws PostsException {
@@ -178,29 +200,6 @@ public class PostService {
         } else if (post.getTime().isAfter(LocalDateTime.now())) {
             return PostType.QUEUED;
         } else return PostType.POSTED;
-    }
-
-    private CommonListResponseDto<PostResponseDto> tryCatchPostsExceptionForCommonList(Page<PostEntity> postPage, int offset, int itemPerPage) throws PostsException {
-        try {
-            return CommonListResponseDto.<PostResponseDto>builder()
-                    .total((int) postPage.getTotalElements())
-                    .perPage(itemPerPage)
-                    .offset(offset)
-                    .data(postPage.stream().map(this::tryCatchPostsExceptionForPostEntity).toList())
-                    .error("")
-                    .timestamp(LocalDateTime.now())
-                    .build();
-        } catch (Exception e) {
-            throw new PostsException(e.getMessage());
-        }
-    }
-
-    private PostResponseDto tryCatchPostsExceptionForPostEntity(PostEntity entity) {
-        try {
-            return getPostDtoFromEntity(entity);
-        } catch (PostsException e) {
-            return null;
-        }
     }
 
     private PostResponseDto getPostDtoFromEntity(PostEntity postEntity) throws PostsException {
