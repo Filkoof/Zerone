@@ -64,7 +64,14 @@
     - **Чтение сообщений, при входе в диалог тригерится ивент read_message, читает сообщение и обновляет количество непрочитанных.**
     
 # Дополнителные ссылки:
-- <a href="http://zerone-network.ru/" target="_blank">Социальная сеть Zerone</a>
+- <a href="http://195.161.62.32/" target="_blank">Социальная сеть Zerone</a>
+    - При отсутсвии желания проходить регистрацию: 
+        - login: filkof@mail.ru
+        - password: 12345678
+    - При желании пощупать диалог с собеседником с двух окон:
+        - login: filkoof@mail.ru
+        - password: 12345678
+        
 - <a href="https://www.youtube.com/watch?v=0dMY2Og8_YA&ab_channel=%D0%9F%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%D0%B8%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D1%8B%D1%85%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%BE%D0%B2Skillbox&t=33m44s" target="_blank">Моя защита проекта</a>
 ## Итоговый отзыв тимлидера 
  ![Alt-текст](https://sun9-west.userapi.com/sun9-6/s/v1/ig2/1fk4F2teLedfgGntHRWxfKYHCVHwoGJgSDI5xbSwk9pOeBHttKIGo-FaaDQXX93ar1zoF2Vwa7aq3UStbxDlwA3l.jpg?size=960x180&quality=96&type=album "Коммент Тимлида")
