@@ -37,17 +37,22 @@ public class DialogService {
         var sender = socialNetUserRegisterService.getCurrentUser();
         var recipient = userRepository.findById(request.getUsersIds().get(0)).orElseThrow(EntityNotFoundException::new);
 
-        var dialogExist = dialogRepository.existsBySenderAndRecipient(sender, recipient) || dialogRepository.existsBySenderAndRecipient(recipient, sender);
-        var data = dialogExist ?
-                getDialogDto(dialogRepository.findDialogByUsersIds(sender, recipient), sender)
-                :
-                getDialogDto(dialogRepository.save(dialogMapper.dialogRequestToEntity(sender, recipient)), sender);
-
         return CommonResponseDto.<DialogResponseDto>builder()
-                .data(data)
+                .data(getPostDialogDto(sender, recipient))
                 .error("")
                 .timeStamp(LocalDateTime.now())
                 .build();
+    }
+
+    private DialogResponseDto getPostDialogDto(UserEntity sender, UserEntity recipient) {
+        return isDialogExist(sender, recipient) ?
+                getDialogDto(dialogRepository.findDialogByUsersIds(sender, recipient), sender)
+                :
+                getDialogDto(dialogRepository.save(dialogMapper.dialogRequestToEntity(sender, recipient)), sender);
+    }
+
+    private boolean isDialogExist(UserEntity sender, UserEntity recipient) {
+        return dialogRepository.existsBySenderAndRecipient(sender, recipient) || dialogRepository.existsBySenderAndRecipient(recipient, sender);
     }
 
     public CommonListResponseDto<DialogResponseDto> getDialogs(Integer offset, Integer itemPerPage) {
@@ -67,7 +72,6 @@ public class DialogService {
     private DialogResponseDto getDialogDto(DialogEntity dialog, UserEntity currentUser) {
         var lastMessage = messageRepository.existsByDialogId(dialog.getId()) ?
                 messageRepository.findLastMessage(dialog.getId()) : getStartMessage(dialog, currentUser);
-
 
         return dialogMapper.dialogEntityToDto(
                 dialog,

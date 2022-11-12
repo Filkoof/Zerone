@@ -3,6 +3,7 @@ package ru.example.group.main.service;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.example.group.main.dto.request.CommentRequestDto;
@@ -55,31 +56,48 @@ public class CommentService {
 
         var currentUser = socialNetUserRegisterService.getCurrentUser();
         var postEntity = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
-        var parentComment = request.getParentId() != null ? commentRepository.getReferenceById(request.getParentId()) : null;
-
+        var parentComment = isRequestHaveParentId(request) ? commentRepository.getReferenceById(request.getParentId()) : null;
         var commentEntity = commentMapper.commentRequestDtoToEntity(request, postEntity, currentUser, parentComment);
+
         commentRepository.save(commentEntity);
 
         addCommentNotification(postEntity, parentComment, commentEntity, currentUser);
 
-        if (!request.getImageDtoList().isEmpty()) fileRepository.saveAll(request.getImageDtoList().stream()
+        if (isHaveImages(request)) fileRepository.saveAll(request.getImageDtoList().stream()
                 .map(file -> fileMapper.commentFileRequestToEntity(file, postEntity, commentEntity)).toList());
 
         return getCommonResponseDto(commentEntity);
     }
 
+    private boolean isHaveImages(CommentRequestDto request) {
+        return !request.getImageDtoList().isEmpty();
+    }
+
     private void addCommentNotification(PostEntity post, CommentEntity parentComment, CommentEntity comment, UserEntity currentUser) {
-        var eventType = parentComment == null ? NotificationType.POST_COMMENT : NotificationType.COMMENT_COMMENT;
-        var recipientId = eventType.equals(NotificationType.COMMENT_COMMENT) ? comment.getParent().getUser().getId() : post.getUser().getId();
+        var eventType = isParentCommentExist(parentComment) ? NotificationType.COMMENT_COMMENT : NotificationType.POST_COMMENT;
+        var recipientId = isThisCommentComment(eventType) ? comment.getParent().getUser().getId() : post.getUser().getId();
         var postNotification = notificationMapper.notificationEntity(eventType, currentUser, post.getId(), comment.getId(), recipientId);
+
         if(!currentUser.getId().equals(recipientId)) {
             notificationRepository.save(postNotification);
-            if (eventType == NotificationType.POST_COMMENT) {
+            if (isThisPostComment(eventType)) {
                 socketEvents.postCommentNotification(postNotification);
             } else {
                 socketEvents.commentCommentNotification(postNotification, comment);
             }
         }
+    }
+
+    private boolean isParentCommentExist(CommentEntity parentComment) {
+        return parentComment != null;
+    }
+
+    private boolean isThisCommentComment(NotificationType eventType) {
+        return eventType.equals(NotificationType.COMMENT_COMMENT);
+    }
+
+    private boolean isThisPostComment(NotificationType eventType) {
+        return eventType.equals(NotificationType.POST_COMMENT);
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> deleteComment(long idPost, long commentId)
@@ -115,10 +133,13 @@ public class CommentService {
 
     private CommentEntity getCommentFromRequest(CommentEntity commentEntity, CommentRequestDto request) {
         commentEntity.setCommentText(request.getCommentText());
-        if (request.getParentId() != null) {
-            commentEntity.setParent(commentRepository.getReferenceById(request.getParentId()));
-        }
+        if (isRequestHaveParentId(request)) commentEntity.setParent(commentRepository.getReferenceById(request.getParentId()));
+
         return commentEntity;
+    }
+
+    private boolean isRequestHaveParentId(CommentRequestDto request) {
+        return request.getParentId() != null;
     }
 
     public ResponseEntity<CommonResponseDto<CommentDto>> recoverComment(long idPost, long commentId)
@@ -137,6 +158,14 @@ public class CommentService {
         return ResponseEntity.ok(getCommonResponseDto(comment));
     }
 
+    private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment) {
+        return CommonResponseDto.<CommentDto>builder()
+                .data(getCommentDto(comment))
+                .error("")
+                .timeStamp(LocalDateTime.now())
+                .build();
+    }
+
     public CommonListResponseDto<CommentDto> getComments(Long postId, int offset, int itemPerPage) {
         Assert.notNull(postId, "id поста не может быть null");
         return getCommonList(postId, itemPerPage, offset);
@@ -144,39 +173,31 @@ public class CommentService {
 
     public CommonListResponseDto<CommentDto> getCommonList(Long idPost, int itemPerPage, int offset) {
         var commentEntityPage = commentRepository.findCommentsByPostIdWithPagination(idPost, UtilZerone.getPagination(itemPerPage, offset));
-        UserEntity user = socialNetUserRegisterService.getCurrentUser();
+
         return CommonListResponseDto.<CommentDto>builder()
                 .total((int) commentEntityPage.getTotalElements())
                 .perPage(itemPerPage)
                 .offset(offset)
-                .data(commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream()
-                        .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
-                                likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT)
-                        ))
-                        .toList())
+                .data(getCommentDtoList(commentEntityPage))
                 .error("")
                 .timestamp(LocalDateTime.now())
                 .build();
     }
 
-    private CommonResponseDto<CommentDto> getCommonResponseDto(CommentEntity comment) {
-        UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        return CommonResponseDto.<CommentDto>builder()
-                .data(commentMapper.commentEntityToDto(comment, getFilesDtoList(comment), getSubComments(comment.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(), LikeType.COMMENT, user),
-                        likesService.likesCountByPostIdAndType(comment.getId(), LikeType.COMMENT)))
-                .error("")
-                .timeStamp(LocalDateTime.now())
-                .build();
+    private List<CommentDto> getCommentDtoList(Page<CommentEntity> commentEntityPage) {
+        return commentEntityPage.isEmpty() ? Collections.emptyList() : commentEntityPage.stream().map(this::getCommentDto).toList();
     }
 
     private List<CommentDto> getSubComments(List<CommentEntity> commentEntities) {
-        UserEntity user = socialNetUserRegisterService.getCurrentUser();
-        return commentEntities.stream()
-                .map(c -> commentMapper.commentEntityToDto(c, getFilesDtoList(c), getSubComments(c.getSubComments()),
-                        likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(c.getId(), LikeType.COMMENT, user),
-                        likesService.likesCountByPostIdAndType(c.getId(), LikeType.COMMENT))).toList();
+        return commentEntities.stream().map(this::getCommentDto).toList();
+    }
+
+    private CommentDto getCommentDto (CommentEntity comment) {
+        var currentUser = socialNetUserRegisterService.getCurrentUser();
+
+        return commentMapper.commentEntityToDto(comment, getFilesDtoList(comment), getSubComments(comment.getSubComments()),
+                likesService.isMyLikeByPostOrCommentIdAndTypeAndUserId(comment.getId(), LikeType.COMMENT, currentUser),
+                likesService.likesCountByPostIdAndType(comment.getId(), LikeType.COMMENT));
     }
 
     private List<FileResponseDto> getFilesDtoList(CommentEntity comment) {

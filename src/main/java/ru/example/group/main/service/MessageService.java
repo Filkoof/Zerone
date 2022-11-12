@@ -6,6 +6,8 @@ import ru.example.group.main.dto.request.MessageRequestDto;
 import ru.example.group.main.dto.response.CommonListResponseDto;
 import ru.example.group.main.dto.response.CommonResponseDto;
 import ru.example.group.main.dto.response.MessageDto;
+import ru.example.group.main.entity.DialogEntity;
+import ru.example.group.main.entity.UserEntity;
 import ru.example.group.main.mapper.MessageMapper;
 import ru.example.group.main.repository.DialogRepository;
 import ru.example.group.main.repository.MessageRepository;
@@ -31,9 +33,10 @@ public class MessageService {
         var currentUser = socialNetUserRegisterService.getCurrentUser();
         var dialog = dialogRepository.findById(dialogId).orElseThrow(EntityNotFoundException::new);
         var messageEntity = messageMapper.messageRequestToEntity(request, dialog, currentUser);
+
         messageRepository.save(messageEntity);
 
-        var recipient = dialog.getRecipient().getId().equals(currentUser.getId()) ? dialog.getSender() : dialog.getRecipient();
+        var recipient = isCurrentUserEqualsRecipient(dialog, currentUser) ? dialog.getSender() : dialog.getRecipient();
         socketEvents.sentMessage(messageEntity, recipient);
 
         return CommonResponseDto.<MessageDto>builder()
@@ -41,6 +44,10 @@ public class MessageService {
                 .error("")
                 .timeStamp(LocalDateTime.now())
                 .build();
+    }
+
+    private boolean isCurrentUserEqualsRecipient(DialogEntity dialog, UserEntity currentUser) {
+        return dialog.getRecipient().getId().equals(currentUser.getId());
     }
 
     public CommonListResponseDto<MessageDto> getMessages(Long id, int offset, int itemPerPage) {
