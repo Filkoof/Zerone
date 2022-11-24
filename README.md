@@ -24,6 +24,7 @@
 - Redis
 - Postgres
 - H2
+- Lombok
 
 ## Моя роль:
 - #### Docker:whale: :
