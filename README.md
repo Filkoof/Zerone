@@ -23,6 +23,7 @@
 - Netty-socket.io
 - Redis
 - Postgres
+- H2
 
 ## Моя роль:
 - #### Docker:whale: :
