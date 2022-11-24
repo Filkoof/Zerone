@@ -77,12 +77,5 @@
         - password: 12345678
         
 - <a href="https://www.youtube.com/watch?v=0dMY2Og8_YA&ab_channel=%D0%9F%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%D0%B8%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D1%8B%D1%85%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%BE%D0%B2Skillbox&t=33m44s" target="_blank">Моя защита проекта</a>
-## Итоговый отзыв тимлидера 
+## Отзыв тимлидера 
  ![Alt-текст](https://sun9-west.userapi.com/sun9-6/s/v1/ig2/1fk4F2teLedfgGntHRWxfKYHCVHwoGJgSDI5xbSwk9pOeBHttKIGo-FaaDQXX93ar1zoF2Vwa7aq3UStbxDlwA3l.jpg?size=960x180&quality=96&type=album "Коммент Тимлида")
-
-## Сертификат о прохождении курса
- ![Alt-текст](https://sun9-west.userapi.com/sun9-64/s/v1/ig2/E7rRSemG12T1tPoYpBB7bv5_eOYp3W_NTMdKSSdXzg9QQNDtXhtnyk_zCcopnpjFP2cSyNLz37AjkKwgLLaHK8xb.jpg?size=1007x1426&quality=96&type=album "Сертификат")
-    
-<div id="header" align="center">
-  <img src="https://media.giphy.com/media/scZPhLqaVOM1qG4lT9/giphy.gif" width="500"/>
-</div>
