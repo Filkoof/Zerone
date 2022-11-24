@@ -1,5 +1,4 @@
-<h1 align="center">Приветствую всех!  
-<img src="https://github.com/blackcater/blackcater/raw/main/images/Hi.gif" height="32"/></h1>
+<h1 align="center">Социальная сеть Zerone </h1>
 <h3 align="center"> <a href="https://vk.com/filkoof" target="_blank">Я</a> рад представить вам командный проект по созданию социальной сети, в котором принимал участие!</h3>
 
 ## О проекте
