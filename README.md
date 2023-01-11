@@ -31,6 +31,9 @@
     - Реализовал отдельный Docker-compose файл для Sonarqube с целью экономии времени при развертывании основного.
     - В дополнительном проекте zerone mail service реализовал его сборку и пуш на Docker Hub.
 - #### Подключил и настроил Sonarqube:mag:.
+(весь code smels уже исправлен, показан для наглядности)
+<img src="https://sun9-north.userapi.com/sun9-84/s/v1/ig2/5tr90WXwBYEVr4BMaSm0i1EeqeP1LFFY4lgHdlAZttD9uZWuzBlE9CccXCSmrQSZotJMcq60sVaW1RDPL5moJhUX.jpg?size=1244x1015&quality=96&type=album" /></h1>
+
 - #### Настроил gitLab CI/CD:recycle::
     - **В основном проекте:** 
         - *build:* компиляция проекта.
@@ -44,20 +47,38 @@
         - *test:* запуск тестов.
         - *package:* упаковка проекта.
         - *deploy:* деплой проекта на DockerHub.
-- #### Сгенерировал тестовые данные(посты, юзеры, комментарии):black_nib:
+ 
+<img src="https://sun9-north.userapi.com/sun9-88/s/v1/ig2/wf3p4g-ny8RVHYpIC5ii7MnhzNBMYld8DrbddDZMEtKQqgK1LH6GNiiwjoL_3TZYyWrOvG3F3I70N5c67QiT8x4O.jpg?size=1037x190&quality=96&type=album" /></h1>
+
+- #### Вручную написал тестовые данные(посты, юзеры, комментарии):black_nib:
+<img src="https://sun9-east.userapi.com/sun9-59/s/v1/ig2/rnzosqO4BiChvZ9yRRsNxuZTMa8zYmFnkkUeOkJGrXCFW1uqYZzXmvx4q1T-p5GaQuTZHpFtTsKvuldyAfXYE6LB.jpg?size=1000x836&quality=96&type=album" /></h1>
+
+
 - #### Посты:memo::
     - Реализовал вывод новостной ленты
     - Реализовал редактирование постов
+    
 - #### Коментарии:scroll::
     - **Реализовал загрузку файлов, в ходе которой переписал по новой:**
         - *добавление комментариев.* 
         - *вывод комментариев.*
+        
+ ![image](https://user-images.githubusercontent.com/100158318/211787068-88bd3a84-d1b3-41e7-a3ef-e9b787cd2102.png)
+
+ 
 - #### Реализовал настройку получаемых уведомлений:wrench:
+ ![image](https://sun9-west.userapi.com/sun9-15/s/v1/ig2/etBwOr773Gnc4pVNL90nUi73hgGNLfN8Bk3j2zhDiOjIAAD2bT349O39Gk6yZQ2k8FSrf9IB_TRvkZTJFCNLjKv_.jpg?size=1010x401&quality=96&type=album)
+
+
 - #### Настроил вебсокеты и Redis для хранения сессий.
 - #### Уведомления(*с сокетами*):bell:
     - Создание уведомлений, при создании тригерятся связанные с ними ивенты, отправляют получателю уведомление и обновляют его счетчик непрочитынных уведомлений.
     - Вывод уведомлений.
     - Прочтение всех уведомлений или по отдельности.
+ 
+ ![image](https://user-images.githubusercontent.com/100158318/211788405-cd35cc36-207e-4bd5-b66e-4d93f2cb83d1.png)
+
+ 
 - ### Мессенджер(*с сокетами*):e-mail::
     - **Вывод всех диалогов, непрочитанных сообщений в каждом и отдельно их общее количество.**
     - **Добавление новых диалогов, при добавлении выводится приветсвенное сообщение.**
@@ -67,6 +88,11 @@
         - При отправке сообщений тригерится ивент send_message, отправляет уведомление получателю и обновляет количество непрочитанных сообщений у получателя.
     - **Вывод сообщений в диалоге.**
     - **Чтение сообщений, при входе в диалог тригерится ивент read_message, читает сообщение и обновляет количество непрочитанных.**
+    
+    
+ ![image](https://sun9-west.userapi.com/sun9-10/s/v1/ig2/u6J5QdEpOvDxUbrm8GGVg08bN2GwD_5Tu0gTzW7b6ZYhbFKwh_fw28Ztkmqj10I2lU-NizIXk5HoVBioxWKgq5v7.jpg?size=1468x1275&quality=96&type=album)
+ 
+  ![image](https://sun9-north.userapi.com/sun9-85/s/v1/ig2/bpmH718LbD2vzQNpWMdvRY8wA8EUrmgKEiNM0h9RnP2sds2zyG-RHzzXm8p17KVgYF6dGBrEI8ZpzyZrq6F-L24e.jpg?size=1001x1200&quality=96&type=album)
     
 # Cсылки:
 - <a href="http://zerone-network.ru/" target="_blank">Социальная сеть Zerone</a>
