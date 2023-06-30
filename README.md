@@ -9,7 +9,6 @@
 #### Состав команды:
 - 7 backend разработчиков
 - 14 frontend разработчиков
-- 1 проджект менеджер 
 
 #### Связанные репозитории:
 - <a href="https://github.com/Filkoof/Zerone_frontend">Фронтенд</a>
